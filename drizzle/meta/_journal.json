@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1721871634517,
+      "tag": "0000_aberrant_norman_osborn",
+      "breakpoints": true
+    }
+  ]
+}
