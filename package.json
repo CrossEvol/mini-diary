@@ -1,6 +1,6 @@
 {
   "name": "mini-diary",
-  "version": "0.0.2-snapshot",
+  "version": "0.0.1-snapshot",
   "main": "dist-electron/main/index.js",
   "description": "Electron Vite React boilerplate.",
   "author": "296662402@qq.com",
@@ -24,6 +24,9 @@
     "studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@blocknote/core": "^0.15.3",
+    "@blocknote/mantine": "^0.15.3",
+    "@blocknote/react": "^0.15.3",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@hono/node-server": "^1.12.0",

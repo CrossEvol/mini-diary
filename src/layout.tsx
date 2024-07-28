@@ -38,7 +38,8 @@ const Layout = () => {
         <Box
             sx={{ width: 250 }}
             role='presentation'
-            onClick={toggleDrawer(false)}>
+            onClick={toggleDrawer(false)}
+        >
             <List>
                 <ListItem disablePadding>
                     <ListItemButton onClick={() => navigate('/')}>
@@ -91,6 +92,14 @@ const Layout = () => {
                         <ListItemText primary={'Len'} />
                     </ListItemButton>
                 </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate('/editor')}>
+                        <ListItemIcon>
+                            <AbcOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'Editor'} />
+                    </ListItemButton>
+                </ListItem>
             </List>
         </Box>
     )
@@ -107,19 +116,22 @@ const Layout = () => {
                             color='inherit'
                             aria-label='menu'
                             sx={{ mr: 2 }}
-                            onClick={toggleDrawer(true)}>
+                            onClick={toggleDrawer(true)}
+                        >
                             <MenuIcon />
                         </IconButton>
                         <Typography
                             variant='h6'
                             component='div'
-                            sx={{ flexGrow: 1 }}>
+                            sx={{ flexGrow: 1 }}
+                        >
                             MUI
                         </Typography>
                         <IconButton
                             sx={{ ml: 1 }}
                             onClick={colorMode.toggleColorMode}
-                            color='inherit'>
+                            color='inherit'
+                        >
                             {theme.palette.mode === 'dark' ? (
                                 <Brightness7Icon />
                             ) : (

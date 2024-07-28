@@ -1,3 +1,4 @@
+import EditorView from '@/views/editor-view'
 import { createHashRouter } from 'react-router-dom'
 import Layout from '../layout'
 import Counter from '../views/counter'
@@ -18,6 +19,7 @@ export const router = createHashRouter([
             { path: 'counter', Component: Counter },
             { path: 'todo', Component: TodoList },
             { path: 'len', Component: Len },
+            { path: 'editor', Component: EditorView },
         ],
     },
 ])
