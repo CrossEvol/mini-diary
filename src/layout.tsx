@@ -22,6 +22,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
+import CalendarPopover from './components/calendar-popover'
 import { ColorModeContext } from './providers/color-mode-provider'
 
 const Layout = () => {
@@ -100,14 +101,6 @@ const Layout = () => {
                         <ListItemText primary={'Editor'} />
                     </ListItemButton>
                 </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/calendar')}>
-                        <ListItemIcon>
-                            <AbcOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Calendar'} />
-                    </ListItemButton>
-                </ListItem>
             </List>
         </Box>
     )
@@ -135,6 +128,7 @@ const Layout = () => {
                         >
                             MUI
                         </Typography>
+                        <CalendarPopover />
                         <IconButton
                             sx={{ ml: 1 }}
                             onClick={colorMode.toggleColorMode}
