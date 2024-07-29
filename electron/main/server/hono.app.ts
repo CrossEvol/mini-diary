@@ -1,6 +1,6 @@
 import { swaggerUI } from '@hono/swagger-ui'
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
-import { insertUserWithProject } from './database'
+import { insertUserWithProject } from '../database/database'
 import { UserSchema } from './zod.type'
 import { cors } from 'hono/cors'
 

@@ -11,7 +11,7 @@ export const insertUserWithProject = async () => {
         .insert(users)
         .values([
             {
-                fullName: 'User_' + Date.now().toString(),
+                nickName: 'User_' + Date.now().toString(),
             },
         ])
         .run()
