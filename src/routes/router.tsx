@@ -7,6 +7,7 @@ import Len from '../views/len'
 import SignIn from '../views/sign-in'
 import SignUp from '../views/sign-up'
 import TodoList from '../views/todo-list'
+import CalendarView from '@/views/calendar'
 
 export const router = createHashRouter([
     {
@@ -20,6 +21,7 @@ export const router = createHashRouter([
             { path: 'todo', Component: TodoList },
             { path: 'len', Component: Len },
             { path: 'editor', Component: EditorView },
+            { path: 'calendar', Component: CalendarView },
         ],
     },
 ])

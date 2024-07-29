@@ -100,6 +100,14 @@ const Layout = () => {
                         <ListItemText primary={'Editor'} />
                     </ListItemButton>
                 </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate('/calendar')}>
+                        <ListItemIcon>
+                            <AbcOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'Calendar'} />
+                    </ListItemButton>
+                </ListItem>
             </List>
         </Box>
     )
