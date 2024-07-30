@@ -1,19 +1,19 @@
 {
-  "version": "5",
+  "version": "7",
   "dialect": "sqlite",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1721871634517,
-      "tag": "0000_aberrant_norman_osborn",
+      "version": "6",
+      "when": 1722311672170,
+      "tag": "0000_legal_greymalkin",
       "breakpoints": true
     },
     {
       "idx": 1,
-      "version": "5",
-      "when": 1722236476004,
-      "tag": "0001_complex_wolverine",
+      "version": "6",
+      "when": 1722313385154,
+      "tag": "0001_confused_shriek",
       "breakpoints": true
     }
   ]

@@ -1,8 +1,8 @@
 {
-  "version": "5",
+  "version": "6",
   "dialect": "sqlite",
-  "id": "a39a4699-90ec-48d7-a2de-27527d441d58",
-  "prevId": "500bb175-eed2-4de9-bba0-422c0e0cf8ce",
+  "id": "ac8aa040-0b66-41b2-8bbe-ace9426fa20b",
+  "prevId": "82467dd8-5cc5-4f84-9027-34aeb4a51f32",
   "tables": {
     "diaries": {
       "name": "diaries",
@@ -30,6 +30,13 @@
         },
         "created_at": {
           "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -129,6 +136,13 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "avatar": {
+          "name": "avatar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
@@ -141,8 +155,9 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {
-      "\"users\".\"full_name\"": "\"users\".\"nickname\""
-    }
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
   }
 }

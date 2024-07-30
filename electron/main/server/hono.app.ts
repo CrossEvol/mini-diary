@@ -1,17 +1,17 @@
 import { swaggerUI } from '@hono/swagger-ui'
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
-import { insertUserWithProject } from '../database/database'
-import { UserSchema } from './zod.type'
 import { cors } from 'hono/cors'
+import { createUser, getUsersWithProjects } from '../database/database'
+import { User, UserJoinSchema, UserSchema } from './zod.type'
 
 const app = new OpenAPIHono()
 
 app.use('*', async (c, next) => {
     const corsMiddlewareHandler = cors({
-      origin: '*',
+        origin: '*',
     })
     return corsMiddlewareHandler(c, next)
-  })
+})
 
 app.openapi(
     createRoute({
@@ -43,11 +43,11 @@ app.openapi(
         path: '/users',
         responses: {
             200: {
-                description: 'Create new User with Project',
+                description: 'Get Users with Projects',
                 content: {
                     'application/json': {
                         schema: z.object({
-                            data: z.array(UserSchema),
+                            data: UserJoinSchema,
                         }),
                     },
                 },
@@ -55,9 +55,46 @@ app.openapi(
         },
     }),
     async (c) => {
-        const res = await insertUserWithProject()
+        const res = await getUsersWithProjects()
 
         return c.json({ data: res })
+    }
+)
+
+app.openapi(
+    createRoute({
+        method: 'post',
+        path: '/users',
+        request: {
+            body: {
+                content: {
+                    'application/json': {
+                        schema: UserSchema.omit({
+                            id: true,
+                            avatar: true,
+                        }),
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                description: 'Create new User',
+                content: {
+                    'application/json': {
+                        schema: z.object({
+                            data: UserSchema.optional().nullable(),
+                        }),
+                    },
+                },
+            },
+        },
+    }),
+    async (c) => {
+        const { nickName, password, pinCode } =
+            await c.req.json<Omit<User, 'id' | 'avatar'>>()
+        const user = await createUser(nickName!, password!, pinCode!)
+        return c.json({ data: user })
     }
 )
 
