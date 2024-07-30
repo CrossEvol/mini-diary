@@ -1,9 +1,9 @@
 import Database from 'better-sqlite3'
-import { eq, sql } from 'drizzle-orm'
+import { and, between, eq, gt, isNotNull, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { diariesTable, projectsTable, usersTable } from './schema'
 
-const sqlite = new Database('./sqlite.db')
+const sqlite = new Database('./sqlite2.db')
 const db = drizzle(sqlite)
 
 export const getUsersWithProjects = async () => {
@@ -69,11 +69,28 @@ export const getUsersByNickname = async (nickname: string) => {
     return users
 }
 
-export const getAllDiaries = async (userId: number) => {
+type GetAllDiariesParams = {
+    userId: number
+    start?: Date
+    end?: Date
+}
+
+export const getAllDiaries = async ({
+    userId,
+    start,
+    end,
+}: GetAllDiariesParams) => {
     const result = db
         .select()
         .from(diariesTable)
-        .where(eq(diariesTable.ownerId, userId))
+        .where(
+            and(
+                eq(diariesTable.ownerId, userId),
+                !!start && !!end
+                    ? between(diariesTable.createdAt, start, end)
+                    : isNotNull(diariesTable.createdAt)
+            )
+        )
         .all()
     return result
 }

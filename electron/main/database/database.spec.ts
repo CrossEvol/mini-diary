@@ -1,18 +1,35 @@
 import Database from 'better-sqlite3'
 import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
+import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
+import { rmSync } from 'fs'
 import { afterAll, beforeAll, describe, it } from 'vitest'
 import { diariesTable, usersTable } from './schema'
+import { seed } from './seed'
 
-const sqlite = new Database('./sqlite.db')
+const testDatabasePath = 'sqlite.test.db'
+
+const sqlite = new Database(testDatabasePath)
 const db = drizzle(sqlite)
 
-beforeAll(() => {})
+beforeAll(() => {
+    // this will automatically run needed migrations on the database
+    migrate(db, { migrationsFolder: './drizzle' })
+    seed(db)
+})
 
-afterAll(() => {})
+afterAll(() => {
+    sqlite.close()
+    rmSync(testDatabasePath, { force: true })
+})
 
-describe('a', () => {
-    it('a1', async () => {
+describe('databaseTest', () => {
+    it('getUsers', () => {
+        const res = db.select().from(usersTable).all()
+        console.log(res)
+    })
+
+    it('getUsersWithDiaries', async () => {
         await db.transaction(async (tx) => {
             const res = tx
                 .insert(usersTable)
