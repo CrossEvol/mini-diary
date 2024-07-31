@@ -1,16 +1,67 @@
 import { swaggerUI } from '@hono/swagger-ui'
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
-import { createUser, getUsersWithProjects } from '../database/database'
-import { User, UserJoinSchema, UserSchema } from './zod.type'
+import { logger } from 'hono/logger'
+import { getReasonPhrase, StatusCodes } from 'http-status-codes'
+import {
+    createUser,
+    getUserByEmail,
+    getUsersWithProjects,
+} from '../database/database'
+import { createJWT } from '../util/jwt.util'
+import { ErrorCause } from './error'
+import {
+    ResultSchema,
+    User,
+    UserJoin,
+    UserJoinSchema,
+    UserSchema,
+} from './zod.type'
+
+const okResponse = <T>(data: T) => {
+    return {
+        status: StatusCodes.OK,
+        message: getReasonPhrase(StatusCodes.OK),
+        data,
+    }
+}
+
+class HttpError extends Error {
+    statusCode: number
+
+    constructor({
+        message,
+        statusCode,
+    }: {
+        message: string
+        statusCode: number
+    }) {
+        super(message)
+        this.statusCode = statusCode
+        this.name = 'CustomError'
+    }
+
+    toJSON() {
+        return {
+            message: this.message,
+            statusCode: this.statusCode,
+        }
+    }
+}
 
 const app = new OpenAPIHono()
 
+app.use(logger())
 app.use('*', async (c, next) => {
     const corsMiddlewareHandler = cors({
         origin: '*',
     })
     return corsMiddlewareHandler(c, next)
+})
+app.onError((err, c) => {
+    console.error(`${err}`)
+    const httpError = err as HttpError
+    return c.json(httpError.toJSON())
 })
 
 app.openapi(
@@ -22,18 +73,14 @@ app.openapi(
                 description: 'Respond a message',
                 content: {
                     'application/json': {
-                        schema: z.object({
-                            message: z.string(),
-                        }),
+                        schema: ResultSchema(z.string()),
                     },
                 },
             },
         },
     }),
     (c) => {
-        return c.json({
-            message: 'hello',
-        })
+        return c.json(okResponse<string>('hello'))
     }
 )
 
@@ -46,9 +93,7 @@ app.openapi(
                 description: 'Get Users with Projects',
                 content: {
                     'application/json': {
-                        schema: z.object({
-                            data: UserJoinSchema,
-                        }),
+                        schema: ResultSchema(UserJoinSchema),
                     },
                 },
             },
@@ -57,7 +102,7 @@ app.openapi(
     async (c) => {
         const res = await getUsersWithProjects()
 
-        return c.json({ data: res })
+        return c.json(okResponse<UserJoin>(res))
     }
 )
 
@@ -82,19 +127,70 @@ app.openapi(
                 description: 'Create new User',
                 content: {
                     'application/json': {
-                        schema: z.object({
-                            data: UserSchema.optional().nullable(),
-                        }),
+                        schema: ResultSchema(UserSchema.nullable().optional()),
                     },
                 },
             },
         },
     }),
     async (c) => {
-        const { nickName, password, pinCode } =
+        const { email, nickname, password, pinCode } =
             await c.req.json<Omit<User, 'id' | 'avatar'>>()
-        const user = await createUser(nickName!, password!, pinCode!)
-        return c.json({ data: user })
+        const user = await createUser({
+            email: email!,
+            nickname: nickname!,
+            password: password!,
+            pinCode: pinCode!,
+        })
+        return c.json(okResponse<User>(user!))
+    }
+)
+
+app.openapi(
+    createRoute({
+        method: 'post',
+        path: '/auth/sign-in',
+        request: {
+            body: {
+                content: {
+                    'application/json': {
+                        schema: UserSchema.pick({
+                            email: true,
+                            password: true,
+                        }),
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                description: 'Sign In',
+                content: {
+                    'application/json': {
+                        schema: ResultSchema(z.object({ token: z.string() })),
+                    },
+                },
+            },
+        },
+    }),
+    async (c) => {
+        const { email, password } =
+            await c.req.json<Pick<User, 'email' | 'password'>>()
+        const user = await getUserByEmail(email!)
+        if (!user) {
+            throw new HttpError({
+                message: getReasonPhrase(StatusCodes.NOT_FOUND),
+                statusCode: StatusCodes.NOT_FOUND,
+            })
+        }
+        if (user.password !== password) {
+            throw new HttpError({
+                message: ErrorCause.PASSWORD_MISMATCH,
+                statusCode: StatusCodes.BAD_REQUEST,
+            })
+        }
+        const jwt = createJWT({ userID: user.id!, nickname: user.nickname! })
+        return c.json(okResponse({ token: jwt }))
     }
 )
 

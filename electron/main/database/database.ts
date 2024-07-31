@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3'
-import { and, between, eq, gt, isNotNull, sql } from 'drizzle-orm'
+import { and, between, eq, isNotNull, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { diariesTable, projectsTable, usersTable } from './schema'
 
@@ -19,14 +19,22 @@ export const getUsersWithProjects = async () => {
     return { ...users, projects: [projects!] }
 }
 
-export const createUser = async (
-    nickName: string,
-    password: string,
+type CreateUserParams = {
+    email: string
+    nickname: string
+    password: string
     pinCode: string
-) => {
+}
+
+export const createUser = async ({
+    email,
+    nickname,
+    password,
+    pinCode,
+}: CreateUserParams) => {
     const insertResult = db
         .insert(usersTable)
-        .values({ nickName, password, pinCode })
+        .values({ email, nickname, password, pinCode })
         .run()
 
     if (insertResult.changes === 0) {
@@ -41,16 +49,26 @@ export const createUser = async (
     return newUser
 }
 
-export const updateUser = async (
-    id: number,
-    nickName?: string,
-    password?: string,
-    pinCode?: string,
+type UpdateUserParams = {
+    id: number
+    email?: string
+    nickname?: string
+    password?: string
+    pinCode?: string
     avatar?: string
-) => {
+}
+
+export const updateUser = async ({
+    id,
+    email,
+    nickname,
+    password,
+    pinCode,
+    avatar,
+}: UpdateUserParams) => {
     const updateResult = db
         .update(usersTable)
-        .set({ nickName, password, pinCode, avatar })
+        .set({ email, nickname, password, pinCode, avatar })
         .where(eq(usersTable.id, id))
         .run()
     if (updateResult.changes === 0) {
@@ -60,13 +78,20 @@ export const updateUser = async (
     return user
 }
 
-export const getUsersByNickname = async (nickname: string) => {
-    const users = db
+export const getUserByEmail = async (email: string) => {
+    const user = db
         .select()
         .from(usersTable)
-        .where(eq(usersTable.nickName, nickname))
-        .all()
-    return users
+        .where(eq(usersTable.email, email))
+        .get()
+    return user
+}
+
+export const getUserByUserID = async (userID: number) => {
+    const user =
+        db.select().from(usersTable).where(eq(usersTable.id, userID)).get() ??
+        null
+    return user
 }
 
 type GetAllDiariesParams = {

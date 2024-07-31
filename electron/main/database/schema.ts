@@ -1,9 +1,9 @@
-import { sql } from 'drizzle-orm'
 import { blob, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 export const usersTable = sqliteTable('users', {
     id: integer('id').primaryKey(), // 'id' is the column name
-    nickName: text('nickname'),
+    email: text('email').unique(),
+    nickname: text('nickname'),
     password: text('password'),
     pinCode: text('pin_code'),
     avatar: text('avatar'),

@@ -5,7 +5,7 @@ const privateKey = readFileSync('private.key')
 const cert = readFileSync('public.pem')
 
 export const createJWT = (
-    payload: Record<string, string>,
+    payload: Record<string, any>,
     options?: Omit<SignOptions, 'algorithm' | 'subject'>
 ) => {
     const token = jwt.sign(payload, privateKey, {

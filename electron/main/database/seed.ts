@@ -6,7 +6,8 @@ export const seed = (db: BetterSQLite3Database<Record<string, never>>) => {
         .insert(usersTable)
         .values([
             {
-                nickName: 'User_' + Date.now().toString(),
+                email: '123@qq.com',
+                nickname: 'User_' + Date.now().toString(),
                 password: 'abc123',
                 pinCode: '123456',
             },

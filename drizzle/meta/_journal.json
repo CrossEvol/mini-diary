@@ -15,6 +15,13 @@
       "when": 1722313385154,
       "tag": "0001_confused_shriek",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1722420840092,
+      "tag": "0002_wild_thor_girl",
+      "breakpoints": true
     }
   ]
 }
