@@ -24,6 +24,7 @@ import * as React from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import CalendarPopover from './components/calendar-popover'
 import { ColorModeContext } from './providers/color-mode-provider'
+import { DateTimeFormatEnum, formatDateTime } from './utils/datetime.utils'
 
 const Layout = () => {
     const [open, setOpen] = React.useState(false)
@@ -94,7 +95,21 @@ const Layout = () => {
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/editor')}>
+                    <ListItemButton onClick={() => navigate('/test/1')}>
+                        <ListItemIcon>
+                            <AbcOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'Test'} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton
+                        onClick={() =>
+                            navigate(
+                                `/editor/${formatDateTime(new Date(), DateTimeFormatEnum.DATE_FORMAT)}`
+                            )
+                        }
+                    >
                         <ListItemIcon>
                             <AbcOutlinedIcon />
                         </ListItemIcon>

@@ -3,7 +3,7 @@ import { and, between, eq, gt, isNotNull, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { diariesTable, projectsTable, usersTable } from './schema'
 
-const sqlite = new Database('./sqlite2.db')
+const sqlite = new Database('./sqlite.db')
 const db = drizzle(sqlite)
 
 export const getUsersWithProjects = async () => {
