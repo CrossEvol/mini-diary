@@ -7,7 +7,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
 import MenuIcon from '@mui/icons-material/Menu'
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined'
-import { CssBaseline, useTheme } from '@mui/material'
+import { CssBaseline, Tooltip, useTheme } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
@@ -95,14 +95,6 @@ const Layout = () => {
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/test/1')}>
-                        <ListItemIcon>
-                            <AbcOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Test'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
                     <ListItemButton
                         onClick={() =>
                             navigate(
@@ -126,16 +118,18 @@ const Layout = () => {
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position='static'>
                     <Toolbar>
-                        <IconButton
-                            size='large'
-                            edge='start'
-                            color='inherit'
-                            aria-label='menu'
-                            sx={{ mr: 2 }}
-                            onClick={toggleDrawer(true)}
-                        >
-                            <MenuIcon />
-                        </IconButton>
+                        <Tooltip title='navigation'>
+                            <IconButton
+                                size='large'
+                                edge='start'
+                                color='inherit'
+                                aria-label='menu'
+                                sx={{ mr: 2 }}
+                                onClick={toggleDrawer(true)}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        </Tooltip>
                         <Typography
                             variant='h6'
                             component='div'
@@ -144,17 +138,19 @@ const Layout = () => {
                             MUI
                         </Typography>
                         <CalendarPopover />
-                        <IconButton
-                            sx={{ ml: 1 }}
-                            onClick={colorMode.toggleColorMode}
-                            color='inherit'
-                        >
-                            {theme.palette.mode === 'dark' ? (
-                                <Brightness7Icon />
-                            ) : (
-                                <Brightness4Icon />
-                            )}
-                        </IconButton>
+                        <Tooltip title='mode'>
+                            <IconButton
+                                sx={{ ml: 1 }}
+                                onClick={colorMode.toggleColorMode}
+                                color='inherit'
+                            >
+                                {theme.palette.mode === 'dark' ? (
+                                    <Brightness7Icon />
+                                ) : (
+                                    <Brightness4Icon />
+                                )}
+                            </IconButton>
+                        </Tooltip>
                     </Toolbar>
                 </AppBar>
                 <Outlet />

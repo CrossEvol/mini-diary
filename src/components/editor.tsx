@@ -1,16 +1,42 @@
+import { eventEmitterAtom } from '@/atoms/editor.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
 import { uploadFile } from '@/utils/uploadFile'
 import { BlockNoteEditor, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/mantine/style.css'
-import { useEffect, useMemo, useState } from 'react'
+import { useAtom } from 'jotai'
+import localforage from 'localforage'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-
-const EDITOR_CONTENT_KEY = 'editorContent'
 
 const createDiaryKey = (userID: number, date: string) =>
     `diary-${userID}-${date}`
+
+const EditorAux = ({ editor }: { editor: BlockNoteEditor<any, any, any> }) => {
+    const [eventEmitter] = useAtom(eventEmitterAtom)
+    const { loadContent } = useEditorStorage()
+    let flag = true
+
+    React.useEffect(() => {
+        if (flag) {
+            eventEmitter.on('a', async () => {
+                for (const key of await localforage.keys()) {
+                    const html = await editor.blocksToHTMLLossy(
+                        await loadContent(key)
+                    )
+                    console.log(html)
+                }
+            })
+        }
+
+        return () => {
+            flag = false
+        }
+    }, [])
+
+    return <div className='hidden'></div>
+}
 
 export default function Editor() {
     const location = useLocation()
@@ -43,12 +69,15 @@ export default function Editor() {
     }
 
     return (
-        <BlockNoteView
-            editor={editor}
-            emojiPicker={true}
-            onChange={() => {
-                saveContent(diaryKey, editor.document)
-            }}
-        />
+        <>
+            <BlockNoteView
+                editor={editor}
+                emojiPicker={true}
+                onChange={async () => {
+                    saveContent(diaryKey, editor.document)
+                }}
+            />
+            <EditorAux editor={editor} />
+        </>
     )
 }
