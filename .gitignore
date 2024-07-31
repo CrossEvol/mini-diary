@@ -42,3 +42,7 @@ e2e/screenshots/
 
 # database 
 *.db
+
+# security
+private.key
+public.pem

@@ -19,6 +19,7 @@
     "pree2e": "vite build --mode=test",
     "e2e": "playwright test",
     "test": "jest",
+    "key:gen": "tsx scripts/generateKeyPair.ts",
     "generate": "drizzle-kit generate ",
     "migrate": "tsx migrate.ts",
     "studio": "drizzle-kit studio"
@@ -41,6 +42,7 @@
     "eventemitter3": "^5.0.1",
     "hono": "^4.5.1",
     "jotai": "^2.9.1",
+    "jsonwebtoken": "^9.0.2",
     "localforage": "^1.10.0",
     "react": "^18",
     "react-calendar": "^5.0.0",
@@ -59,6 +61,7 @@
     "@types/better-sqlite3": "^7.6.11",
     "@types/eslint": "^9.6.0",
     "@types/jest": "^29.5.3",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.11.17",
     "@types/react": "^18",
     "@types/react-dom": "^18",
