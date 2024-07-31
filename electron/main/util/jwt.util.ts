@@ -27,7 +27,7 @@ export const decodeJWT = (token: string) => {
     }
 }
 
-export const getFromJWT = (token: string, key: string) => {
+export const getFromJWT = <T>(token: string, key: string) => {
     const jwtPayload = decodeJWT(token) as JwtPayload
-    return jwtPayload[key] ?? null
+    return (jwtPayload[key] as T) ?? null
 }

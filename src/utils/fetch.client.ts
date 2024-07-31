@@ -24,7 +24,11 @@ async function post<T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
 ): Promise<T> {
-    const response = await fetch(url, { ...options, method: HttpMethod.POST })
+    const response = await fetch(url, {
+        ...options,
+        method: HttpMethod.POST,
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+    })
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -48,7 +52,10 @@ async function delete0<T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
 ): Promise<T> {
-    const response = await fetch(url, { ...options, method: HttpMethod.DELETE })
+    const response = await fetch(url, {
+        ...options,
+        method: HttpMethod.DELETE,
+    })
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -60,7 +67,11 @@ async function patch<T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
 ): Promise<T> {
-    const response = await fetch(url, { ...options, method: HttpMethod.PATCH })
+    const response = await fetch(url, {
+        ...options,
+        method: HttpMethod.PATCH,
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+    })
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
     }

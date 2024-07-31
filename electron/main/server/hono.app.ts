@@ -2,14 +2,16 @@ import { swaggerUI } from '@hono/swagger-ui'
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
-import { getReasonPhrase, StatusCodes } from 'http-status-codes'
+import { getReasonPhrase, getStatusCode, StatusCodes } from 'http-status-codes'
 import {
     createUser,
     getUserByEmail,
+    getUserByUserID,
     getUsersWithProjects,
 } from '../database/database'
 import { createJWT } from '../util/jwt.util'
 import { ErrorCause } from './error'
+import { bearerAuth } from './middlewares'
 import {
     ResultSchema,
     User,
@@ -26,30 +28,7 @@ const okResponse = <T>(data: T) => {
     }
 }
 
-class HttpError extends Error {
-    statusCode: number
-
-    constructor({
-        message,
-        statusCode,
-    }: {
-        message: string
-        statusCode: number
-    }) {
-        super(message)
-        this.statusCode = statusCode
-        this.name = 'CustomError'
-    }
-
-    toJSON() {
-        return {
-            message: this.message,
-            statusCode: this.statusCode,
-        }
-    }
-}
-
-const app = new OpenAPIHono()
+const app = new OpenAPIHono<{ Variables: { userID: number } }, any, any>()
 
 app.use(logger())
 app.use('*', async (c, next) => {
@@ -58,11 +37,39 @@ app.use('*', async (c, next) => {
     })
     return corsMiddlewareHandler(c, next)
 })
+app.use('*', bearerAuth)
+
+const getSafeStatusCode = (reasonPhrase: string) => {
+    try {
+        const statusCode = getStatusCode(reasonPhrase)
+        return statusCode
+    } catch (error) {
+        return StatusCodes.INTERNAL_SERVER_ERROR
+    }
+}
+
 app.onError((err, c) => {
     console.error(`${err}`)
-    const httpError = err as HttpError
-    return c.json(httpError.toJSON())
+
+    return c.json({
+        status: getSafeStatusCode(err.message),
+        message: `error: ${err.message}`,
+        data: null,
+    })
 })
+
+// Security (Bearer)
+// Register security scheme
+// add it on your index.ts
+app.openAPIRegistry.registerComponent(
+    "securitySchemes",
+    "AuthorizationBearer", // <- Add security name
+    {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+    },
+);
 
 app.openapi(
     createRoute({
@@ -103,6 +110,33 @@ app.openapi(
         const res = await getUsersWithProjects()
 
         return c.json(okResponse<UserJoin>(res))
+    }
+)
+
+app.openapi(
+    createRoute({
+        method: 'get',
+        path: '/profile',
+        security: [
+            {
+                AuthorizationBearer: [], // <- Add security name (must be same)
+            },
+        ],
+        responses: {
+            200: {
+                description: 'Get UserProfile by Bearer Auth',
+                content: {
+                    'application/json': {
+                        schema: ResultSchema(UserSchema.nullable()),
+                    },
+                },
+            },
+        },
+    }),
+    async (c) => {
+        const userID = c.get('userID')
+        const user = await getUserByUserID(userID!)
+        return c.json(okResponse<User | null>(user))
     }
 )
 
@@ -178,16 +212,10 @@ app.openapi(
             await c.req.json<Pick<User, 'email' | 'password'>>()
         const user = await getUserByEmail(email!)
         if (!user) {
-            throw new HttpError({
-                message: getReasonPhrase(StatusCodes.NOT_FOUND),
-                statusCode: StatusCodes.NOT_FOUND,
-            })
+            throw new Error(getReasonPhrase(StatusCodes.NOT_FOUND))
         }
         if (user.password !== password) {
-            throw new HttpError({
-                message: ErrorCause.PASSWORD_MISMATCH,
-                statusCode: StatusCodes.BAD_REQUEST,
-            })
+            throw new Error(ErrorCause.PASSWORD_MISMATCH)
         }
         const jwt = createJWT({ userID: user.id!, nickname: user.nickname! })
         return c.json(okResponse({ token: jwt }))

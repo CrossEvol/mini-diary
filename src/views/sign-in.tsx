@@ -1,17 +1,19 @@
-import * as React from 'react'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
-import TextField from '@mui/material/TextField'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import Link from '@mui/material/Link'
-import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
+import fetchClient from '@/utils/fetch.client'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import Typography from '@mui/material/Typography'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
 import Container from '@mui/material/Container'
+import CssBaseline from '@mui/material/CssBaseline'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Grid from '@mui/material/Grid'
+import Link from '@mui/material/Link'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { Result } from 'electron/main/server/zod.type'
+import * as React from 'react'
 
 function Copyright(props: any) {
     return (
@@ -19,7 +21,8 @@ function Copyright(props: any) {
             variant='body2'
             color='text.secondary'
             align='center'
-            {...props}>
+            {...props}
+        >
             {'Copyright © '}
             <Link color='inherit' href='https://mui.com/'>
                 Your Website
@@ -34,13 +37,22 @@ function Copyright(props: any) {
 const defaultTheme = createTheme()
 
 export default function SignIn() {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        })
+        const res = await fetchClient.post<Result<{ token: string }>>(
+            `http://localhost:${localStorage.getItem('port')}/auth/sign-in`,
+            {
+                body: JSON.stringify({
+                    email: data.get('email'),
+                    password: data.get('password'),
+                }),
+            }
+        )
+        console.log(res)
+        if (res.status === 200) {
+            localStorage.setItem('token', res.data.token)
+        }
     }
 
     return (
@@ -53,7 +65,8 @@ export default function SignIn() {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                    }}>
+                    }}
+                >
                     <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                         <LockOutlinedIcon />
                     </Avatar>
@@ -64,7 +77,8 @@ export default function SignIn() {
                         component='form'
                         onSubmit={handleSubmit}
                         noValidate
-                        sx={{ mt: 1 }}>
+                        sx={{ mt: 1 }}
+                    >
                         <TextField
                             margin='normal'
                             required
@@ -95,7 +109,8 @@ export default function SignIn() {
                             type='submit'
                             fullWidth
                             variant='contained'
-                            sx={{ mt: 3, mb: 2 }}>
+                            sx={{ mt: 3, mb: 2 }}
+                        >
                             Sign In
                         </Button>
                         <Grid container>
