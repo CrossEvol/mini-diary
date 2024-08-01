@@ -16,7 +16,7 @@
     "dev:server": "tsx watch electron/main/server/main.ts",
     "build": "tsc && vite build && electron-builder",
     "rebuild": ".\\node_modules\\.bin\\electron-rebuild.cmd -f -m ./node_modules/better-sqlite3",
-    "sqlite:reset": "rm -rf ./node_modules/better-sqlite3 && npm install better-sqlite3",
+    "reset": "rm -rf ./node_modules/better-sqlite3 && npm install better-sqlite3",
     "preview": "vite preview",
     "pree2e": "vite build --mode=test",
     "e2e": "playwright test",
@@ -53,6 +53,7 @@
     "react-dom": "^18",
     "react-router": "^6.25.1",
     "react-router-dom": "^6.25.1",
+    "react-toastify": "^10.0.5",
     "zod": "^3.23.8",
     "zustand": "^4.5.4"
   },

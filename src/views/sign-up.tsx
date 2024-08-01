@@ -1,17 +1,20 @@
-import * as React from 'react'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
-import TextField from '@mui/material/TextField'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import Link from '@mui/material/Link'
-import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
+import useNotify from '@/hooks/useNotify'
+import fetchClient from '@/utils/fetch.client'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import Typography from '@mui/material/Typography'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
 import Container from '@mui/material/Container'
+import CssBaseline from '@mui/material/CssBaseline'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Grid from '@mui/material/Grid'
+import Link from '@mui/material/Link'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { Result, User } from 'electron/main/server/zod.type'
+import * as React from 'react'
 
 function Copyright(props: any) {
     return (
@@ -19,7 +22,8 @@ function Copyright(props: any) {
             variant='body2'
             color='text.secondary'
             align='center'
-            {...props}>
+            {...props}
+        >
             {'Copyright © '}
             <Link color='inherit' href='https://mui.com/'>
                 Your Website
@@ -34,13 +38,27 @@ function Copyright(props: any) {
 const defaultTheme = createTheme()
 
 export default function SignUp() {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const { notifySuccess, notifyError } = useNotify()
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        })
+        const res = await fetchClient.post<Result<Omit<User, 'password'>>>(
+            `http://localhost:${localStorage.getItem('port')}/auth/sign-up`,
+            {
+                body: JSON.stringify({
+                    nickname: data.get('nickname'),
+                    email: data.get('email'),
+                    password: data.get('password'),
+                    pinCode: data.get('pinCode'),
+                }),
+            }
+        )
+        if (res.status === 200) {
+            notifySuccess('Sign Up Success!')
+        } else {
+            notifyError('Sign Up Error!')
+        }
     }
 
     return (
@@ -53,7 +71,8 @@ export default function SignUp() {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                    }}>
+                    }}
+                >
                     <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                         <LockOutlinedIcon />
                     </Avatar>
@@ -64,27 +83,17 @@ export default function SignUp() {
                         component='form'
                         noValidate
                         onSubmit={handleSubmit}
-                        sx={{ mt: 3 }}>
+                        sx={{ mt: 3 }}
+                    >
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    autoComplete='given-name'
-                                    name='firstName'
-                                    required
-                                    fullWidth
-                                    id='firstName'
-                                    label='First Name'
-                                    autoFocus
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12}>
                                 <TextField
                                     required
                                     fullWidth
-                                    id='lastName'
-                                    label='Last Name'
-                                    name='lastName'
-                                    autoComplete='family-name'
+                                    id='nickname'
+                                    label='NickName'
+                                    name='nickname'
+                                    autoComplete='nickname'
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -109,6 +118,16 @@ export default function SignUp() {
                                 />
                             </Grid>
                             <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id='pinCode'
+                                    label='PinCode'
+                                    name='pinCode'
+                                    autoComplete='pinCode'
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
                                 <FormControlLabel
                                     control={
                                         <Checkbox
@@ -124,7 +143,8 @@ export default function SignUp() {
                             type='submit'
                             fullWidth
                             variant='contained'
-                            sx={{ mt: 3, mb: 2 }}>
+                            sx={{ mt: 3, mb: 2 }}
+                        >
                             Sign Up
                         </Button>
                         <Grid container justifyContent='flex-end'>

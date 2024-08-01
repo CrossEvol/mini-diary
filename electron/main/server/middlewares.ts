@@ -1,6 +1,7 @@
 import { Context, Next } from 'hono'
 import { getFromJWT } from '../util/jwt.util'
-import { whiteList } from './whitelist'
+
+const whiteList = ['/ui', '/doc', '/auth/sign-in', '/auth/sign-up']
 
 export const bearerAuth = async (c: Context, next: Next) => {
     if (whiteList.includes(c.req.path)) {

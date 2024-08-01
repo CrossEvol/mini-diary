@@ -8,10 +8,10 @@ enum HttpMethod {
     HEAD = 'HEAD',
 }
 
-async function get<T>(
+const get = async <T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
-): Promise<T> {
+): Promise<T> => {
     const response = await fetch(url, { ...options, method: HttpMethod.GET })
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -20,10 +20,10 @@ async function get<T>(
     return data
 }
 
-async function post<T>(
+const post = async <T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
-): Promise<T> {
+): Promise<T> => {
     const response = await fetch(url, {
         ...options,
         method: HttpMethod.POST,
@@ -36,10 +36,10 @@ async function post<T>(
     return data
 }
 
-async function put<T>(
+const put = async <T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
-): Promise<T> {
+): Promise<T> => {
     const response = await fetch(url, { ...options, method: HttpMethod.PUT })
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -48,10 +48,10 @@ async function put<T>(
     return data
 }
 
-async function delete0<T>(
+const delete0 = async <T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
-): Promise<T> {
+): Promise<T> => {
     const response = await fetch(url, {
         ...options,
         method: HttpMethod.DELETE,
@@ -63,10 +63,10 @@ async function delete0<T>(
     return data
 }
 
-async function patch<T>(
+const patch = async <T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
-): Promise<T> {
+): Promise<T> => {
     const response = await fetch(url, {
         ...options,
         method: HttpMethod.PATCH,

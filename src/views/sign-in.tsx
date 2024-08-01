@@ -1,3 +1,4 @@
+import useNotify from '@/hooks/useNotify'
 import fetchClient from '@/utils/fetch.client'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
@@ -37,6 +38,8 @@ function Copyright(props: any) {
 const defaultTheme = createTheme()
 
 export default function SignIn() {
+    const { notifySuccess, notifyError } = useNotify()
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
@@ -52,6 +55,9 @@ export default function SignIn() {
         console.log(res)
         if (res.status === 200) {
             localStorage.setItem('token', res.data.token)
+            notifySuccess('Sign In Success!')
+        } else {
+            notifyError('Sign In Error!')
         }
     }
 

@@ -62,14 +62,14 @@ app.onError((err, c) => {
 // Register security scheme
 // add it on your index.ts
 app.openAPIRegistry.registerComponent(
-    "securitySchemes",
-    "AuthorizationBearer", // <- Add security name
+    'securitySchemes',
+    'AuthorizationBearer', // <- Add security name
     {
-        type: "http",
-        scheme: "bearer",
-        bearerFormat: "JWT",
-    },
-);
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+    }
+)
 
 app.openapi(
     createRoute({
@@ -143,7 +143,7 @@ app.openapi(
 app.openapi(
     createRoute({
         method: 'post',
-        path: '/users',
+        path: '/auth/sign-up',
         request: {
             body: {
                 content: {
@@ -161,7 +161,11 @@ app.openapi(
                 description: 'Create new User',
                 content: {
                     'application/json': {
-                        schema: ResultSchema(UserSchema.nullable().optional()),
+                        schema: ResultSchema(
+                            UserSchema.omit({ password: true })
+                                .nullable()
+                                .optional()
+                        ),
                     },
                 },
             },
@@ -176,7 +180,15 @@ app.openapi(
             password: password!,
             pinCode: pinCode!,
         })
-        return c.json(okResponse<User>(user!))
+        return c.json(
+            okResponse<Omit<User, 'password'>>({
+                id: user!.id,
+                email: user!.email,
+                nickname: user!.nickname,
+                pinCode: user!.pinCode,
+                avatar: user!.avatar,
+            })
+        )
     }
 )
 

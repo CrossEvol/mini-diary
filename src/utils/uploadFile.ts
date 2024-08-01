@@ -1,5 +1,5 @@
 // Uploads a file to tmpfiles.org and returns the URL to the uploaded file.
-export async function uploadFile(file: File) {
+export const uploadFile = async (file: File) => {
     const body = new FormData()
     body.append('file', file)
 

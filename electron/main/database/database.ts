@@ -45,7 +45,7 @@ export const createUser = async ({
         .select()
         .from(usersTable)
         .where(eq(usersTable.id, insertResult.lastInsertRowid as number))
-        .get()
+        .get()!
     return newUser
 }
 
