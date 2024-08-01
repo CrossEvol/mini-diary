@@ -40,7 +40,11 @@ const put = async <T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
 ): Promise<T> => {
-    const response = await fetch(url, { ...options, method: HttpMethod.PUT })
+    const response = await fetch(url, {
+        ...options,
+        method: HttpMethod.PUT,
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+    })
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
     }

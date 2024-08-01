@@ -125,7 +125,7 @@ const CalendarBar = () => {
                     color='primary'
                     sx={{ p: '10px' }}
                     aria-label='directions'
-                    onClick={() => eventEmitter.emit('a')}
+                    onClick={() => eventEmitter.emit('sync')}
                 >
                     <SyncIcon />
                 </IconButton>

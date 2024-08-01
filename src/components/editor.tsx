@@ -1,5 +1,6 @@
 import { eventEmitterAtom } from '@/atoms/editor.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
+import fetchClient from '@/utils/fetch.client'
 import { uploadFile } from '@/utils/uploadFile'
 import { BlockNoteEditor, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
@@ -20,20 +21,32 @@ const EditorAux = ({ editor }: { editor: BlockNoteEditor<any, any, any> }) => {
 
     React.useEffect(() => {
         if (flag) {
-            eventEmitter.on('a', async () => {
-                for (const key of await localforage.keys()) {
-                    const html = await editor.blocksToHTMLLossy(
-                        await loadContent(key)
-                    )
-                    console.log(html)
-                }
+            eventEmitter.on('sync', async () => {
+                const diaries = await Promise.all(
+                    (await localforage.keys()).map(async (key) => ({
+                        createdAt: new Date(key.substring(key.length - 10)),
+                        content: await editor.blocksToHTMLLossy(
+                            await loadContent(key)
+                        ),
+                    }))
+                )
+                const res = await fetchClient.put(
+                    `http://localhost:${localStorage.getItem('port')}/diaries`,
+                    {
+                        body: JSON.stringify(diaries),
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        },
+                    }
+                )
+                console.log(res)
             })
         }
 
         return () => {
             flag = false
         }
-    }, [])
+    }, [eventEmitter])
 
     return <div className='hidden'></div>
 }
@@ -62,7 +75,7 @@ export default function Editor() {
             return undefined
         }
         return BlockNoteEditor.create({ initialContent, uploadFile })
-    }, [initialContent])
+    }, [initialContent, diaryKey])
 
     if (editor === undefined) {
         return 'Loading content...'

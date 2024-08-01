@@ -120,12 +120,28 @@ export const getAllDiaries = async ({
     return result
 }
 
-export const createDiary = async (ownerId: number, content: unknown) => {
+export const getAllDiaryIDs = async (userID: number) => {
+    const result = db
+        .select({
+            id: diariesTable.id,
+            createdAt: diariesTable.createdAt,
+        })
+        .from(diariesTable)
+        .where(eq(diariesTable.ownerId, userID))
+        .all()
+    return result
+}
+
+export const createDiary = async (
+    ownerId: number,
+    content: unknown,
+    createdAt: Date
+) => {
     const insertResult = db
         .insert(diariesTable)
         .values({
             ownerId,
-            createdAt: new Date(),
+            createdAt,
             content,
             updatedAt: new Date(),
         })

@@ -20,6 +20,7 @@
     }
   ],
   "configurations": [
+  
     {
       "name": "Debug Main Process",
       "type": "node",

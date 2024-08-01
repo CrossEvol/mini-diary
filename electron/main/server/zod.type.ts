@@ -18,10 +18,10 @@ export const UserSchema = z.object({
 export type User = z.infer<typeof UserSchema>
 
 export const DiarySchema = z.object({
-    id: z.number().optional(),
-    ownerId: z.number().optional(),
-    content: z.string().optional(),
-    createdAt: z.coerce.date().optional(),
+    id: z.number(),
+    ownerId: z.number(),
+    content: z.string(),
+    createdAt: z.date().nullable(),
 })
 export type Diary = z.infer<typeof DiarySchema>
 
@@ -29,6 +29,20 @@ export const UserJoinSchema = UserSchema.extend({
     projects: z.array(ProjectSchema).optional(),
     diaries: z.array(DiarySchema).optional(),
 })
+
+export const DiarySyncSchema = z.object({
+    content: z.string(),
+    createdAt: z.string(),
+})
+
+export type DiarySync = z.infer<typeof DiarySyncSchema>
+
+export const DiarySyncOutputSchema = z.object({
+    createdCount: z.number(),
+    updatedCount: z.number(),
+})
+
+export type DiarySyncOutput = z.infer<typeof DiarySyncOutputSchema>
 
 export type UserJoin = z.infer<typeof UserJoinSchema>
 

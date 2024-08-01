@@ -4,15 +4,24 @@ import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { getReasonPhrase, getStatusCode, StatusCodes } from 'http-status-codes'
 import {
+    createDiary,
     createUser,
+    getAllDiaryIDs,
     getUserByEmail,
     getUserByUserID,
     getUsersWithProjects,
+    updateDiary,
 } from '../database/database'
+import { DateTimeFormatEnum, formatDateTime } from '../util/datetime.utils'
 import { createJWT } from '../util/jwt.util'
 import { ErrorCause } from './error'
 import { bearerAuth } from './middlewares'
 import {
+    Diary,
+    DiarySync,
+    DiarySyncOutput,
+    DiarySyncOutputSchema,
+    DiarySyncSchema,
     ResultSchema,
     User,
     UserJoin,
@@ -231,6 +240,84 @@ app.openapi(
         }
         const jwt = createJWT({ userID: user.id!, nickname: user.nickname! })
         return c.json(okResponse({ token: jwt }))
+    }
+)
+
+app.openapi(
+    createRoute({
+        method: 'put',
+        path: '/diaries',
+        request: {
+            body: {
+                content: {
+                    'application/json': {
+                        schema: z.array(DiarySyncSchema),
+                    },
+                },
+            },
+        },
+        responses: {
+            200: {
+                description: 'Respond a message',
+                content: {
+                    'application/json': {
+                        schema: ResultSchema(DiarySyncOutputSchema),
+                    },
+                },
+            },
+        },
+    }),
+    async (c) => {
+        const diaries = (await c.req.json<DiarySync[]>()).map((d) => ({
+            ...d,
+            createdAt: formatDateTime(
+                new Date(d.createdAt),
+                DateTimeFormatEnum.DATE_FORMAT
+            ),
+        }))
+        const userID = c.get('userID')
+        const diaryIDs = await getAllDiaryIDs(userID)
+        const diaryIdMap = diaryIDs.reduce((acc, cur) => {
+            acc.set(
+                formatDateTime(cur.createdAt!, DateTimeFormatEnum.DATE_FORMAT),
+                cur
+            )
+            return acc
+        }, new Map<string, Pick<Diary, 'id' | 'createdAt'>>())
+        const existedDates = diaryIDs
+            .map((d) => d.createdAt)
+            .filter((d) => d !== null)
+            .map((e) => formatDateTime(e, DateTimeFormatEnum.DATE_FORMAT))
+        const createdDiaries = await Promise.all(
+            diaries
+                .filter((d) => !existedDates.includes(d.createdAt!))
+                .map(
+                    async (d) =>
+                        await createDiary(
+                            userID,
+                            d.content,
+                            new Date(d.createdAt!)
+                        )
+                )
+        )
+        const updatedDiaries = await Promise.all(
+            diaries
+                .filter((d) => existedDates.includes(d.createdAt!))
+                .map(
+                    async (d) =>
+                        await updateDiary(
+                            diaryIdMap.get(d.createdAt!)!.id,
+                            d.content
+                        )
+                )
+        )
+
+        return c.json(
+            okResponse<DiarySyncOutput>({
+                createdCount: createdDiaries.length,
+                updatedCount: updatedDiaries.length,
+            })
+        )
     }
 )
 
