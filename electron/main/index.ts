@@ -5,9 +5,8 @@ import {
     MenuItemConstructorOptions,
     Notification,
     app,
-    dialog,
     ipcMain,
-    shell,
+    shell
 } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
@@ -147,43 +146,63 @@ app.whenReady().then(() => {
                     { label: 'a', click: showNotification },
                     {
                         label: 'import',
-                        click: async () => {
-                            const openDialogReturnValue =
-                                await dialog.showOpenDialog({
-                                    properties: ['openFile'],
-                                })
-                            console.log(openDialogReturnValue.filePaths)
-                        },
+                        submenu: [
+                            { label: 'to JSON' },
+                            { label: 'to Markdown' },
+                            { label: 'to HTML' },
+                        ],
+                        // click: async () => {
+                        //     const openDialogReturnValue =
+                        //         await dialog.showOpenDialog({
+                        //             properties: ['openFile'],
+                        //         })
+                        //     console.log(openDialogReturnValue.filePaths)
+                        // },
                     },
                     {
                         label: 'export',
-                        click: async () => {
-                            const openDialogReturnValue =
-                                await dialog.showOpenDialog({
-                                    properties: ['openDirectory'],
-                                })
-                            console.log(openDialogReturnValue)
-                        },
+                        submenu: [
+                            { label: 'to JSON' },
+                            { label: 'to Markdown' },
+                            { label: 'to HTML' },
+                        ],
+                        // click: async () => {
+                        //     const openDialogReturnValue =
+                        //         await dialog.showOpenDialog({
+                        //             properties: ['openDirectory'],
+                        //         })
+                        //     console.log(openDialogReturnValue)
+                        // },
                     },
                     {
                         label: 'imports',
-                        click: async () => {
-                            const openDialogReturnValue =
-                                await dialog.showOpenDialog({
-                                    properties: ['openFile', 'multiSelections'],
-                                })
-                            console.log(openDialogReturnValue)
-                        },
+                        submenu: [
+                            { label: 'to JSON' },
+                            { label: 'to Markdown' },
+                            { label: 'to HTML' },
+                        ],
+                        // click: async () => {
+                        //     const openDialogReturnValue =
+                        //         await dialog.showOpenDialog({
+                        //             properties: ['openFile', 'multiSelections'],
+                        //         })
+                        //     console.log(openDialogReturnValue)
+                        // },
                     },
                     {
                         label: 'exports',
-                        click: async () => {
-                            const openDialogReturnValue =
-                                await dialog.showOpenDialog({
-                                    properties: ['openDirectory'],
-                                })
-                            console.log(openDialogReturnValue)
-                        },
+                        submenu: [
+                            { label: 'to JSON' },
+                            { label: 'to Markdown' },
+                            { label: 'to HTML' },
+                        ],
+                        // click: async () => {
+                        //     const openDialogReturnValue =
+                        //         await dialog.showOpenDialog({
+                        //             properties: ['openDirectory'],
+                        //         })
+                        //     console.log(openDialogReturnValue)
+                        // },
                     },
                 ],
             },

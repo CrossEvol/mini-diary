@@ -1,4 +1,4 @@
-import { eventEmitterAtom } from '@/atoms/editor.atom'
+import { eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
 import fetchClient from '@/utils/fetch.client'
 import { uploadFile } from '@/utils/uploadFile'

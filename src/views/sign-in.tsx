@@ -1,3 +1,4 @@
+import { profileAtom } from '@/atoms/profile.atom'
 import useNotify from '@/hooks/useNotify'
 import fetchClient from '@/utils/fetch.client'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
@@ -14,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { Result } from 'electron/main/server/zod.type'
+import { useAtom } from 'jotai'
 import * as React from 'react'
 
 function Copyright(props: any) {
@@ -39,6 +41,7 @@ const defaultTheme = createTheme()
 
 export default function SignIn() {
     const { notifySuccess, notifyError } = useNotify()
+    const [, setProfile] = useAtom(profileAtom)
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -55,6 +58,7 @@ export default function SignIn() {
         console.log(res)
         if (res.status === 200) {
             localStorage.setItem('token', res.data.token)
+            setProfile(null)
             notifySuccess('Sign In Success!')
         } else {
             notifyError('Sign In Error!')

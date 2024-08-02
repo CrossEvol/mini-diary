@@ -17,6 +17,10 @@ export const UserSchema = z.object({
 })
 export type User = z.infer<typeof UserSchema>
 
+export const UserProfileSchema = UserSchema.omit({ password: true })
+
+export type UserProfile = z.infer<typeof UserProfileSchema>
+
 export const DiarySchema = z.object({
     id: z.number(),
     ownerId: z.number(),

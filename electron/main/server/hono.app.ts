@@ -26,6 +26,8 @@ import {
     User,
     UserJoin,
     UserJoinSchema,
+    UserProfile,
+    UserProfileSchema,
     UserSchema,
 } from './zod.type'
 
@@ -136,7 +138,7 @@ app.openapi(
                 description: 'Get UserProfile by Bearer Auth',
                 content: {
                     'application/json': {
-                        schema: ResultSchema(UserSchema.nullable()),
+                        schema: ResultSchema(UserProfileSchema.nullable()),
                     },
                 },
             },
@@ -145,7 +147,7 @@ app.openapi(
     async (c) => {
         const userID = c.get('userID')
         const user = await getUserByUserID(userID!)
-        return c.json(okResponse<User | null>(user))
+        return c.json(okResponse<UserProfile | null>(user))
     }
 )
 
@@ -171,9 +173,7 @@ app.openapi(
                 content: {
                     'application/json': {
                         schema: ResultSchema(
-                            UserSchema.omit({ password: true })
-                                .nullable()
-                                .optional()
+                            UserProfileSchema.nullable().optional()
                         ),
                     },
                 },
@@ -190,7 +190,7 @@ app.openapi(
             pinCode: pinCode!,
         })
         return c.json(
-            okResponse<Omit<User, 'password'>>({
+            okResponse<UserProfile>({
                 id: user!.id,
                 email: user!.email,
                 nickname: user!.nickname,

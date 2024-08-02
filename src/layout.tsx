@@ -7,7 +7,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
 import MenuIcon from '@mui/icons-material/Menu'
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined'
-import { CssBaseline, Tooltip, useTheme } from '@mui/material'
+import { Avatar, CssBaseline, Stack, Tooltip, useTheme } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
@@ -20,13 +20,48 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import { Result, UserProfile } from 'electron/main/server/zod.type'
+import { useAtom } from 'jotai'
 import * as React from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
+import { profileAtom } from './atoms/profile.atom'
 import CalendarPopover from './components/calendar-popover'
 import { ColorModeContext } from './providers/color-mode-provider'
 import { DateTimeFormatEnum, formatDateTime } from './utils/datetime.utils'
+import fetchClient from './utils/fetch.client'
+
+const UserLayout = () => {
+    const [profile, setProfile] = useAtom(profileAtom)
+    const setupUserProfile = async () => {
+        if (!localStorage.getItem('token')) {
+            return
+        }
+        if (!!profile) {
+            return
+        }
+        const res = await fetchClient.get<Result<UserProfile>>(
+            `http://localhost:${localStorage.getItem('port')}/profile`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            }
+        )
+        if (res.status === 200) {
+            setProfile(res.data)
+        }
+    }
+
+    React.useEffect(() => {
+        setupUserProfile()
+        return () => {}
+    }, [profile])
+
+    return <div className='hidden'></div>
+}
 
 const Layout = () => {
+    const [profile] = useAtom(profileAtom)
     const [open, setOpen] = React.useState(false)
     const navigate = useNavigate()
     const theme = useTheme()
@@ -42,6 +77,19 @@ const Layout = () => {
             role='presentation'
             onClick={toggleDrawer(false)}
         >
+            <Stack
+                direction={'row'}
+                spacing={2}
+                alignItems={'center'}
+                padding={1}
+                marginLeft={1}
+            >
+                <Avatar src='/public/default-avatar.jpg' />
+                <Typography variant='h5'>
+                    {profile?.nickname ?? 'Unknown'}
+                </Typography>
+            </Stack>
+            <Divider />
             <List>
                 <ListItem disablePadding>
                     <ListItemButton onClick={() => navigate('/')}>
@@ -163,6 +211,7 @@ const Layout = () => {
                 </AppBar>
                 <Outlet />
             </Box>
+            <UserLayout />
             <Drawer open={open} onClose={toggleDrawer(false)}>
                 {DrawerList}
             </Drawer>

@@ -12,6 +12,11 @@ const _loadFromForage = async <K, V>(key: K) => {
     return storageString ?? undefined
 }
 
+const _removeFromForage = async (key: any) => {
+    const keyString = typeof key === 'string' ? key : JSON.stringify(key)
+    await localforage.removeItem(keyString)
+}
+
 const useLocalForage = () => {
     const saveToForage = useCallback(async <K, V>(key: K, data: V) => {
         await _saveToForage<K, V>(key, data)
@@ -21,7 +26,11 @@ const useLocalForage = () => {
         return await _loadFromForage<K, V>(key)
     }, [])
 
-    return { saveToForage, loadFromForage }
+    const removeFromForage = useCallback(async (key: any) => {
+        await _removeFromForage(key)
+    }, [])
+
+    return { saveToForage, loadFromForage, removeFromForage }
 }
 
 export default useLocalForage

@@ -1,4 +1,4 @@
-import { eventEmitterAtom } from '@/atoms/editor.atom'
+import { eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import MenuIcon from '@mui/icons-material/Menu'
