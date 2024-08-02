@@ -1,4 +1,14 @@
-import { BrowserWindow, app, ipcMain, shell } from 'electron'
+import {
+    BrowserWindow,
+    Menu,
+    MenuItem,
+    MenuItemConstructorOptions,
+    Notification,
+    app,
+    dialog,
+    ipcMain,
+    shell,
+} from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
 import { initPrisma } from './deprecated.prisma.util'
@@ -102,7 +112,139 @@ app.whenReady().then(() => {
     ipcMain.handle('dialog:openFile', handleFileOpen)
     ipcMain.handle('message:two-way', handleReceiveTwoWayMessage)
     ipcMain.handle('server-port', handleSendServerPort)
-    createWindow()
+    createWindow().then(() => {
+        const NOTIFICATION_TITLE = 'Basic Notification'
+        const NOTIFICATION_BODY = 'Notification from the Main process'
+
+        function showNotification() {
+            new Notification({
+                title: NOTIFICATION_TITLE,
+                body: NOTIFICATION_BODY,
+            }).show()
+        }
+
+        const template: (MenuItemConstructorOptions | MenuItem)[] = [
+            // { role: 'appMenu' },
+            {
+                label: app.name,
+                submenu: [
+                    {
+                        click: () => win?.webContents.send('update-counter', 1),
+                        label: 'Increment',
+                    },
+                    {
+                        click: () =>
+                            win?.webContents.send('update-counter', -1),
+                        label: 'Decrement',
+                    },
+                ],
+            },
+            // { role: 'fileMenu' }
+            {
+                label: 'File',
+                submenu: [
+                    { role: 'quit' },
+                    { label: 'a', click: showNotification },
+                    {
+                        label: 'import',
+                        click: async () => {
+                            const openDialogReturnValue =
+                                await dialog.showOpenDialog({
+                                    properties: ['openFile'],
+                                })
+                            console.log(openDialogReturnValue.filePaths)
+                        },
+                    },
+                    {
+                        label: 'export',
+                        click: async () => {
+                            const openDialogReturnValue =
+                                await dialog.showOpenDialog({
+                                    properties: ['openDirectory'],
+                                })
+                            console.log(openDialogReturnValue)
+                        },
+                    },
+                    {
+                        label: 'imports',
+                        click: async () => {
+                            const openDialogReturnValue =
+                                await dialog.showOpenDialog({
+                                    properties: ['openFile', 'multiSelections'],
+                                })
+                            console.log(openDialogReturnValue)
+                        },
+                    },
+                    {
+                        label: 'exports',
+                        click: async () => {
+                            const openDialogReturnValue =
+                                await dialog.showOpenDialog({
+                                    properties: ['openDirectory'],
+                                })
+                            console.log(openDialogReturnValue)
+                        },
+                    },
+                ],
+            },
+            // { role: 'editMenu' }
+            {
+                label: 'Edit',
+                submenu: [
+                    { role: 'undo' },
+                    { role: 'redo' },
+                    { type: 'separator' },
+                    { role: 'cut' },
+                    { role: 'copy' },
+                    { role: 'paste' },
+                    ...([
+                        { role: 'delete' },
+                        { type: 'separator' },
+                        { role: 'selectAll' },
+                    ] as MenuItemConstructorOptions[]),
+                ],
+            },
+            // { role: 'viewMenu' }
+            {
+                label: 'View',
+                submenu: [
+                    { role: 'reload' },
+                    { role: 'forceReload' },
+                    { role: 'toggleDevTools' },
+                    { type: 'separator' },
+                    { role: 'resetZoom' },
+                    { role: 'zoomIn' },
+                    { role: 'zoomOut' },
+                    { type: 'separator' },
+                    { role: 'togglefullscreen' },
+                ],
+            },
+            // { role: 'windowMenu' }
+            {
+                label: 'Window',
+                submenu: [
+                    { role: 'minimize' },
+                    { role: 'zoom' },
+                    ...[{ role: 'close' } as MenuItemConstructorOptions],
+                ],
+            },
+            {
+                role: 'help',
+                submenu: [
+                    {
+                        label: 'Learn More',
+                        click: async () => {
+                            const { shell } = require('electron')
+                            await shell.openExternal('https://electronjs.org')
+                        },
+                    },
+                ],
+            },
+        ]
+
+        const menu = Menu.buildFromTemplate(template)
+        Menu.setApplicationMenu(menu)
+    })
 })
 
 app.on('window-all-closed', () => {

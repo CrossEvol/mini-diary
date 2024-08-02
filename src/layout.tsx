@@ -95,6 +95,14 @@ const Layout = () => {
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate('/counter-test')}>
+                        <ListItemIcon>
+                            <AbcOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'CounterTest'} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
                     <ListItemButton
                         onClick={() =>
                             navigate(

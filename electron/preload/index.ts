@@ -6,6 +6,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     sendTwoWayMessage: (message: string) =>
         ipcRenderer.invoke('message:two-way', message),
     updatePort: () => ipcRenderer.invoke('server-port'),
+    onUpdateCounter: (callback: (arg0: any) => void) =>
+        ipcRenderer.on('update-counter', (_event, value) => callback(value)),
+    counterValue: (value: any) => ipcRenderer.send('counter-value', value),
 })
 
 // function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
