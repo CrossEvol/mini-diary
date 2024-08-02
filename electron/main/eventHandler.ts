@@ -1,20 +1,12 @@
-import { IpcMainEvent, IpcMainInvokeEvent, dialog } from 'electron'
+import {
+    BrowserWindow,
+    IpcMainEvent,
+    IpcMainInvokeEvent,
+    dialog,
+} from 'electron'
+import { Format } from './common/enums'
 
 let port = 0
-
-export async function handleFileOpen() {
-    const { canceled, filePaths } = await dialog.showOpenDialog({})
-    if (!canceled) {
-        return filePaths[0]
-    }
-}
-
-export const handleReceiveOneWayMsg = (
-    event: IpcMainEvent,
-    message: string
-) => {
-    console.log(message)
-}
 
 export const handlePortFromWorkerThread = (
     event: IpcMainEvent,
@@ -35,4 +27,55 @@ export const handleSendServerPort = (
     message: string
 ) => {
     return { port: port }
+}
+
+export const exportDiaryHandler = async (
+    mainWindow: BrowserWindow | null,
+    format: Format
+) => {
+    const openDialogReturnValue = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+    })
+    mainWindow?.webContents.send('export-diary', [
+        format,
+        openDialogReturnValue.filePaths[0],
+    ])
+}
+
+export const exportAllDiariesHandler = async (
+    mainWindow: BrowserWindow | null,
+    format: Format
+) => {
+    const openDialogReturnValue = await dialog.showOpenDialog({
+        properties: ['openDirectory'],
+    })
+    mainWindow?.webContents.send('export-all-diary', [
+        format,
+        openDialogReturnValue.filePaths[0],
+    ])
+}
+
+export const importDiaryHandler = async (
+    mainWindow: BrowserWindow | null,
+    format: Format
+) => {
+    const openDialogReturnValue = await dialog.showOpenDialog({
+        properties: ['openFile'],
+    })
+    mainWindow?.webContents.send('import-diary', [
+        format,
+        openDialogReturnValue.filePaths[0],
+    ])
+}
+export const importAllDiariesHandler = async (
+    mainWindow: BrowserWindow | null,
+    format: Format
+) => {
+    const openDialogReturnValue = await dialog.showOpenDialog({
+        properties: ['openFile', 'multiSelections'],
+    })
+    mainWindow?.webContents.send('import-all-diary', [
+        format,
+        openDialogReturnValue.filePaths,
+    ])
 }

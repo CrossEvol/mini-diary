@@ -6,17 +6,20 @@ import {
     Notification,
     app,
     ipcMain,
-    shell
+    shell,
 } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
+import { Format } from './common/enums'
 import { initPrisma } from './deprecated.prisma.util'
 import {
-    handleFileOpen,
+    exportAllDiariesHandler,
+    exportDiaryHandler,
     handlePortFromWorkerThread,
-    handleReceiveOneWayMsg,
     handleReceiveTwoWayMessage,
     handleSendServerPort,
+    importAllDiariesHandler,
+    importDiaryHandler,
 } from './eventHandler'
 import { update } from './update'
 import { startServerInWorker } from './util/worker.util'
@@ -77,7 +80,6 @@ async function createWindow() {
         },
     })
 
-    ipcMain.on('message:one-way', handleReceiveOneWayMsg)
     ipcMain.on('server_port', handlePortFromWorkerThread)
 
     if (url) {
@@ -108,7 +110,22 @@ async function createWindow() {
 }
 
 app.whenReady().then(() => {
-    ipcMain.handle('dialog:openFile', handleFileOpen)
+    ipcMain.on('diary-value', (_event, value) => {
+        console.log(value) // will print value to Node console
+        win?.webContents.send('notify-success', 'SUCCESS')
+    })
+    ipcMain.on('all-diary-value', (_event, value) => {
+        console.log(value) // will print value to Node console
+        win?.webContents.send('notify-error', 'ERROR')
+    })
+    ipcMain.on('import-diary-value', (_event, value) => {
+        console.log(value) // will print value to Node console
+        win?.webContents.send('notify-success', 'SUCCESS')
+    })
+    ipcMain.on('import-all-diary-value', (_event, value) => {
+        console.log(value) // will print value to Node console
+        win?.webContents.send('notify-error', 'ERROR')
+    })
     ipcMain.handle('message:two-way', handleReceiveTwoWayMessage)
     ipcMain.handle('server-port', handleSendServerPort)
     createWindow().then(() => {
@@ -147,62 +164,88 @@ app.whenReady().then(() => {
                     {
                         label: 'import',
                         submenu: [
-                            { label: 'to JSON' },
-                            { label: 'to Markdown' },
-                            { label: 'to HTML' },
+                            {
+                                label: 'to JSON',
+                                click: () =>
+                                    importDiaryHandler(win, Format.JSON),
+                            },
+                            {
+                                label: 'to Markdown',
+                                click: () =>
+                                    importDiaryHandler(win, Format.MARKDOWN),
+                            },
+                            {
+                                label: 'to HTML',
+                                click: () =>
+                                    importDiaryHandler(win, Format.HTML),
+                            },
                         ],
-                        // click: async () => {
-                        //     const openDialogReturnValue =
-                        //         await dialog.showOpenDialog({
-                        //             properties: ['openFile'],
-                        //         })
-                        //     console.log(openDialogReturnValue.filePaths)
-                        // },
                     },
                     {
                         label: 'export',
                         submenu: [
-                            { label: 'to JSON' },
-                            { label: 'to Markdown' },
-                            { label: 'to HTML' },
+                            {
+                                label: 'to JSON',
+                                click: () =>
+                                    exportDiaryHandler(win, Format.JSON),
+                            },
+                            {
+                                label: 'to Markdown',
+                                click: () =>
+                                    exportDiaryHandler(win, Format.MARKDOWN),
+                            },
+                            {
+                                label: 'to HTML',
+                                click: () =>
+                                    exportDiaryHandler(win, Format.HTML),
+                            },
                         ],
-                        // click: async () => {
-                        //     const openDialogReturnValue =
-                        //         await dialog.showOpenDialog({
-                        //             properties: ['openDirectory'],
-                        //         })
-                        //     console.log(openDialogReturnValue)
-                        // },
                     },
                     {
                         label: 'imports',
                         submenu: [
-                            { label: 'to JSON' },
-                            { label: 'to Markdown' },
-                            { label: 'to HTML' },
+                            {
+                                label: 'to JSON',
+                                click: () =>
+                                    importAllDiariesHandler(win, Format.JSON),
+                            },
+                            {
+                                label: 'to Markdown',
+                                click: () =>
+                                    importAllDiariesHandler(
+                                        win,
+                                        Format.MARKDOWN
+                                    ),
+                            },
+                            {
+                                label: 'to HTML',
+                                click: () =>
+                                    importAllDiariesHandler(win, Format.HTML),
+                            },
                         ],
-                        // click: async () => {
-                        //     const openDialogReturnValue =
-                        //         await dialog.showOpenDialog({
-                        //             properties: ['openFile', 'multiSelections'],
-                        //         })
-                        //     console.log(openDialogReturnValue)
-                        // },
                     },
                     {
                         label: 'exports',
                         submenu: [
-                            { label: 'to JSON' },
-                            { label: 'to Markdown' },
-                            { label: 'to HTML' },
+                            {
+                                label: 'to JSON',
+                                click: () =>
+                                    exportAllDiariesHandler(win, Format.JSON),
+                            },
+                            {
+                                label: 'to Markdown',
+                                click: () =>
+                                    exportAllDiariesHandler(
+                                        win,
+                                        Format.MARKDOWN
+                                    ),
+                            },
+                            {
+                                label: 'to HTML',
+                                click: () =>
+                                    exportAllDiariesHandler(win, Format.HTML),
+                            },
                         ],
-                        // click: async () => {
-                        //     const openDialogReturnValue =
-                        //         await dialog.showOpenDialog({
-                        //             properties: ['openDirectory'],
-                        //         })
-                        //     console.log(openDialogReturnValue)
-                        // },
                     },
                 ],
             },

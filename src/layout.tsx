@@ -24,11 +24,70 @@ import { Result, UserProfile } from 'electron/main/server/zod.type'
 import { useAtom } from 'jotai'
 import * as React from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
+import { eventEmitterAtom } from './atoms/event.emitter.atom'
 import { profileAtom } from './atoms/profile.atom'
 import CalendarPopover from './components/calendar-popover'
+import useNotify from './hooks/useNotify'
 import { ColorModeContext } from './providers/color-mode-provider'
 import { DateTimeFormatEnum, formatDateTime } from './utils/datetime.utils'
 import fetchClient from './utils/fetch.client'
+
+const EventEmitterLayout = () => {
+    const [eventEmitter] = useAtom(eventEmitterAtom)
+    const { notifySuccess, notifyError } = useNotify()
+    let flag = true
+
+    React.useEffect(() => {
+        if (flag) {
+            window.electronAPI.onExportDiary((value) => {
+                console.log('export-diary')
+                console.log(value)
+                eventEmitter.emit('export-diary', value)
+            })
+            window.electronAPI.onExportAllDiaries((value) => {
+                console.log('export-all-diary')
+                console.log(value)
+                eventEmitter.emit('export-all-diary', value)
+            })
+
+            window.electronAPI.onImportDiary((value) => {
+                console.log(value)
+                eventEmitter.emit('import-diary', value)
+            })
+            window.electronAPI.onImportAllDiaries((value) => {
+                console.log(value)
+                eventEmitter.emit('import-all-diary', value)
+            })
+
+            window.electronAPI.onNotifySuccess((value) => notifySuccess(value))
+            window.electronAPI.onNotifyError((value) => notifyError(value))
+
+            eventEmitter.on('export-diary', async (value) => {
+                console.log(value)
+                window.electronAPI.diaryExportValue(value)
+            })
+            eventEmitter.on('export-all-diary', async (value) => {
+                console.log(value)
+                window.electronAPI.allDiaryExportsValue(value)
+            })
+
+            eventEmitter.on('import-diary', async (value) => {
+                console.log(value)
+                window.electronAPI.diaryImportValue(value)
+            })
+            eventEmitter.on('import-all-diary', async (value) => {
+                console.log(value)
+                window.electronAPI.allDiaryImportsValue(value)
+            })
+        }
+
+        return () => {
+            flag = false
+        }
+    }, [eventEmitter])
+
+    return <div className='hidden'></div>
+}
 
 const UserLayout = () => {
     const [profile, setProfile] = useAtom(profileAtom)
@@ -212,6 +271,7 @@ const Layout = () => {
                 <Outlet />
             </Box>
             <UserLayout />
+            <EventEmitterLayout />
             <Drawer open={open} onClose={toggleDrawer(false)}>
                 {DrawerList}
             </Drawer>

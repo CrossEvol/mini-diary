@@ -6,9 +6,32 @@ contextBridge.exposeInMainWorld('electronAPI', {
     sendTwoWayMessage: (message: string) =>
         ipcRenderer.invoke('message:two-way', message),
     updatePort: () => ipcRenderer.invoke('server-port'),
+
     onUpdateCounter: (callback: (arg0: any) => void) =>
         ipcRenderer.on('update-counter', (_event, value) => callback(value)),
     counterValue: (value: any) => ipcRenderer.send('counter-value', value),
+
+    onExportDiary: (callback: (arg0: any) => void) =>
+        ipcRenderer.on('export-diary', (_event, value) => callback(value)),
+    diaryExportValue: (value: any) => ipcRenderer.send('diary-value', value),
+    onExportAllDiaries: (callback: (arg0: any) => void) =>
+        ipcRenderer.on('export-all-diary', (_event, value) => callback(value)),
+    allDiaryExportsValue: (value: any) =>
+        ipcRenderer.send('all-diary-value', value),
+
+    onImportDiary: (callback: (arg0: any) => void) =>
+        ipcRenderer.on('import-diary', (_event, value) => callback(value)),
+    diaryImportValue: (value: any) =>
+        ipcRenderer.send('import-diary-value', value),
+    onImportAllDiaries: (callback: (arg0: any) => void) =>
+        ipcRenderer.on('import-all-diary', (_event, value) => callback(value)),
+    allDiaryImportsValue: (value: any) =>
+        ipcRenderer.send('import-all-diary-value', value),
+
+    onNotifySuccess: (callback: (arg0: any) => void) =>
+        ipcRenderer.on('notify-success', (_event, value) => callback(value)),
+    onNotifyError: (callback: (arg0: any) => void) =>
+        ipcRenderer.on('notify-error', (_event, value) => callback(value)),
 })
 
 // function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
