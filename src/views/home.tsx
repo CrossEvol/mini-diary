@@ -1,11 +1,10 @@
+import fetchClient from '@/utils/fetch.client'
 import { Button } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
-import React from 'react'
 import ProTip from '../ProTip'
-import fetchClient from '@/utils/fetch.client'
 
 function Copyright() {
     return (
@@ -20,15 +19,6 @@ function Copyright() {
 }
 
 export default function Home() {
-    React.useEffect(() => {
-        handleUpdatePort()
-    }, [])
-
-    const handleUpdatePort = async () => {
-        const { port } = await window.electronAPI.updatePort()
-        localStorage.setItem('port', port.toString())
-    }
-
     const handleHttpRequest = async () => {
         const res = await fetchClient.get(
             `http://localhost:${localStorage.getItem('port')}/users`

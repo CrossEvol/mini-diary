@@ -35,10 +35,36 @@ import fetchClient from './utils/fetch.client'
 const EventEmitterLayout = () => {
     const [eventEmitter] = useAtom(eventEmitterAtom)
     const { notifySuccess, notifyError } = useNotify()
+    const [profile, setProfile] = useAtom(profileAtom)
+
+    const setupUserProfile = async () => {
+        if (!localStorage.getItem('token')) {
+            return
+        }
+        if (!!profile) {
+            return
+        }
+        const res = await fetchClient.get<Result<UserProfile>>(
+            `http://localhost:${localStorage.getItem('port')}/profile`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            }
+        )
+        if (res.status === 200) {
+            setProfile(res.data)
+        }
+    }
+
     let flag = true
 
     React.useEffect(() => {
         if (flag) {
+            window.electronAPI.onUpdatePort((value) => {
+                localStorage.setItem('port', value.port)
+                setupUserProfile()
+            })
             window.electronAPI.onExportDiary((value) => {
                 console.log('export-diary')
                 console.log(value)
@@ -89,36 +115,6 @@ const EventEmitterLayout = () => {
     return <div className='hidden'></div>
 }
 
-const UserLayout = () => {
-    const [profile, setProfile] = useAtom(profileAtom)
-    const setupUserProfile = async () => {
-        if (!localStorage.getItem('token')) {
-            return
-        }
-        if (!!profile) {
-            return
-        }
-        const res = await fetchClient.get<Result<UserProfile>>(
-            `http://localhost:${localStorage.getItem('port')}/profile`,
-            {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            }
-        )
-        if (res.status === 200) {
-            setProfile(res.data)
-        }
-    }
-
-    React.useEffect(() => {
-        setupUserProfile()
-        return () => {}
-    }, [profile])
-
-    return <div className='hidden'></div>
-}
-
 const Layout = () => {
     const [profile] = useAtom(profileAtom)
     const [open, setOpen] = React.useState(false)
@@ -143,7 +139,7 @@ const Layout = () => {
                 padding={1}
                 marginLeft={1}
             >
-                <Avatar src='/public/default-avatar.jpg' />
+                <Avatar src='/default-avatar.jpg' />
                 <Typography variant='h5'>
                     {profile?.nickname ?? 'Unknown'}
                 </Typography>
@@ -270,7 +266,6 @@ const Layout = () => {
                 </AppBar>
                 <Outlet />
             </Box>
-            <UserLayout />
             <EventEmitterLayout />
             <Drawer open={open} onClose={toggleDrawer(false)}>
                 {DrawerList}

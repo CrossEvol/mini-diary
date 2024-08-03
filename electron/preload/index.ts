@@ -1,37 +1,47 @@
+import { EChannel } from '../preload/common/enums'
+
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    openFile: () => ipcRenderer.invoke('dialog:openFile'),
-    sendMessage: (title: string) => ipcRenderer.send('message:one-way', title),
-    sendTwoWayMessage: (message: string) =>
-        ipcRenderer.invoke('message:two-way', message),
-    updatePort: () => ipcRenderer.invoke('server-port'),
-
-    onUpdateCounter: (callback: (arg0: any) => void) =>
-        ipcRenderer.on('update-counter', (_event, value) => callback(value)),
-    counterValue: (value: any) => ipcRenderer.send('counter-value', value),
+    onUpdatePort: (callback: (arg0: any) => void) =>
+        ipcRenderer.on(EChannel.SEND_SERVER_PORT, (_event, value) =>
+            callback(value)
+        ),
 
     onExportDiary: (callback: (arg0: any) => void) =>
-        ipcRenderer.on('export-diary', (_event, value) => callback(value)),
-    diaryExportValue: (value: any) => ipcRenderer.send('diary-value', value),
+        ipcRenderer.on(EChannel.EXPORT_DIARY, (_event, value) =>
+            callback(value)
+        ),
+    diaryExportValue: (value: any) =>
+        ipcRenderer.send(EChannel.EXPORT_DIARY_VALUE, value),
     onExportAllDiaries: (callback: (arg0: any) => void) =>
-        ipcRenderer.on('export-all-diary', (_event, value) => callback(value)),
+        ipcRenderer.on(EChannel.EXPORT_ALL_DIARY, (_event, value) =>
+            callback(value)
+        ),
     allDiaryExportsValue: (value: any) =>
-        ipcRenderer.send('all-diary-value', value),
+        ipcRenderer.send(EChannel.EXPORT_ALL_DIARY_VALUE, value),
 
     onImportDiary: (callback: (arg0: any) => void) =>
-        ipcRenderer.on('import-diary', (_event, value) => callback(value)),
+        ipcRenderer.on(EChannel.IMPORT_DIARY, (_event, value) =>
+            callback(value)
+        ),
     diaryImportValue: (value: any) =>
-        ipcRenderer.send('import-diary-value', value),
+        ipcRenderer.send(EChannel.IMPORT_DIARY_VALUE, value),
     onImportAllDiaries: (callback: (arg0: any) => void) =>
-        ipcRenderer.on('import-all-diary', (_event, value) => callback(value)),
+        ipcRenderer.on(EChannel.IMPORT_ALL_DIARY, (_event, value) =>
+            callback(value)
+        ),
     allDiaryImportsValue: (value: any) =>
-        ipcRenderer.send('import-all-diary-value', value),
+        ipcRenderer.send(EChannel.IMPORT_ALL_DIARY_VALUE, value),
 
     onNotifySuccess: (callback: (arg0: any) => void) =>
-        ipcRenderer.on('notify-success', (_event, value) => callback(value)),
+        ipcRenderer.on(EChannel.NOTIFY_SUCCESS, (_event, value) =>
+            callback(value)
+        ),
     onNotifyError: (callback: (arg0: any) => void) =>
-        ipcRenderer.on('notify-error', (_event, value) => callback(value)),
+        ipcRenderer.on(EChannel.NOTIFY_ERROR, (_event, value) =>
+            callback(value)
+        ),
 })
 
 // function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {

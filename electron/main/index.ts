@@ -10,16 +10,15 @@ import {
 } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
-import { Format } from './common/enums'
+import { EChannel, Format } from './common/enums'
 import { initPrisma } from './deprecated.prisma.util'
 import {
     exportAllDiariesHandler,
     exportDiaryHandler,
     handlePortFromWorkerThread,
-    handleReceiveTwoWayMessage,
-    handleSendServerPort,
     importAllDiariesHandler,
     importDiaryHandler,
+    port,
 } from './eventHandler'
 import { update } from './update'
 import { startServerInWorker } from './util/worker.util'
@@ -80,8 +79,6 @@ async function createWindow() {
         },
     })
 
-    ipcMain.on('server_port', handlePortFromWorkerThread)
-
     if (url) {
         // electron-vite-vue#298
         win.loadURL(url)
@@ -97,6 +94,9 @@ async function createWindow() {
             'main-process-message',
             new Date().toLocaleString()
         )
+        if (!!port) {
+            win?.webContents.send(EChannel.SEND_SERVER_PORT, { port })
+        }
     })
 
     // Make all links open with the browser, not with the application
@@ -110,24 +110,23 @@ async function createWindow() {
 }
 
 app.whenReady().then(() => {
-    ipcMain.on('diary-value', (_event, value) => {
+    ipcMain.on(EChannel.EXPORT_DIARY_VALUE, (_event, value) => {
         console.log(value) // will print value to Node console
-        win?.webContents.send('notify-success', 'SUCCESS')
+        win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
     })
-    ipcMain.on('all-diary-value', (_event, value) => {
+    ipcMain.on(EChannel.EXPORT_ALL_DIARY_VALUE, (_event, value) => {
         console.log(value) // will print value to Node console
-        win?.webContents.send('notify-error', 'ERROR')
+        win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
     })
-    ipcMain.on('import-diary-value', (_event, value) => {
+    ipcMain.on(EChannel.IMPORT_DIARY_VALUE, (_event, value) => {
         console.log(value) // will print value to Node console
-        win?.webContents.send('notify-success', 'SUCCESS')
+        win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
     })
-    ipcMain.on('import-all-diary-value', (_event, value) => {
+    ipcMain.on(EChannel.IMPORT_ALL_DIARY_VALUE, (_event, value) => {
         console.log(value) // will print value to Node console
-        win?.webContents.send('notify-error', 'ERROR')
+        win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
     })
-    ipcMain.handle('message:two-way', handleReceiveTwoWayMessage)
-    ipcMain.handle('server-port', handleSendServerPort)
+    ipcMain.on(EChannel.PORT_FROM_WORKER, handlePortFromWorkerThread)
     createWindow().then(() => {
         const NOTIFICATION_TITLE = 'Basic Notification'
         const NOTIFICATION_BODY = 'Notification from the Main process'
@@ -141,20 +140,6 @@ app.whenReady().then(() => {
 
         const template: (MenuItemConstructorOptions | MenuItem)[] = [
             // { role: 'appMenu' },
-            {
-                label: app.name,
-                submenu: [
-                    {
-                        click: () => win?.webContents.send('update-counter', 1),
-                        label: 'Increment',
-                    },
-                    {
-                        click: () =>
-                            win?.webContents.send('update-counter', -1),
-                        label: 'Decrement',
-                    },
-                ],
-            },
             // { role: 'fileMenu' }
             {
                 label: 'File',

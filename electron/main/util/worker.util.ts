@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
 import path from 'node:path'
 import { Worker } from 'node:worker_threads'
+import { EChannel } from '../common/enums'
 
 type Message = {
     port: number
@@ -11,7 +12,7 @@ export const startServerInWorker = () => {
 
     worker.on('message', (message: Message) => {
         console.log('Received message from Hono worker:', message)
-        ipcMain.emit('server_port', message)
+        ipcMain.emit(EChannel.PORT_FROM_WORKER, message)
     })
     worker.on('error', (err) => {
         console.error('Worker thread error:', err)

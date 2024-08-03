@@ -1,32 +1,17 @@
 import {
     BrowserWindow,
     IpcMainEvent,
-    IpcMainInvokeEvent,
-    dialog,
+    dialog
 } from 'electron'
-import { Format } from './common/enums'
+import { EChannel, Format } from './common/enums'
 
-let port = 0
+export let port = 0
 
 export const handlePortFromWorkerThread = (
     event: IpcMainEvent,
     message: string
 ) => {
     port = (event as any).port
-}
-
-export const handleReceiveTwoWayMessage = (
-    event: IpcMainInvokeEvent,
-    message: string
-) => {
-    return `IPCMAIN: ${message}`
-}
-
-export const handleSendServerPort = (
-    event: IpcMainInvokeEvent,
-    message: string
-) => {
-    return { port: port }
 }
 
 export const exportDiaryHandler = async (
@@ -36,7 +21,7 @@ export const exportDiaryHandler = async (
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openDirectory'],
     })
-    mainWindow?.webContents.send('export-diary', [
+    mainWindow?.webContents.send(EChannel.EXPORT_DIARY, [
         format,
         openDialogReturnValue.filePaths[0],
     ])
@@ -49,7 +34,7 @@ export const exportAllDiariesHandler = async (
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openDirectory'],
     })
-    mainWindow?.webContents.send('export-all-diary', [
+    mainWindow?.webContents.send(EChannel.EXPORT_ALL_DIARY, [
         format,
         openDialogReturnValue.filePaths[0],
     ])
@@ -62,7 +47,7 @@ export const importDiaryHandler = async (
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openFile'],
     })
-    mainWindow?.webContents.send('import-diary', [
+    mainWindow?.webContents.send(EChannel.IMPORT_DIARY, [
         format,
         openDialogReturnValue.filePaths[0],
     ])
@@ -74,7 +59,7 @@ export const importAllDiariesHandler = async (
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openFile', 'multiSelections'],
     })
-    mainWindow?.webContents.send('import-all-diary', [
+    mainWindow?.webContents.send(EChannel.IMPORT_ALL_DIARY, [
         format,
         openDialogReturnValue.filePaths,
     ])
