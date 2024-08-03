@@ -1,18 +1,15 @@
-import {
-    BrowserWindow,
-    IpcMainEvent,
-    dialog
-} from 'electron'
+import { BrowserWindow, dialog } from 'electron'
 import { EChannel, Format } from './common/enums'
 
-export let port = 0
+// TODO wait for worker bundle
+/* export let port = 0
 
 export const handlePortFromWorkerThread = (
     event: IpcMainEvent,
     message: string
 ) => {
     port = (event as any).port
-}
+} */
 
 export const exportDiaryHandler = async (
     mainWindow: BrowserWindow | null,

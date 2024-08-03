@@ -15,13 +15,11 @@ import { initPrisma } from './deprecated.prisma.util'
 import {
     exportAllDiariesHandler,
     exportDiaryHandler,
-    handlePortFromWorkerThread,
     importAllDiariesHandler,
     importDiaryHandler,
-    port,
 } from './eventHandler'
 import { update } from './update'
-import { startServerInWorker } from './util/worker.util'
+import { startHonoServer } from './util/net.util'
 
 // The built directory structure
 //
@@ -63,9 +61,9 @@ const indexHtml = join(process.env.DIST, 'index.html')
 
 initPrisma()
 
-startServerInWorker()
-
 async function createWindow() {
+    const port = await startHonoServer()
+
     win = new BrowserWindow({
         title: 'Main window',
         icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
@@ -94,9 +92,7 @@ async function createWindow() {
             'main-process-message',
             new Date().toLocaleString()
         )
-        if (!!port) {
-            win?.webContents.send(EChannel.SEND_SERVER_PORT, { port })
-        }
+        win?.webContents.send(EChannel.SEND_SERVER_PORT, { port })
     })
 
     // Make all links open with the browser, not with the application
@@ -126,7 +122,7 @@ app.whenReady().then(() => {
         console.log(value) // will print value to Node console
         win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
     })
-    ipcMain.on(EChannel.PORT_FROM_WORKER, handlePortFromWorkerThread)
+    // ipcMain.on(EChannel.PORT_FROM_WORKER, handlePortFromWorkerThread) // maybe be useful once I solve how to  bundle the worker
     createWindow().then(() => {
         const NOTIFICATION_TITLE = 'Basic Notification'
         const NOTIFICATION_BODY = 'Notification from the Main process'

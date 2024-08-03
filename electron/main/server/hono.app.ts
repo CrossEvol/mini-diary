@@ -1,5 +1,7 @@
+import { serveStatic } from '@hono/node-server/serve-static'
 import { swaggerUI } from '@hono/swagger-ui'
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import isDev from 'electron-is-dev'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { getReasonPhrase, getStatusCode, StatusCodes } from 'http-status-codes'
@@ -49,6 +51,15 @@ app.use('*', async (c, next) => {
     return corsMiddlewareHandler(c, next)
 })
 app.use('*', bearerAuth)
+
+// TODO: wait for the logger to analyze this
+app.get(
+    '/static/*',
+    serveStatic({
+        root: isDev ? './' : undefined,
+        path: !isDev ? process.resourcesPath : undefined,
+    })
+)
 
 const getSafeStatusCode = (reasonPhrase: string) => {
     try {
@@ -287,7 +298,7 @@ app.openapi(
         const existedDates = diaryIDs
             .map((d) => d.createdAt)
             .filter((d) => d !== null)
-            .map((e) => formatDateTime(e, DateTimeFormatEnum.DATE_FORMAT))
+            .map((e) => formatDateTime(e!, DateTimeFormatEnum.DATE_FORMAT))
         const createdDiaries = await Promise.all(
             diaries
                 .filter((d) => !existedDates.includes(d.createdAt!))

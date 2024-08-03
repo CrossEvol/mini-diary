@@ -139,7 +139,9 @@ const Layout = () => {
                 padding={1}
                 marginLeft={1}
             >
-                <Avatar src='/default-avatar.jpg' />
+                <Avatar
+                    src={`http://localhost:${localStorage.getItem('port')}/static/go.jpg`}
+                />
                 <Typography variant='h5'>
                     {profile?.nickname ?? 'Unknown'}
                 </Typography>
@@ -195,14 +197,6 @@ const Layout = () => {
                             <AbcOutlinedIcon />
                         </ListItemIcon>
                         <ListItemText primary={'Len'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/counter-test')}>
-                        <ListItemIcon>
-                            <AbcOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'CounterTest'} />
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>

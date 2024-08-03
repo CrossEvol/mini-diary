@@ -10,9 +10,10 @@
     files: ['dist-electron', 'dist'],
     extraResources: [
         'sqlite.db',
-        'prisma/**/*',
-        'node_modules/.prisma/**/*',
-        'node_modules/@prisma/client/**/*',
+        'private.key',
+        'public.pem',
+        'public/default-avatar.jpg',
+        'static/*',
     ],
     mac: {
         artifactName: '${productName}_${version}.${ext}',

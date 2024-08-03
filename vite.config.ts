@@ -25,33 +25,6 @@ export default defineConfig(({ command }) => {
             electron([
                 {
                     // Main-Process entry file of the Electron App.
-                    entry: 'electron/main/server/worker.ts',
-                    onstart(options) {
-                        if (process.env.VSCODE_DEBUG) {
-                            console.log(
-                                /* For `.vscode/.debug.script.mjs` */ '[startup] Electron App'
-                            )
-                        } else {
-                            options.startup()
-                        }
-                    },
-                    vite: {
-                        build: {
-                            sourcemap,
-                            minify: isBuild,
-                            outDir: 'dist-electron/worker',
-                            rollupOptions: {
-                                external: Object.keys(
-                                    'dependencies' in pkg
-                                        ? pkg.dependencies
-                                        : {}
-                                ),
-                            },
-                        },
-                    },
-                },
-                {
-                    // Main-Process entry file of the Electron App.
                     entry: 'electron/main/index.ts',
                     onstart(options) {
                         if (process.env.VSCODE_DEBUG) {

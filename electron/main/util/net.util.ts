@@ -1,4 +1,6 @@
+import { serve } from '@hono/node-server'
 import * as net from 'net'
+import app from '../server/hono.app'
 
 const getRandomPort = (start: number, end: number): number => {
     return Math.floor(Math.random() * (end - start + 1)) + start
@@ -29,5 +31,18 @@ export const findFreePort = async (
     while (!(await isPortAvailable(port))) {
         port = getRandomPort(start, end)
     }
+    return port
+}
+
+export const startHonoServer = async () => {
+    const port = await findFreePort(3000, 8000)
+
+    console.log(`Server is running on port ${port}`)
+
+    serve({
+        fetch: app.fetch,
+        port,
+    })
+
     return port
 }

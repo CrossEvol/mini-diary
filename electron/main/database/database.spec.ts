@@ -34,7 +34,8 @@ describe('databaseTest', () => {
             const res = tx
                 .insert(usersTable)
                 .values({
-                    nickName: 'test',
+                    email: 'test',
+                    nickname: 'test',
                     password: 'abc123',
                     pinCode: '123456',
                 })
