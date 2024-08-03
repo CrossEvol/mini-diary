@@ -14,6 +14,7 @@
         'public.pem',
         'public/default-avatar.jpg',
         'static/*',
+        'logs/*',
     ],
     mac: {
         artifactName: '${productName}_${version}.${ext}',

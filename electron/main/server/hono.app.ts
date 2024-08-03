@@ -56,8 +56,7 @@ app.use('*', bearerAuth)
 app.get(
     '/static/*',
     serveStatic({
-        root: isDev ? './' : undefined,
-        path: !isDev ? process.resourcesPath : undefined,
+        root: isDev ? './' : './resources/',
     })
 )
 
