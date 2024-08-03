@@ -10,7 +10,12 @@ import {
 } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
-import { EChannel, Format } from './common/enums'
+import { EChannel, EFormat } from './common/enums'
+import {
+    EventResult,
+    ExportResult,
+    ImportResult
+} from './common/params'
 import { initPrisma } from './deprecated.prisma.util'
 import {
     exportAllDiariesHandler,
@@ -92,7 +97,7 @@ async function createWindow() {
             'main-process-message',
             new Date().toLocaleString()
         )
-        win?.webContents.send(EChannel.SEND_SERVER_PORT, { port })
+        win?.webContents.send(EChannel.SEND_SERVER_PORT, port)
     })
 
     // Make all links open with the browser, not with the application
@@ -106,22 +111,34 @@ async function createWindow() {
 }
 
 app.whenReady().then(() => {
-    ipcMain.on(EChannel.EXPORT_DIARY_VALUE, (_event, value) => {
-        console.log(value) // will print value to Node console
-        win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
-    })
-    ipcMain.on(EChannel.EXPORT_ALL_DIARY_VALUE, (_event, value) => {
-        console.log(value) // will print value to Node console
-        win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
-    })
-    ipcMain.on(EChannel.IMPORT_DIARY_VALUE, (_event, value) => {
-        console.log(value) // will print value to Node console
-        win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
-    })
-    ipcMain.on(EChannel.IMPORT_ALL_DIARY_VALUE, (_event, value) => {
-        console.log(value) // will print value to Node console
-        win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
-    })
+    ipcMain.on(
+        EChannel.EXPORT_DIARY_VALUE,
+        (_event, value: EventResult<ExportResult>) => {
+            console.log(value) // will print value to Node console
+            win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
+        }
+    )
+    ipcMain.on(
+        EChannel.EXPORT_ALL_DIARY_VALUE,
+        (_event, value: EventResult<ExportResult>) => {
+            console.log(value) // will print value to Node console
+            win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
+        }
+    )
+    ipcMain.on(
+        EChannel.IMPORT_DIARY_VALUE,
+        (_event, value: EventResult<ImportResult>) => {
+            console.log(value) // will print value to Node console
+            win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
+        }
+    )
+    ipcMain.on(
+        EChannel.IMPORT_ALL_DIARY_VALUE,
+        (_event, value: EventResult<ImportResult>) => {
+            console.log(value) // will print value to Node console
+            win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
+        }
+    )
     // ipcMain.on(EChannel.PORT_FROM_WORKER, handlePortFromWorkerThread) // maybe be useful once I solve how to  bundle the worker
     createWindow().then(() => {
         const NOTIFICATION_TITLE = 'Basic Notification'
@@ -148,17 +165,17 @@ app.whenReady().then(() => {
                             {
                                 label: 'to JSON',
                                 click: () =>
-                                    importDiaryHandler(win, Format.JSON),
+                                    importDiaryHandler(win, EFormat.JSON),
                             },
                             {
                                 label: 'to Markdown',
                                 click: () =>
-                                    importDiaryHandler(win, Format.MARKDOWN),
+                                    importDiaryHandler(win, EFormat.MARKDOWN),
                             },
                             {
                                 label: 'to HTML',
                                 click: () =>
-                                    importDiaryHandler(win, Format.HTML),
+                                    importDiaryHandler(win, EFormat.HTML),
                             },
                         ],
                     },
@@ -168,17 +185,17 @@ app.whenReady().then(() => {
                             {
                                 label: 'to JSON',
                                 click: () =>
-                                    exportDiaryHandler(win, Format.JSON),
+                                    exportDiaryHandler(win, EFormat.JSON),
                             },
                             {
                                 label: 'to Markdown',
                                 click: () =>
-                                    exportDiaryHandler(win, Format.MARKDOWN),
+                                    exportDiaryHandler(win, EFormat.MARKDOWN),
                             },
                             {
                                 label: 'to HTML',
                                 click: () =>
-                                    exportDiaryHandler(win, Format.HTML),
+                                    exportDiaryHandler(win, EFormat.HTML),
                             },
                         ],
                     },
@@ -188,20 +205,20 @@ app.whenReady().then(() => {
                             {
                                 label: 'to JSON',
                                 click: () =>
-                                    importAllDiariesHandler(win, Format.JSON),
+                                    importAllDiariesHandler(win, EFormat.JSON),
                             },
                             {
                                 label: 'to Markdown',
                                 click: () =>
                                     importAllDiariesHandler(
                                         win,
-                                        Format.MARKDOWN
+                                        EFormat.MARKDOWN
                                     ),
                             },
                             {
                                 label: 'to HTML',
                                 click: () =>
-                                    importAllDiariesHandler(win, Format.HTML),
+                                    importAllDiariesHandler(win, EFormat.HTML),
                             },
                         ],
                     },
@@ -211,20 +228,20 @@ app.whenReady().then(() => {
                             {
                                 label: 'to JSON',
                                 click: () =>
-                                    exportAllDiariesHandler(win, Format.JSON),
+                                    exportAllDiariesHandler(win, EFormat.JSON),
                             },
                             {
                                 label: 'to Markdown',
                                 click: () =>
                                     exportAllDiariesHandler(
                                         win,
-                                        Format.MARKDOWN
+                                        EFormat.MARKDOWN
                                     ),
                             },
                             {
                                 label: 'to HTML',
                                 click: () =>
-                                    exportAllDiariesHandler(win, Format.HTML),
+                                    exportAllDiariesHandler(win, EFormat.HTML),
                             },
                         ],
                     },

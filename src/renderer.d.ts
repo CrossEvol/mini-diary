@@ -1,18 +1,26 @@
+import {
+    EventResult,
+    ExportParam,
+    ExportResult,
+    ImportParam,
+    ImportResult,
+} from 'electron/preload/common/params'
+
 export interface IElectronAPI {
-    onUpdatePort: (callback: (arg0: any) => void) => void
+    onUpdatePort: (callback: (port: number) => void) => void
 
-    onExportDiary: (callback: (arg0: any) => void) => void
-    diaryExportValue: (value: any) => void
-    onExportAllDiaries: (callback: (arg0: any) => void) => void
-    allDiaryExportsValue: (value: any) => void
+    onExportDiary: (callback: (arg0: ExportParam) => void) => void
+    diaryExportValue: (value: EventResult<ExportResult>) => void
+    onExportAllDiaries: (callback: (arg0: ExportParam) => void) => void
+    allDiaryExportsValue: (value: EventResult<ExportResult>) => void
 
-    onImportDiary: (callback: (arg0: any) => void) => void
-    diaryImportValue: (value: any) => void
-    onImportAllDiaries: (callback: (arg0: any) => void) => void
-    allDiaryImportsValue: (value: any) => void
+    onImportDiary: (callback: (arg0: ImportParam) => void) => void
+    diaryImportValue: (value: EventResult<ImportResult>) => void
+    onImportAllDiaries: (callback: (arg0: ImportParam) => void) => void
+    allDiaryImportsValue: (value: EventResult<ImportResult>) => void
 
-    onNotifySuccess: (callback: (arg0: any) => void) => void
-    onNotifyError: (callback: (arg0: any) => void) => void
+    onNotifySuccess: (callback: (arg0: string) => void) => void
+    onNotifyError: (callback: (arg0: string) => void) => void
 }
 
 declare global {

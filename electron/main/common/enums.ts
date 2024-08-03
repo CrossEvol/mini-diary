@@ -1,4 +1,4 @@
-export enum Format {
+export enum EFormat {
     'JSON' = 'JSON',
     'HTML' = 'HTML',
     'MARKDOWN' = 'MARKDOWN',

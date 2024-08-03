@@ -20,11 +20,11 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import { Result, UserProfile } from 'electron/main/server/zod.type'
+import { UserProfile, ZResult } from 'electron/main/server/zod.type'
 import { useAtom } from 'jotai'
 import * as React from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
-import { eventEmitterAtom } from './atoms/event.emitter.atom'
+import { EmitterEvent, eventEmitterAtom } from './atoms/event.emitter.atom'
 import { profileAtom } from './atoms/profile.atom'
 import CalendarPopover from './components/calendar-popover'
 import useNotify from './hooks/useNotify'
@@ -44,7 +44,7 @@ const EventEmitterLayout = () => {
         if (!!profile) {
             return
         }
-        const res = await fetchClient.get<Result<UserProfile>>(
+        const res = await fetchClient.get<ZResult<UserProfile>>(
             `http://localhost:${localStorage.getItem('port')}/profile`,
             {
                 headers: {
@@ -62,49 +62,29 @@ const EventEmitterLayout = () => {
     React.useEffect(() => {
         if (flag) {
             window.electronAPI.onUpdatePort((value) => {
-                localStorage.setItem('port', value.port)
+                localStorage.setItem('port', value.toString())
                 setupUserProfile()
             })
             window.electronAPI.onExportDiary((value) => {
-                console.log('export-diary')
-                console.log(value)
-                eventEmitter.emit('export-diary', value)
+                console.log('redirect: ', EmitterEvent.EXPORT_DIARY)
+                eventEmitter.emit(EmitterEvent.EXPORT_DIARY, value)
             })
             window.electronAPI.onExportAllDiaries((value) => {
-                console.log('export-all-diary')
-                console.log(value)
-                eventEmitter.emit('export-all-diary', value)
+                console.log('redirect: ', EmitterEvent.EXPORT_ALL_DIARY)
+                eventEmitter.emit(EmitterEvent.EXPORT_ALL_DIARY, value)
             })
 
             window.electronAPI.onImportDiary((value) => {
-                console.log(value)
-                eventEmitter.emit('import-diary', value)
+                console.log('redirect: ', EmitterEvent.IMPORT_DIARY)
+                eventEmitter.emit(EmitterEvent.IMPORT_DIARY, value)
             })
             window.electronAPI.onImportAllDiaries((value) => {
-                console.log(value)
-                eventEmitter.emit('import-all-diary', value)
+                console.log('redirect: ', EmitterEvent.IMPORT_ALL_DIARY)
+                eventEmitter.emit(EmitterEvent.IMPORT_ALL_DIARY, value)
             })
 
             window.electronAPI.onNotifySuccess((value) => notifySuccess(value))
             window.electronAPI.onNotifyError((value) => notifyError(value))
-
-            eventEmitter.on('export-diary', async (value) => {
-                console.log(value)
-                window.electronAPI.diaryExportValue(value)
-            })
-            eventEmitter.on('export-all-diary', async (value) => {
-                console.log(value)
-                window.electronAPI.allDiaryExportsValue(value)
-            })
-
-            eventEmitter.on('import-diary', async (value) => {
-                console.log(value)
-                window.electronAPI.diaryImportValue(value)
-            })
-            eventEmitter.on('import-all-diary', async (value) => {
-                console.log(value)
-                window.electronAPI.allDiaryImportsValue(value)
-            })
         }
 
         return () => {

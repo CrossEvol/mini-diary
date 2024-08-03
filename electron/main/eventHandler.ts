@@ -1,5 +1,7 @@
 import { BrowserWindow, dialog } from 'electron'
-import { EChannel, Format } from './common/enums'
+import { readFile } from 'node:fs/promises'
+import { EChannel, EFormat } from './common/enums'
+import { ExportParam, FileItem, ImportParam } from './common/params'
 
 // TODO wait for worker bundle
 /* export let port = 0
@@ -13,51 +15,65 @@ export const handlePortFromWorkerThread = (
 
 export const exportDiaryHandler = async (
     mainWindow: BrowserWindow | null,
-    format: Format
+    format: EFormat
 ) => {
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openDirectory'],
     })
-    mainWindow?.webContents.send(EChannel.EXPORT_DIARY, [
+    mainWindow?.webContents.send(EChannel.EXPORT_DIARY, {
         format,
-        openDialogReturnValue.filePaths[0],
-    ])
+        dir: openDialogReturnValue.filePaths[0],
+    } as ExportParam)
 }
 
 export const exportAllDiariesHandler = async (
     mainWindow: BrowserWindow | null,
-    format: Format
+    format: EFormat
 ) => {
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openDirectory'],
     })
-    mainWindow?.webContents.send(EChannel.EXPORT_ALL_DIARY, [
+    mainWindow?.webContents.send(EChannel.EXPORT_ALL_DIARY, {
         format,
-        openDialogReturnValue.filePaths[0],
-    ])
+        dir: openDialogReturnValue.filePaths[0],
+    } as ExportParam)
 }
 
 export const importDiaryHandler = async (
     mainWindow: BrowserWindow | null,
-    format: Format
+    format: EFormat
 ) => {
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openFile'],
     })
-    mainWindow?.webContents.send(EChannel.IMPORT_DIARY, [
+    const fileItems = await Promise.all(
+        openDialogReturnValue.filePaths.map(async (path) => {
+            const content = await readFile(path, { encoding: 'utf-8' })
+            return { path, content } as FileItem
+        })
+    )
+    mainWindow?.webContents.send(EChannel.IMPORT_DIARY, {
         format,
-        openDialogReturnValue.filePaths[0],
-    ])
+        filePaths: openDialogReturnValue.filePaths,
+        fileItems,
+    } as ImportParam)
 }
 export const importAllDiariesHandler = async (
     mainWindow: BrowserWindow | null,
-    format: Format
+    format: EFormat
 ) => {
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openFile', 'multiSelections'],
     })
-    mainWindow?.webContents.send(EChannel.IMPORT_ALL_DIARY, [
+    const fileItems = await Promise.all(
+        openDialogReturnValue.filePaths.map(async (path) => {
+            const content = await readFile(path, { encoding: 'utf-8' })
+            return { path, content } as FileItem
+        })
+    )
+    mainWindow?.webContents.send(EChannel.IMPORT_ALL_DIARY, {
         format,
-        openDialogReturnValue.filePaths,
-    ])
+        filePaths: openDialogReturnValue.filePaths,
+        fileItems,
+    } as ImportParam)
 }

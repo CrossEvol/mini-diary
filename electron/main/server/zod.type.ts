@@ -50,11 +50,11 @@ export type DiarySyncOutput = z.infer<typeof DiarySyncOutputSchema>
 
 export type UserJoin = z.infer<typeof UserJoinSchema>
 
-export const ResultSchema = <T>(dataSchema: z.ZodType<T>) =>
+export const ZResultSchema = <T>(dataSchema: z.ZodType<T>) =>
     z.object({
         status: z.number(),
         message: z.string(),
         data: dataSchema,
     })
 
-export type Result<T> = z.infer<ReturnType<typeof ResultSchema<T>>>
+export type ZResult<T> = z.infer<ReturnType<typeof ZResultSchema<T>>>

@@ -14,7 +14,7 @@ import Link from '@mui/material/Link'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { Result } from 'electron/main/server/zod.type'
+import { ZResult } from 'electron/main/server/zod.type'
 import { useAtom } from 'jotai'
 import * as React from 'react'
 
@@ -46,7 +46,7 @@ export default function SignIn() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
-        const res = await fetchClient.post<Result<{ token: string }>>(
+        const res = await fetchClient.post<ZResult<{ token: string }>>(
             `http://localhost:${localStorage.getItem('port')}/auth/sign-in`,
             {
                 body: JSON.stringify({

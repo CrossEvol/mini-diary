@@ -1,4 +1,4 @@
-import { eventEmitterAtom } from '@/atoms/event.emitter.atom'
+import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
 import fetchClient from '@/utils/fetch.client'
 import { uploadFile } from '@/utils/uploadFile'
@@ -6,6 +6,8 @@ import { BlockNoteEditor, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/mantine/style.css'
+import { ExportParam, ImportParam } from 'electron/preload/common/params'
+import { StatusCodes } from 'http-status-codes'
 import { useAtom } from 'jotai'
 import localforage from 'localforage'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -41,6 +43,52 @@ const EditorAux = ({ editor }: { editor: BlockNoteEditor<any, any, any> }) => {
                 )
                 console.log(res)
             })
+
+            eventEmitter.on(
+                EmitterEvent.EXPORT_DIARY,
+                async (value: ExportParam) => {
+                    console.log(value)
+                    window.electronAPI.diaryExportValue({
+                        data: { ...value, fileItems: [] },
+                        status: StatusCodes.OK,
+                        message: '',
+                    })
+                }
+            )
+            eventEmitter.on(
+                EmitterEvent.EXPORT_ALL_DIARY,
+                async (value: ExportParam) => {
+                    console.log(value)
+                    window.electronAPI.allDiaryExportsValue({
+                        data: { ...value, fileItems: [] },
+                        status: StatusCodes.OK,
+                        message: '',
+                    })
+                }
+            )
+
+            eventEmitter.on(
+                EmitterEvent.IMPORT_DIARY,
+                async (value: ImportParam) => {
+                    console.log(value)
+                    window.electronAPI.diaryImportValue({
+                        data: null,
+                        status: StatusCodes.OK,
+                        message: '',
+                    })
+                }
+            )
+            eventEmitter.on(
+                EmitterEvent.IMPORT_ALL_DIARY,
+                async (value: ImportParam) => {
+                    console.log(value)
+                    window.electronAPI.allDiaryImportsValue({
+                        data: null,
+                        status: StatusCodes.OK,
+                        message: '',
+                    })
+                }
+            )
         }
 
         return () => {

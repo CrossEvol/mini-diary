@@ -24,13 +24,13 @@ import {
     DiarySyncOutput,
     DiarySyncOutputSchema,
     DiarySyncSchema,
-    ResultSchema,
     User,
     UserJoin,
     UserJoinSchema,
     UserProfile,
     UserProfileSchema,
     UserSchema,
+    ZResultSchema,
 } from './zod.type'
 
 const okResponse = <T>(data: T) => {
@@ -101,7 +101,7 @@ app.openapi(
                 description: 'Respond a message',
                 content: {
                     'application/json': {
-                        schema: ResultSchema(z.string()),
+                        schema: ZResultSchema(z.string()),
                     },
                 },
             },
@@ -121,7 +121,7 @@ app.openapi(
                 description: 'Get Users with Projects',
                 content: {
                     'application/json': {
-                        schema: ResultSchema(UserJoinSchema),
+                        schema: ZResultSchema(UserJoinSchema),
                     },
                 },
             },
@@ -148,7 +148,7 @@ app.openapi(
                 description: 'Get UserProfile by Bearer Auth',
                 content: {
                     'application/json': {
-                        schema: ResultSchema(UserProfileSchema.nullable()),
+                        schema: ZResultSchema(UserProfileSchema.nullable()),
                     },
                 },
             },
@@ -182,7 +182,7 @@ app.openapi(
                 description: 'Create new User',
                 content: {
                     'application/json': {
-                        schema: ResultSchema(
+                        schema: ZResultSchema(
                             UserProfileSchema.nullable().optional()
                         ),
                     },
@@ -232,7 +232,7 @@ app.openapi(
                 description: 'Sign In',
                 content: {
                     'application/json': {
-                        schema: ResultSchema(z.object({ token: z.string() })),
+                        schema: ZResultSchema(z.object({ token: z.string() })),
                     },
                 },
             },
@@ -271,7 +271,7 @@ app.openapi(
                 description: 'Respond a message',
                 content: {
                     'application/json': {
-                        schema: ResultSchema(DiarySyncOutputSchema),
+                        schema: ZResultSchema(DiarySyncOutputSchema),
                     },
                 },
             },
