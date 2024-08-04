@@ -8,14 +8,9 @@ import {
     ipcMain,
     shell,
 } from 'electron'
+import { writeFile } from 'node:fs/promises'
 import { release } from 'node:os'
 import { join } from 'node:path'
-import { EChannel, EFormat } from './common/enums'
-import {
-    EventResult,
-    ExportResult,
-    ImportResult
-} from './common/params'
 import { initPrisma } from './deprecated.prisma.util'
 import {
     exportAllDiariesHandler,
@@ -23,6 +18,8 @@ import {
     importAllDiariesHandler,
     importDiaryHandler,
 } from './eventHandler'
+import { EChannel, EFormat } from './shared/enums'
+import { EventResult, ExportResult, ImportResult } from './shared/params'
 import { update } from './update'
 import { startHonoServer } from './util/net.util'
 
@@ -122,7 +119,20 @@ app.whenReady().then(() => {
         EChannel.EXPORT_ALL_DIARY_VALUE,
         (_event, value: EventResult<ExportResult>) => {
             console.log(value) // will print value to Node console
-            win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
+            Promise.all(
+                value.data.fileItems.map(
+                    async (fileItem) =>
+                        await writeFile(fileItem.path, fileItem.content, {
+                            encoding: 'utf-8',
+                        })
+                )
+            )
+                .then((res) =>
+                    win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
+                )
+                .catch((err) =>
+                    win?.webContents.send(EChannel.NOTIFY_ERROR, err)
+                )
         }
     )
     ipcMain.on(

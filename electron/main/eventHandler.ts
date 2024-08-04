@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog } from 'electron'
 import { readFile } from 'node:fs/promises'
-import { EChannel, EFormat } from './common/enums'
-import { ExportParam, FileItem, ImportParam } from './common/params'
+import { EChannel, EFormat } from './shared/enums'
+import { ExportParam, FileItem, ImportParam } from './shared/params'
 
 // TODO wait for worker bundle
 /* export let port = 0

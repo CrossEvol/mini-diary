@@ -1,4 +1,4 @@
-import { eventEmitterAtom } from '@/atoms/event.emitter.atom'
+import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -125,7 +125,7 @@ const CalendarBar = () => {
                     color='primary'
                     sx={{ p: '10px' }}
                     aria-label='directions'
-                    onClick={() => eventEmitter.emit('sync')}
+                    onClick={() => eventEmitter.emit(EmitterEvent.SYNC)}
                 >
                     <SyncIcon />
                 </IconButton>

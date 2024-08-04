@@ -1,7 +1,7 @@
 export enum EFormat {
-    'JSON' = 'JSON',
-    'HTML' = 'HTML',
-    'MARKDOWN' = 'MARKDOWN',
+    'JSON' = 'json',
+    'HTML' = 'html',
+    'MARKDOWN' = 'md',
 }
 
 export enum EChannel {

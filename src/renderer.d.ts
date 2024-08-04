@@ -4,7 +4,7 @@ import {
     ExportResult,
     ImportParam,
     ImportResult,
-} from 'electron/preload/common/params'
+} from '@/shared/params'
 
 export interface IElectronAPI {
     onUpdatePort: (callback: (port: number) => void) => void

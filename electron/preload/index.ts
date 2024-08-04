@@ -1,11 +1,11 @@
-import { EChannel } from '../preload/common/enums'
+import { EChannel } from './shared/enums'
 import {
     EventResult,
     ExportParam,
     ExportResult,
     ImportParam,
     ImportResult,
-} from './common/params'
+} from './shared/params'
 
 const { contextBridge, ipcRenderer } = require('electron')
 
