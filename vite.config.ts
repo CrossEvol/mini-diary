@@ -20,6 +20,15 @@ export default defineConfig(({ command }) => {
                 '@': path.join(__dirname, 'src'),
             },
         },
+        build: {
+            rollupOptions: {
+                input: {
+                    main: 'index.html',
+                    datePicker: 'date-picker.html',
+                    test: 'pages/date-picker/dist/index.html',
+                },
+            },
+        },
         plugins: [
             react(),
             electron([

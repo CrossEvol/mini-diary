@@ -1,0 +1,19 @@
+{
+  "name": "pages",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "frontend": "pnpm --filter frontend",
+    "backend": "pnpm --filter backend",
+    "common": "pnpm --filter common",
+    "validation": "pnpm --filter validation"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

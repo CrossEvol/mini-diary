@@ -5,6 +5,7 @@ import {
     MenuItemConstructorOptions,
     Notification,
     app,
+    dialog,
     ipcMain,
     shell,
 } from 'electron'
@@ -164,6 +165,82 @@ app.whenReady().then(() => {
         const template: (MenuItemConstructorOptions | MenuItem)[] = [
             // { role: 'appMenu' },
             // { role: 'fileMenu' }
+            {
+                label: app.name,
+                submenu: [
+                    {
+                        click: () => {
+                            const datePickerWindow = new BrowserWindow({
+                                width: 400,
+                                height: 300,
+                                parent: win!,
+                                modal: true,
+                                webPreferences: {
+                                    nodeIntegration: true,
+                                    contextIsolation: false,
+                                },
+                                autoHideMenuBar: true,
+                                resizable: false,
+                            })
+
+                            const datePickerUrl =
+                                process.env.NODE_ENV === 'development'
+                                    ? 'date-picker.html'
+                                    : join(process.env.DIST, 'date-picker.html')
+                            console.log(datePickerUrl)
+                            datePickerWindow.loadFile(datePickerUrl)
+                            // datePickerWindow.loadFile('date-picker.html')
+
+                            ipcMain.once('date-selected', (event, date) => {
+                                dialog.showMessageBox(win!, {
+                                    type: 'info',
+                                    message: `You selected: ${date}`,
+                                })
+                                datePickerWindow.close()
+                            })
+                        },
+                        label: 'Message',
+                    },
+                    {
+                        click: () => {
+                            const datePickerWindow = new BrowserWindow({
+                                width: 800,
+                                height: 600,
+                                parent: win!,
+                                modal: true,
+                                webPreferences: {
+                                    nodeIntegration: true,
+                                    contextIsolation: false,
+                                },
+                                autoHideMenuBar: false,
+                                resizable: false,
+                            })
+
+                            const datePickerUrl =
+                                process.env.NODE_ENV === 'development'
+                                    ? 'pages/date-picker/dist/index.html'
+                                    : join(
+                                          process.env.DIST,
+                                          'pages/date-picker/dist/index.html'
+                                      )
+                            console.log(datePickerUrl)
+                            datePickerWindow.loadFile(datePickerUrl)
+
+                            ipcMain.once(
+                                EChannel.CLICK_MESSAGE,
+                                (event, message) => {
+                                    dialog.showMessageBox(win!, {
+                                        type: 'info',
+                                        message: `You selected: ${message}`,
+                                    })
+                                    datePickerWindow.close()
+                                }
+                            )
+                        },
+                        label: 'SubWindow',
+                    },
+                ],
+            },
             {
                 label: 'File',
                 submenu: [

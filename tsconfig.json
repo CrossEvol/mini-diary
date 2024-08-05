@@ -37,6 +37,9 @@
     "**/*.tsx",
     "./vitest.setup.ts"
   ],
+  "exclude": [
+    "pages"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

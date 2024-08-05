@@ -15,6 +15,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
             callback(value)
         ),
 
+    onClickMessage: (value: string) =>
+        ipcRenderer.send(EChannel.CLICK_MESSAGE, value),
+
     onExportDiary: (callback: (arg0: ExportParam) => void) =>
         ipcRenderer.on(EChannel.EXPORT_DIARY, (_event, value: ExportParam) =>
             callback(value)

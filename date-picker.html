@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Select a Date</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+            #datePickerContainer {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="datePickerContainer">
+            <h1>Select a Date</h1>
+            <input type="date" id="datePicker" />
+            <br /><br />
+            <button onclick="submitDate()">Submit</button>
+        </div>
+        <script>
+            const { ipcRenderer } = require('electron')
+
+            function submitDate() {
+                const date = document.getElementById('datePicker').value
+                ipcRenderer.send('date-selected', date)
+            }
+        </script>
+    </body>
+</html>
