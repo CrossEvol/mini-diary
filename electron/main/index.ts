@@ -3,6 +3,7 @@ import {
     Menu,
     MenuItem,
     MenuItemConstructorOptions,
+    MessageChannelMain,
     Notification,
     app,
     dialog,
@@ -63,6 +64,289 @@ const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join(process.env.DIST, 'index.html')
 
 initPrisma()
+
+const buildMenus = () => {
+    const NOTIFICATION_TITLE = 'Basic Notification'
+    const NOTIFICATION_BODY = 'Notification from the Main process'
+
+    function showNotification() {
+        new Notification({
+            title: NOTIFICATION_TITLE,
+            body: NOTIFICATION_BODY,
+        }).show()
+    }
+
+    const template: (MenuItemConstructorOptions | MenuItem)[] = [
+        // { role: 'appMenu' },
+        // { role: 'fileMenu' }
+        {
+            label: app.name,
+            submenu: [
+                {
+                    click: () => {
+                        const datePickerWindow = new BrowserWindow({
+                            width: 1000,
+                            height: 800,
+                            parent: win!,
+                            modal: true,
+                            webPreferences: {
+                                nodeIntegration: true,
+                                contextIsolation: false,
+                            },
+                            autoHideMenuBar: false,
+                            resizable: false,
+                        })
+
+                        const datePickerUrl =
+                            process.env.NODE_ENV === 'development'
+                                ? 'date-picker.html'
+                                : join(process.env.DIST, 'date-picker.html')
+                        console.log(datePickerUrl)
+                        datePickerWindow.loadFile(datePickerUrl)
+                        // datePickerWindow.loadFile('date-picker.html')
+
+                        ipcMain.once('date-selected', (event, date) => {
+                            dialog.showMessageBox(win!, {
+                                type: 'info',
+                                message: `You selected: ${date}`,
+                            })
+                            datePickerWindow.close()
+                        })
+                    },
+                    label: 'Message',
+                },
+                {
+                    click: () => {
+                        const datePickerWindow = new BrowserWindow({
+                            width: 800,
+                            height: 600,
+                            parent: win!,
+                            modal: true,
+                            webPreferences: {
+                                nodeIntegration: true,
+                                contextIsolation: false,
+                            },
+                            autoHideMenuBar: false,
+                            resizable: false,
+                        })
+
+                        const datePickerUrl =
+                            process.env.NODE_ENV === 'development'
+                                ? 'pages/date-picker/dist/index.html'
+                                : join(
+                                      process.env.DIST,
+                                      'pages/date-picker/dist/index.html'
+                                  )
+                        console.log(datePickerUrl)
+                        datePickerWindow.loadFile(datePickerUrl)
+
+                        ipcMain.once(
+                            EChannel.CLICK_MESSAGE,
+                            (event, message) => {
+                                dialog.showMessageBox(win!, {
+                                    type: 'info',
+                                    message: `You selected: ${message}`,
+                                })
+                                datePickerWindow.close()
+                            }
+                        )
+                    },
+                    label: 'SubWindow',
+                },
+                {
+                    label: 'ipc',
+                    click: () => {
+                        // set up the channel.
+                        const { port1, port2 } = new MessageChannelMain()
+
+                        const senderWindow = new BrowserWindow({
+                            webPreferences: {
+                                nodeIntegration: true,
+                                preload: join(
+                                    __dirname,
+                                    '..',
+                                    '..',
+                                    'preloadSender.js'
+                                ),
+                                contextIsolation: false,
+                            },
+                        })
+
+                        const receiverWindow = new BrowserWindow({
+                            webPreferences: {
+                                nodeIntegration: true,
+                                preload: join(
+                                    __dirname,
+                                    '..',
+                                    '..',
+                                    'preloadReceiver.js'
+                                ),
+                                contextIsolation: false,
+                            },
+                        })
+
+                        senderWindow.loadFile('sender.html')
+                        receiverWindow.loadFile('receiver.html')
+
+                        // Send port to both windows
+                        senderWindow.once('ready-to-show', () => {
+                            senderWindow.webContents.postMessage('port', null, [
+                                port1,
+                            ])
+                        })
+
+                        receiverWindow.once('ready-to-show', () => {
+                            receiverWindow.webContents.postMessage(
+                                'port',
+                                null,
+                                [port2]
+                            )
+                        })
+                    },
+                },
+            ],
+        },
+        {
+            label: 'File',
+            submenu: [
+                { role: 'quit' },
+                { label: 'a', click: showNotification },
+                {
+                    label: 'import',
+                    submenu: [
+                        {
+                            label: 'to JSON',
+                            click: () => importDiaryHandler(win, EFormat.JSON),
+                        },
+                        {
+                            label: 'to Markdown',
+                            click: () =>
+                                importDiaryHandler(win, EFormat.MARKDOWN),
+                        },
+                        {
+                            label: 'to HTML',
+                            click: () => importDiaryHandler(win, EFormat.HTML),
+                        },
+                    ],
+                },
+                {
+                    label: 'export',
+                    submenu: [
+                        {
+                            label: 'to JSON',
+                            click: () => exportDiaryHandler(win, EFormat.JSON),
+                        },
+                        {
+                            label: 'to Markdown',
+                            click: () =>
+                                exportDiaryHandler(win, EFormat.MARKDOWN),
+                        },
+                        {
+                            label: 'to HTML',
+                            click: () => exportDiaryHandler(win, EFormat.HTML),
+                        },
+                    ],
+                },
+                {
+                    label: 'imports',
+                    submenu: [
+                        {
+                            label: 'to JSON',
+                            click: () =>
+                                importAllDiariesHandler(win, EFormat.JSON),
+                        },
+                        {
+                            label: 'to Markdown',
+                            click: () =>
+                                importAllDiariesHandler(win, EFormat.MARKDOWN),
+                        },
+                        {
+                            label: 'to HTML',
+                            click: () =>
+                                importAllDiariesHandler(win, EFormat.HTML),
+                        },
+                    ],
+                },
+                {
+                    label: 'exports',
+                    submenu: [
+                        {
+                            label: 'to JSON',
+                            click: () =>
+                                exportAllDiariesHandler(win, EFormat.JSON),
+                        },
+                        {
+                            label: 'to Markdown',
+                            click: () =>
+                                exportAllDiariesHandler(win, EFormat.MARKDOWN),
+                        },
+                        {
+                            label: 'to HTML',
+                            click: () =>
+                                exportAllDiariesHandler(win, EFormat.HTML),
+                        },
+                    ],
+                },
+            ],
+        },
+        // { role: 'editMenu' }
+        {
+            label: 'Edit',
+            submenu: [
+                { role: 'undo' },
+                { role: 'redo' },
+                { type: 'separator' },
+                { role: 'cut' },
+                { role: 'copy' },
+                { role: 'paste' },
+                ...([
+                    { role: 'delete' },
+                    { type: 'separator' },
+                    { role: 'selectAll' },
+                ] as MenuItemConstructorOptions[]),
+            ],
+        },
+        // { role: 'viewMenu' }
+        {
+            label: 'View',
+            submenu: [
+                { role: 'reload' },
+                { role: 'forceReload' },
+                { role: 'toggleDevTools' },
+                { type: 'separator' },
+                { role: 'resetZoom' },
+                { role: 'zoomIn' },
+                { role: 'zoomOut' },
+                { type: 'separator' },
+                { role: 'togglefullscreen' },
+            ],
+        },
+        // { role: 'windowMenu' }
+        {
+            label: 'Window',
+            submenu: [
+                { role: 'minimize' },
+                { role: 'zoom' },
+                ...[{ role: 'close' } as MenuItemConstructorOptions],
+            ],
+        },
+        {
+            role: 'help',
+            submenu: [
+                {
+                    label: 'Learn More',
+                    click: async () => {
+                        const { shell } = require('electron')
+                        await shell.openExternal('https://electronjs.org')
+                    },
+                },
+            ],
+        },
+    ]
+
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+}
 
 async function createWindow() {
     const port = await startHonoServer()
@@ -152,245 +436,7 @@ app.whenReady().then(() => {
     )
     // ipcMain.on(EChannel.PORT_FROM_WORKER, handlePortFromWorkerThread) // maybe be useful once I solve how to  bundle the worker
     createWindow().then(() => {
-        const NOTIFICATION_TITLE = 'Basic Notification'
-        const NOTIFICATION_BODY = 'Notification from the Main process'
-
-        function showNotification() {
-            new Notification({
-                title: NOTIFICATION_TITLE,
-                body: NOTIFICATION_BODY,
-            }).show()
-        }
-
-        const template: (MenuItemConstructorOptions | MenuItem)[] = [
-            // { role: 'appMenu' },
-            // { role: 'fileMenu' }
-            {
-                label: app.name,
-                submenu: [
-                    {
-                        click: () => {
-                            const datePickerWindow = new BrowserWindow({
-                                width: 400,
-                                height: 300,
-                                parent: win!,
-                                modal: true,
-                                webPreferences: {
-                                    nodeIntegration: true,
-                                    contextIsolation: false,
-                                },
-                                autoHideMenuBar: true,
-                                resizable: false,
-                            })
-
-                            const datePickerUrl =
-                                process.env.NODE_ENV === 'development'
-                                    ? 'date-picker.html'
-                                    : join(process.env.DIST, 'date-picker.html')
-                            console.log(datePickerUrl)
-                            datePickerWindow.loadFile(datePickerUrl)
-                            // datePickerWindow.loadFile('date-picker.html')
-
-                            ipcMain.once('date-selected', (event, date) => {
-                                dialog.showMessageBox(win!, {
-                                    type: 'info',
-                                    message: `You selected: ${date}`,
-                                })
-                                datePickerWindow.close()
-                            })
-                        },
-                        label: 'Message',
-                    },
-                    {
-                        click: () => {
-                            const datePickerWindow = new BrowserWindow({
-                                width: 800,
-                                height: 600,
-                                parent: win!,
-                                modal: true,
-                                webPreferences: {
-                                    nodeIntegration: true,
-                                    contextIsolation: false,
-                                },
-                                autoHideMenuBar: false,
-                                resizable: false,
-                            })
-
-                            const datePickerUrl =
-                                process.env.NODE_ENV === 'development'
-                                    ? 'pages/date-picker/dist/index.html'
-                                    : join(
-                                          process.env.DIST,
-                                          'pages/date-picker/dist/index.html'
-                                      )
-                            console.log(datePickerUrl)
-                            datePickerWindow.loadFile(datePickerUrl)
-
-                            ipcMain.once(
-                                EChannel.CLICK_MESSAGE,
-                                (event, message) => {
-                                    dialog.showMessageBox(win!, {
-                                        type: 'info',
-                                        message: `You selected: ${message}`,
-                                    })
-                                    datePickerWindow.close()
-                                }
-                            )
-                        },
-                        label: 'SubWindow',
-                    },
-                ],
-            },
-            {
-                label: 'File',
-                submenu: [
-                    { role: 'quit' },
-                    { label: 'a', click: showNotification },
-                    {
-                        label: 'import',
-                        submenu: [
-                            {
-                                label: 'to JSON',
-                                click: () =>
-                                    importDiaryHandler(win, EFormat.JSON),
-                            },
-                            {
-                                label: 'to Markdown',
-                                click: () =>
-                                    importDiaryHandler(win, EFormat.MARKDOWN),
-                            },
-                            {
-                                label: 'to HTML',
-                                click: () =>
-                                    importDiaryHandler(win, EFormat.HTML),
-                            },
-                        ],
-                    },
-                    {
-                        label: 'export',
-                        submenu: [
-                            {
-                                label: 'to JSON',
-                                click: () =>
-                                    exportDiaryHandler(win, EFormat.JSON),
-                            },
-                            {
-                                label: 'to Markdown',
-                                click: () =>
-                                    exportDiaryHandler(win, EFormat.MARKDOWN),
-                            },
-                            {
-                                label: 'to HTML',
-                                click: () =>
-                                    exportDiaryHandler(win, EFormat.HTML),
-                            },
-                        ],
-                    },
-                    {
-                        label: 'imports',
-                        submenu: [
-                            {
-                                label: 'to JSON',
-                                click: () =>
-                                    importAllDiariesHandler(win, EFormat.JSON),
-                            },
-                            {
-                                label: 'to Markdown',
-                                click: () =>
-                                    importAllDiariesHandler(
-                                        win,
-                                        EFormat.MARKDOWN
-                                    ),
-                            },
-                            {
-                                label: 'to HTML',
-                                click: () =>
-                                    importAllDiariesHandler(win, EFormat.HTML),
-                            },
-                        ],
-                    },
-                    {
-                        label: 'exports',
-                        submenu: [
-                            {
-                                label: 'to JSON',
-                                click: () =>
-                                    exportAllDiariesHandler(win, EFormat.JSON),
-                            },
-                            {
-                                label: 'to Markdown',
-                                click: () =>
-                                    exportAllDiariesHandler(
-                                        win,
-                                        EFormat.MARKDOWN
-                                    ),
-                            },
-                            {
-                                label: 'to HTML',
-                                click: () =>
-                                    exportAllDiariesHandler(win, EFormat.HTML),
-                            },
-                        ],
-                    },
-                ],
-            },
-            // { role: 'editMenu' }
-            {
-                label: 'Edit',
-                submenu: [
-                    { role: 'undo' },
-                    { role: 'redo' },
-                    { type: 'separator' },
-                    { role: 'cut' },
-                    { role: 'copy' },
-                    { role: 'paste' },
-                    ...([
-                        { role: 'delete' },
-                        { type: 'separator' },
-                        { role: 'selectAll' },
-                    ] as MenuItemConstructorOptions[]),
-                ],
-            },
-            // { role: 'viewMenu' }
-            {
-                label: 'View',
-                submenu: [
-                    { role: 'reload' },
-                    { role: 'forceReload' },
-                    { role: 'toggleDevTools' },
-                    { type: 'separator' },
-                    { role: 'resetZoom' },
-                    { role: 'zoomIn' },
-                    { role: 'zoomOut' },
-                    { type: 'separator' },
-                    { role: 'togglefullscreen' },
-                ],
-            },
-            // { role: 'windowMenu' }
-            {
-                label: 'Window',
-                submenu: [
-                    { role: 'minimize' },
-                    { role: 'zoom' },
-                    ...[{ role: 'close' } as MenuItemConstructorOptions],
-                ],
-            },
-            {
-                role: 'help',
-                submenu: [
-                    {
-                        label: 'Learn More',
-                        click: async () => {
-                            const { shell } = require('electron')
-                            await shell.openExternal('https://electronjs.org')
-                        },
-                    },
-                ],
-            },
-        ]
-
-        const menu = Menu.buildFromTemplate(template)
-        Menu.setApplicationMenu(menu)
+        buildMenus()
     })
 })
 

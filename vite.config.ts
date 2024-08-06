@@ -26,6 +26,8 @@ export default defineConfig(({ command }) => {
                     main: 'index.html',
                     datePicker: 'date-picker.html',
                     test: 'pages/date-picker/dist/index.html',
+                    sender: 'sender.html',
+                    receiver: 'receiver.html',
                 },
             },
         },

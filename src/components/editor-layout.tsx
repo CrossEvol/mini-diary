@@ -89,7 +89,6 @@ const EditorLayout = () => {
                             })(),
                         }))
                 )
-                debugger
                 window.electronAPI.allDiaryExportsValue({
                     data: {
                         format: exportParam.format,
