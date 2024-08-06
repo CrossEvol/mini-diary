@@ -5,7 +5,9 @@ import * as path from 'path'
 const sourceDir = path.join(__dirname, '..', 'electron/main/shared')
 const destDirs = [
     path.join(__dirname, '..', 'electron/preload/shared'),
+    path.join(__dirname, '..', 'electron/preload-date-picker/shared'),
     path.join(__dirname, '..', 'src/shared'),
+    path.join(__dirname, '..', 'pages/date-picker/src/shared'),
 ]
 
 // Function to copy files recursively

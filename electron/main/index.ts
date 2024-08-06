@@ -121,8 +121,8 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                         const { port1, port2 } = new MessageChannelMain()
 
                         const datePickerWindow = new BrowserWindow({
-                            width: 800,
-                            height: 600,
+                            width: 1440,
+                            height: 1080,
                             parent: undefined,
                             modal: true,
                             webPreferences: {
@@ -148,18 +148,20 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                         datePickerWindow.loadFile(datePickerUrl)
 
                         mainWindow.webContents.postMessage(
-                            'main-world-port',
+                            EChannel.SEND_MESSAGE_PORT,
                             null,
                             [port1]
                         )
 
                         // The preload script will receive this IPC message and transfer the port
                         // over to the main world.
-                        datePickerWindow.webContents.postMessage(
-                            'main-world-port',
-                            null,
-                            [port2]
-                        )
+                        datePickerWindow.once('ready-to-show', () => {
+                            datePickerWindow.webContents.postMessage(
+                                EChannel.SEND_MESSAGE_PORT,
+                                null,
+                                [port2]
+                            )
+                        })
 
                         ipcMain.once(
                             EChannel.CLICK_MESSAGE,
@@ -173,57 +175,6 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                         )
                     },
                     label: 'SubWindow',
-                },
-                {
-                    label: 'ipc',
-                    click: () => {
-                        // set up the channel.
-                        const { port1, port2 } = new MessageChannelMain()
-
-                        const senderWindow = new BrowserWindow({
-                            webPreferences: {
-                                nodeIntegration: true,
-                                preload: join(
-                                    __dirname,
-                                    '..',
-                                    '..',
-                                    'preloadSender.js'
-                                ),
-                                contextIsolation: false,
-                            },
-                        })
-
-                        const receiverWindow = new BrowserWindow({
-                            webPreferences: {
-                                nodeIntegration: true,
-                                preload: join(
-                                    __dirname,
-                                    '..',
-                                    '..',
-                                    'preloadReceiver.js'
-                                ),
-                                contextIsolation: false,
-                            },
-                        })
-
-                        senderWindow.loadFile('sender.html')
-                        receiverWindow.loadFile('receiver.html')
-
-                        // Send port to both windows
-                        senderWindow.once('ready-to-show', () => {
-                            senderWindow.webContents.postMessage('port', null, [
-                                port1,
-                            ])
-                        })
-
-                        receiverWindow.once('ready-to-show', () => {
-                            receiverWindow.webContents.postMessage(
-                                'port',
-                                null,
-                                [port2]
-                            )
-                        })
-                    },
                 },
             ],
         },

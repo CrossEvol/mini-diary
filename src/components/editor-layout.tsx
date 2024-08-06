@@ -1,8 +1,10 @@
 import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
+import { portAtom } from '@/atoms/message-port.atom'
 import { profileAtom } from '@/atoms/profile.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
 import { EFormat } from '@/shared/enums'
 import { ExportParam, ImportParam } from '@/shared/params'
+import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import fetchClient from '@/utils/fetch.client'
 import { extractDataByDiaryKey } from '@/utils/regExp.utils'
 import '@blocknote/core/fonts/inter.css'
@@ -15,10 +17,38 @@ import { join } from 'path-browserify'
 import React from 'react'
 
 const EditorLayout = () => {
+    const [port] = useAtom(portAtom)
     const editor = useCreateBlockNote()
     const [eventEmitter] = useAtom(eventEmitterAtom)
     const { loadContent } = useEditorStorage()
     const [profile] = useAtom(profileAtom)
+
+    React.useEffect(() => {
+        if (!!port) {
+            // We can also receive messages from the main world of the renderer.
+            port.onmessage = (event) => {
+                console.log(
+                    'from renderer main world:',
+                    formatDateTime(event.data, DateTimeFormatEnum.DAY_FORMAT)
+                )
+                port.postMessage({
+                    id: 1,
+                    date: formatDateTime(
+                        event.data,
+                        DateTimeFormatEnum.DAY_FORMAT
+                    ),
+                    username: 'emilys',
+                    email: 'emily.johnson@x.dummyjson.com',
+                    firstName: 'Emily',
+                    lastName: 'Johnson',
+                    gender: 'female',
+                    image: 'https://dummyjson.com/icon/emilys/128',
+                })
+                port.start()
+            }
+        }
+        return () => {}
+    }, [port])
 
     React.useEffect(() => {
         eventEmitter.on(EmitterEvent.SYNC, async () => {

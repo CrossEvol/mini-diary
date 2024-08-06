@@ -1,6 +1,7 @@
 import { atom, useAtom } from 'jotai'
 import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom'
+import { EChannel } from './shared/enums'
 
 export const portAtom = atom<MessagePort | null>(null)
 
@@ -11,10 +12,11 @@ const Layout = () => {
     window.onmessage = (event) => {
       // event.source === window means the message is coming from the preload
       // script, as opposed to from an <iframe> or other source.
-      if (event.source === window && event.data === 'main-world-port') {
+      if (
+        event.source === window &&
+        event.data === EChannel.SEND_MESSAGE_PORT
+      ) {
         const [port] = event.ports
-        // Once we have the port, we can communicate directly with the main
-        // process.
         setPort(port)
       }
     }

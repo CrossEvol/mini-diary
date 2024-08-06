@@ -38,11 +38,13 @@ export function CalendarForm() {
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    port?.postMessage(data.dob)
-    port!.onmessage = (event) => {
-      console.log('from main process:', event.data)
+    if (!!port) {
+      port.postMessage(data.dob)
+      port.onmessage = (event) => {
+        console.log('from main process:', event.data)
+      }
+      port.start()
     }
-    port?.start()
 
     toast({
       title: 'You submitted the following values:',

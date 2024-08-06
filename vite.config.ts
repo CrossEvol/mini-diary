@@ -26,8 +26,6 @@ export default defineConfig(({ command }) => {
                     main: 'index.html',
                     datePicker: 'date-picker.html',
                     test: 'pages/date-picker/dist/index.html',
-                    sender: 'sender.html',
-                    receiver: 'receiver.html',
                 },
             },
         },
@@ -96,11 +94,7 @@ export default defineConfig(({ command }) => {
                             minify: isBuild,
                             outDir: 'dist-electron/preload-date-picker',
                             rollupOptions: {
-                                // external: Object.keys(
-                                //     'dependencies' in pkg
-                                //         ? pkg.dependencies
-                                //         : {}
-                                // ),
+                                external: [],
                             },
                         },
                     },

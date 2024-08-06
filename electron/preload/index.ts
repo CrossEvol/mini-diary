@@ -66,11 +66,11 @@ const windowLoaded = new Promise((resolve) => {
     window.onload = resolve
 })
 
-ipcRenderer.on('main-world-port', async (event) => {
+ipcRenderer.on(EChannel.SEND_MESSAGE_PORT, async (event) => {
     await windowLoaded
     // We use regular window.postMessage to transfer the port from the isolated
     // world to the main world.
-    window.postMessage('main-world-port', '*', event.ports)
+    window.postMessage(EChannel.SEND_MESSAGE_PORT, '*', event.ports)
 })
 
 // function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
