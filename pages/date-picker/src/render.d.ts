@@ -1,4 +1,3 @@
-
 export interface IElectronAPI {
   onClickMessage: (value: string) => void
 }

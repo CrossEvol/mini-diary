@@ -1,3 +1,4 @@
+import ErrorPage from '@/error-page'
 import EditorView from '@/views/editor-view'
 import { createHashRouter } from 'react-router-dom'
 import Layout from '../layout'
@@ -12,6 +13,7 @@ export const router = createHashRouter([
     {
         path: '/',
         Component: Layout,
+        errorElement: <ErrorPage />,
         children: [
             { path: '', index: true, Component: Home },
             { path: 'sign-in', Component: SignIn },
