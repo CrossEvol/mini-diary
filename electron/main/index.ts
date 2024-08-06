@@ -379,6 +379,9 @@ async function createWindow() {
             'main-process-message',
             new Date().toLocaleString()
         )
+    })
+
+    win.once('ready-to-show', () => {
         win?.webContents.send(EChannel.SEND_SERVER_PORT, port)
     })
 

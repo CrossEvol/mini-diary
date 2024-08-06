@@ -8,6 +8,7 @@ import { useAtom } from 'jotai'
 import * as React from 'react'
 
 const EventEmitterLayout = () => {
+    let flag = true
     const [eventEmitter] = useAtom(eventEmitterAtom)
     const { notifySuccess, notifyError } = useNotify()
     const [profile, setProfile] = useAtom(profileAtom)
@@ -31,8 +32,6 @@ const EventEmitterLayout = () => {
             setProfile(res.data)
         }
     }
-
-    let flag = true
 
     React.useEffect(() => {
         if (flag) {
