@@ -65,7 +65,7 @@ const indexHtml = join(process.env.DIST, 'index.html')
 
 initPrisma()
 
-const buildMenus = () => {
+const buildMenus = (mainWindow: BrowserWindow) => {
     const NOTIFICATION_TITLE = 'Basic Notification'
     const NOTIFICATION_BODY = 'Notification from the Main process'
 
@@ -106,7 +106,7 @@ const buildMenus = () => {
                         // datePickerWindow.loadFile('date-picker.html')
 
                         ipcMain.once('date-selected', (event, date) => {
-                            dialog.showMessageBox(win!, {
+                            dialog.showMessageBox(mainWindow!, {
                                 type: 'info',
                                 message: `You selected: ${date}`,
                             })
@@ -117,14 +117,21 @@ const buildMenus = () => {
                 },
                 {
                     click: () => {
+                        // set up the channel.
+                        const { port1, port2 } = new MessageChannelMain()
+
                         const datePickerWindow = new BrowserWindow({
                             width: 800,
                             height: 600,
-                            parent: win!,
+                            parent: undefined,
                             modal: true,
                             webPreferences: {
                                 nodeIntegration: true,
-                                contextIsolation: false,
+                                contextIsolation: true,
+                                preload: join(
+                                    __dirname,
+                                    '../preload-date-picker/index.js'
+                                ),
                             },
                             autoHideMenuBar: false,
                             resizable: false,
@@ -139,6 +146,20 @@ const buildMenus = () => {
                                   )
                         console.log(datePickerUrl)
                         datePickerWindow.loadFile(datePickerUrl)
+
+                        mainWindow.webContents.postMessage(
+                            'main-world-port',
+                            null,
+                            [port1]
+                        )
+
+                        // The preload script will receive this IPC message and transfer the port
+                        // over to the main world.
+                        datePickerWindow.webContents.postMessage(
+                            'main-world-port',
+                            null,
+                            [port2]
+                        )
 
                         ipcMain.once(
                             EChannel.CLICK_MESSAGE,
@@ -216,16 +237,21 @@ const buildMenus = () => {
                     submenu: [
                         {
                             label: 'to JSON',
-                            click: () => importDiaryHandler(win, EFormat.JSON),
+                            click: () =>
+                                importDiaryHandler(mainWindow, EFormat.JSON),
                         },
                         {
                             label: 'to Markdown',
                             click: () =>
-                                importDiaryHandler(win, EFormat.MARKDOWN),
+                                importDiaryHandler(
+                                    mainWindow,
+                                    EFormat.MARKDOWN
+                                ),
                         },
                         {
                             label: 'to HTML',
-                            click: () => importDiaryHandler(win, EFormat.HTML),
+                            click: () =>
+                                importDiaryHandler(mainWindow, EFormat.HTML),
                         },
                     ],
                 },
@@ -234,16 +260,21 @@ const buildMenus = () => {
                     submenu: [
                         {
                             label: 'to JSON',
-                            click: () => exportDiaryHandler(win, EFormat.JSON),
+                            click: () =>
+                                exportDiaryHandler(mainWindow, EFormat.JSON),
                         },
                         {
                             label: 'to Markdown',
                             click: () =>
-                                exportDiaryHandler(win, EFormat.MARKDOWN),
+                                exportDiaryHandler(
+                                    mainWindow,
+                                    EFormat.MARKDOWN
+                                ),
                         },
                         {
                             label: 'to HTML',
-                            click: () => exportDiaryHandler(win, EFormat.HTML),
+                            click: () =>
+                                exportDiaryHandler(mainWindow, EFormat.HTML),
                         },
                     ],
                 },
@@ -253,17 +284,26 @@ const buildMenus = () => {
                         {
                             label: 'to JSON',
                             click: () =>
-                                importAllDiariesHandler(win, EFormat.JSON),
+                                importAllDiariesHandler(
+                                    mainWindow,
+                                    EFormat.JSON
+                                ),
                         },
                         {
                             label: 'to Markdown',
                             click: () =>
-                                importAllDiariesHandler(win, EFormat.MARKDOWN),
+                                importAllDiariesHandler(
+                                    mainWindow,
+                                    EFormat.MARKDOWN
+                                ),
                         },
                         {
                             label: 'to HTML',
                             click: () =>
-                                importAllDiariesHandler(win, EFormat.HTML),
+                                importAllDiariesHandler(
+                                    mainWindow,
+                                    EFormat.HTML
+                                ),
                         },
                     ],
                 },
@@ -273,17 +313,26 @@ const buildMenus = () => {
                         {
                             label: 'to JSON',
                             click: () =>
-                                exportAllDiariesHandler(win, EFormat.JSON),
+                                exportAllDiariesHandler(
+                                    mainWindow,
+                                    EFormat.JSON
+                                ),
                         },
                         {
                             label: 'to Markdown',
                             click: () =>
-                                exportAllDiariesHandler(win, EFormat.MARKDOWN),
+                                exportAllDiariesHandler(
+                                    mainWindow,
+                                    EFormat.MARKDOWN
+                                ),
                         },
                         {
                             label: 'to HTML',
                             click: () =>
-                                exportAllDiariesHandler(win, EFormat.HTML),
+                                exportAllDiariesHandler(
+                                    mainWindow,
+                                    EFormat.HTML
+                                ),
                         },
                     ],
                 },
@@ -436,7 +485,7 @@ app.whenReady().then(() => {
     )
     // ipcMain.on(EChannel.PORT_FROM_WORKER, handlePortFromWorkerThread) // maybe be useful once I solve how to  bundle the worker
     createWindow().then(() => {
-        buildMenus()
+        buildMenus(win!)
     })
 })
 

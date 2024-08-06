@@ -1,19 +1,45 @@
-import HomeView from '@/views/home-view'
-import HtmlTabsView from '@/views/html-tabs-view'
-import JsonTabsView from '@/views/json-tabs-view'
-import MarkdownTabsView from '@/views/markdown-tabs-view'
-import { createHashRouter } from 'react-router-dom'
+import React, { lazy, Suspense, startTransition } from 'react'
+import { createHashRouter, RouteObject } from 'react-router-dom'
 import Layout from '../layout'
+import FallbackComponent from '@/components/fallback-component' // Import your fallback component
 
-export const router = createHashRouter([
+const loadComponent = (
+  importFunction: () => Promise<{ default: React.ComponentType<any> }>
+) => {
+  return new Promise<{ default: React.ComponentType<any> }>((resolve) => {
+    startTransition(() => {
+      resolve(importFunction())
+    })
+  })
+}
+
+const HomeView = lazy(() => loadComponent(() => import('@/views/home-view')))
+const HtmlTabsView = lazy(() =>
+  loadComponent(() => import('@/views/html-tabs-view'))
+)
+const JsonTabsView = lazy(() =>
+  loadComponent(() => import('@/views/json-tabs-view'))
+)
+const MarkdownTabsView = lazy(() =>
+  loadComponent(() => import('@/views/markdown-tabs-view'))
+)
+
+const routes: RouteObject[] = [
   {
     path: '/',
-    Component: Layout,
+    element: <Layout />,
     children: [
-      { path: '', index: true, Component: HomeView },
-      { path: 'json', Component: JsonTabsView },
-      { path: 'html', Component: HtmlTabsView },
-      { path: 'markdown', Component: MarkdownTabsView }
-    ]
+      { path: '', index: true, element: <HomeView /> },
+      { path: 'json', element: <JsonTabsView /> },
+      { path: 'html', element: <HtmlTabsView /> },
+      { path: 'markdown', element: <MarkdownTabsView /> }
+    ].map((route) => ({
+      ...route,
+      element: (
+        <Suspense fallback={<FallbackComponent />}>{route.element}</Suspense>
+      )
+    }))
   }
-])
+]
+
+export const router = createHashRouter(routes)

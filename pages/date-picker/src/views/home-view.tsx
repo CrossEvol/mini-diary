@@ -1,13 +1,9 @@
-'use client'
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from '@radix-ui/react-icons'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Toaster } from '@/components/ui/toaster'
 
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -25,6 +21,9 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { toast } from '@/components/ui/use-toast'
+import { cn } from '@/lib/utils'
+import { useAtom } from 'jotai'
+import { portAtom } from '@/layout'
 
 const FormSchema = z.object({
   dob: z.date({
@@ -33,11 +32,18 @@ const FormSchema = z.object({
 })
 
 export function CalendarForm() {
+  const [port] = useAtom(portAtom)
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema)
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    port?.postMessage(data.dob)
+    port!.onmessage = (event) => {
+      console.log('from main process:', event.data)
+    }
+    port?.start()
+
     toast({
       title: 'You submitted the following values:',
       description: (

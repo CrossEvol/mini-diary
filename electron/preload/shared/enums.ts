@@ -6,6 +6,7 @@ export enum EFormat {
 
 export enum EChannel {
     PORT_FROM_WORKER = 'port_from_worker',
+    SEND_MESSAGE_PORT = 'send_message_port',
     SEND_SERVER_PORT = 'send_server_port',
     CLICK_MESSAGE = 'click_message',
     IMPORT_DIARY = 'import_diary',

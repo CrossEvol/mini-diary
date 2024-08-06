@@ -52,12 +52,11 @@ export default defineConfig(({ command }) => {
                             minify: isBuild,
                             outDir: 'dist-electron/main',
                             rollupOptions: {
-                                // external: Object.keys(
-                                //     'dependencies' in pkg
-                                //         ? pkg.dependencies
-                                //         : {}
-                                // ),
-                                external: pkg.externals ?? [],
+                                external: Object.keys(
+                                    'dependencies' in pkg
+                                        ? pkg.dependencies
+                                        : {}
+                                ),
                             },
                         },
                     },
@@ -75,12 +74,33 @@ export default defineConfig(({ command }) => {
                             minify: isBuild,
                             outDir: 'dist-electron/preload',
                             rollupOptions: {
+                                external: Object.keys(
+                                    'dependencies' in pkg
+                                        ? pkg.dependencies
+                                        : {}
+                                ),
+                            },
+                        },
+                    },
+                },
+                {
+                    entry: 'electron/preload-date-picker/index.ts',
+                    onstart(options) {
+                        // Notify the Renderer-Process to reload the page when the Preload-Scripts build is complete,
+                        // instead of restarting the entire Electron App.
+                        options.reload()
+                    },
+                    vite: {
+                        build: {
+                            sourcemap: sourcemap ? 'inline' : undefined, // #332
+                            minify: isBuild,
+                            outDir: 'dist-electron/preload-date-picker',
+                            rollupOptions: {
                                 // external: Object.keys(
                                 //     'dependencies' in pkg
                                 //         ? pkg.dependencies
                                 //         : {}
                                 // ),
-                                external: pkg.externals ?? [],
                             },
                         },
                     },

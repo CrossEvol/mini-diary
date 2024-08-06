@@ -9,12 +9,17 @@ import {
 
 const { contextBridge, ipcRenderer } = require('electron')
 
+declare global {
+    interface Window {
+        electronMessagePort: Electron.MessagePortMain
+    }
+}
+
 contextBridge.exposeInMainWorld('electronAPI', {
     onUpdatePort: (callback: (arg0: number) => void) =>
         ipcRenderer.on(EChannel.SEND_SERVER_PORT, (_event, value: number) =>
             callback(value)
         ),
-
     onClickMessage: (value: string) =>
         ipcRenderer.send(EChannel.CLICK_MESSAGE, value),
 
@@ -54,6 +59,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
         ipcRenderer.on(EChannel.NOTIFY_ERROR, (_event, value: string) =>
             callback(value)
         ),
+})
+
+// to register the onload listener before the load event is fired.
+const windowLoaded = new Promise((resolve) => {
+    window.onload = resolve
+})
+
+ipcRenderer.on('main-world-port', async (event) => {
+    await windowLoaded
+    // We use regular window.postMessage to transfer the port from the isolated
+    // world to the main world.
+    window.postMessage('main-world-port', '*', event.ports)
 })
 
 // function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {

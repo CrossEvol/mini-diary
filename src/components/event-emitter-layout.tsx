@@ -1,6 +1,7 @@
 import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { profileAtom } from '@/atoms/profile.atom'
 import useNotify from '@/hooks/useNotify'
+import { EChannel } from '@/shared/enums'
 import fetchClient from '@/utils/fetch.client'
 import { UserProfile, ZResult } from 'electron/main/server/zod.type'
 import { useAtom } from 'jotai'
@@ -39,6 +40,7 @@ const EventEmitterLayout = () => {
                 localStorage.setItem('port', value.toString())
                 setupUserProfile()
             })
+
             window.electronAPI.onExportDiary((value) => {
                 console.log('redirect: ', EmitterEvent.EXPORT_DIARY)
                 eventEmitter.emit(EmitterEvent.EXPORT_DIARY, value)

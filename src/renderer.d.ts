@@ -8,6 +8,7 @@ import {
 
 export interface IElectronAPI {
     onUpdatePort: (callback: (port: number) => void) => void
+    onSendMessagePort: (callback: any) => void
 
     onExportDiary: (callback: (arg0: ExportParam) => void) => void
     diaryExportValue: (value: EventResult<ExportResult>) => void

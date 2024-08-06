@@ -29,6 +29,7 @@ import EditorLayout from './components/editor-layout'
 import EventEmitterLayout from './components/event-emitter-layout'
 import { ColorModeContext } from './providers/color-mode-provider'
 import { DateTimeFormatEnum, formatDateTime } from './utils/datetime.utils'
+import IPCLayout from './components/ipc-layout'
 
 const Layout = () => {
     const [profile] = useAtom(profileAtom)
@@ -177,6 +178,7 @@ const Layout = () => {
             </Box>
             <EventEmitterLayout />
             <EditorLayout />
+            <IPCLayout />
             <Drawer open={open} onClose={toggleDrawer(false)}>
                 {DrawerList}
             </Drawer>

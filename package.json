@@ -22,6 +22,7 @@
     "e2e": "playwright test",
     "test": "jest",
     "key:gen": "tsx scripts/generateKeyPair.ts",
+    "share": "tsx scripts/copy-shared-dir.ts",
     "generate": "drizzle-kit generate ",
     "migrate": "tsx migrate.ts",
     "studio": "drizzle-kit studio"
@@ -109,10 +110,5 @@
   },
   "engines": {
     "node": "^14.18.0 || >=16.0.0"
-  },
-  "externals": [
-    "better-sqlite3",
-    "drizzle-orm",
-    "electron-updater"
-  ]
+  }
 }
