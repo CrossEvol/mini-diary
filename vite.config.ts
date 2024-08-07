@@ -1,7 +1,7 @@
+import react from '@vitejs/plugin-react'
 import { rmSync } from 'node:fs'
 import path from 'node:path'
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 import electron from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
 import pkg from './package.json'
@@ -26,6 +26,31 @@ export default defineConfig(({ command }) => {
                     main: 'index.html',
                     datePicker: 'date-picker.html',
                     test: 'pages/date-picker/dist/index.html',
+                },
+                output: {
+                    entryFileNames: '[name].js', // Change JS file name if needed
+                    chunkFileNames: 'assets/[name].js',
+                    assetFileNames: 'assets/[name][extname]',
+                    manualChunks: (id, {}) => {
+                        if (id.includes('node_modules')) {
+                            if (id.includes('@blocknote'))
+                                return 'vender-block-note'
+                            if (id.includes('@mui')) return 'vendor-mui'
+                            if (id.includes('@emotion')) return 'vendor-emotion'
+                            if (id.includes('js-beautify'))
+                                return 'vendor-js-beautify'
+                            if (id.includes('localforage'))
+                                return 'vendor-localforage'
+                            if (id.includes('react-toastify'))
+                                return 'vendor-react-toastify'
+                            if (id.includes('react-calendar'))
+                                return 'vendor-react-calendar'
+                            return 'vendor'
+                        }
+                    },
+                    paths: {
+                        test: 'test.html',
+                    },
                 },
             },
         },

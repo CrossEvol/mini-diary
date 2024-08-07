@@ -27,6 +27,9 @@ export const exportDiaryHandler = async (
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openDirectory'],
     })
+    if (openDialogReturnValue.canceled) {
+        return
+    }
     const dir = openDialogReturnValue.filePaths[0]
 
     // deprecated

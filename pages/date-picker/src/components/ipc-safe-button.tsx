@@ -1,12 +1,11 @@
 import { NavigateData } from '@/views/home-view'
-import React, { lazy, Suspense } from 'react'
+import React, { Suspense } from 'react'
 import BeatLoader from 'react-spinners/BeatLoader'
+import IpcButton from './ipc-button'
 import { Button } from './ui/button'
 import { toast } from './ui/use-toast'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
-
-const IpcButton = lazy(() => import('./ipc-button')) // Your component
 
 interface IProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   data: NavigateData
@@ -34,7 +33,7 @@ function IpcSafeButton({ className, data }: IProps) {
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <IpcButton data={data} />
+          <IpcButton data={data} className={className} />
         </React.Fragment>
       )}
     </Suspense>

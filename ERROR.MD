@@ -33,3 +33,5 @@ Unable to preload CSS for file:///D:/WEB-Code/my-electron/mini-diary/release/0.0
 Error: Unable to preload CSS for file:///D:/WEB-Code/my-electron/mini-diary/release/0.0.1-snapshot/win-unpacked/resources/app.asar/dist/assets/index-BppIz9BB.css
     at HTMLLinkElement.<anonymous> (file:///D:/WEB-Code/my-electron/mini-diary/release/0.0.1-snapshot/win-unpacked/resources/app.asar/dist/assets/test-B77mtunr.js:70:5558
 ```
+
+can be resolved by not dynamic importing the IpcButton 

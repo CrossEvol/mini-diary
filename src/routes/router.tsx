@@ -1,27 +1,45 @@
 import ErrorPage from '@/error-page'
-import EditorView from '@/views/editor-view'
-import { createHashRouter } from 'react-router-dom'
+import { createHashRouter, RouteObject } from 'react-router-dom'
 import Layout from '../layout'
-import Counter from '../views/counter'
-import Home from '../views/home'
-import Len from '../views/len'
-import SignIn from '../views/sign-in'
-import SignUp from '../views/sign-up'
-import TodoList from '../views/todo-list'
+// import EditorView from '@/views/editor-view'
+// import Counter from '../views/counter'
+// import Home from '../views/home'
+// import Len from '../views/len'
+// import SignIn from '../views/sign-in'
+// import SignUp from '../views/sign-up'
+// import TodoList from '../views/todo-list'
+import { Suspense } from 'react'
+import Loading from './loading'
+import React from 'react'
 
-export const router = createHashRouter([
+const EditorView = React.lazy(() => import('@/views/editor-view'))
+const Counter = React.lazy(() => import('@/views/counter'))
+const Home = React.lazy(() => import('@/views/home'))
+const Len = React.lazy(() => import('@/views/len'))
+const SignIn = React.lazy(() => import('@/views/sign-in'))
+const SignUp = React.lazy(() => import('@/views/sign-up'))
+const TodoList = React.lazy(() => import('@/views/todo-list'))
+
+const routes: RouteObject[] = [
     {
         path: '/',
-        Component: Layout,
+        element: <Layout />,
         errorElement: <ErrorPage />,
         children: [
-            { path: '', index: true, Component: Home },
-            { path: 'sign-in', Component: SignIn },
-            { path: 'sign-up', Component: SignUp },
-            { path: 'counter', Component: Counter },
-            { path: 'todo', Component: TodoList },
-            { path: 'len', Component: Len },
-            { path: 'editor/:date', Component: EditorView },
-        ],
+            { path: '', index: true, element: <Home /> },
+            { path: 'sign-in', element: <SignIn /> },
+            { path: 'sign-up', element: <SignUp /> },
+            { path: 'counter', element: <Counter /> },
+            { path: 'todo', element: <TodoList /> },
+            { path: 'len', element: <Len /> },
+            { path: 'editor/:date', element: <EditorView /> },
+        ].map((route) => ({
+            ...route,
+            element: (
+                <Suspense fallback={<Loading />}>{route.element}</Suspense>
+            ),
+        })),
     },
-])
+]
+
+export const router = createHashRouter(routes)

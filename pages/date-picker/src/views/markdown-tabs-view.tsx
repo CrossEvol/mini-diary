@@ -38,7 +38,10 @@ const MarkdownTabsView = () => {
         <TabsList>
           <TabsTrigger value="account">Prettier</TabsTrigger>
           <TabsTrigger value="password">PlainText</TabsTrigger>
-          <IpcSafeButton data={location.state} className="sm:ml-20 md:ml-40" />
+          <IpcSafeButton
+            data={location.state}
+            className="uppercase sm:ml-20 md:ml-40"
+          />
         </TabsList>
         <TabsContent value="account" className="min-w-96 p-2">
           <Markdown remarkPlugins={[remarkGfm]}>{markdown}</Markdown>

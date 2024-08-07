@@ -1,4 +1,4 @@
-import IpcSafeButton from '@/components/ipc-safe-button'
+import IpcButton from '@/components/ipc-button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import parse, {
   DOMNode,
@@ -8,6 +8,7 @@ import parse, {
 import React, { useState } from 'react'
 import { Location, useLocation } from 'react-router-dom'
 import { NavigateData } from './home-view'
+import IpcSafeButton from '@/components/ipc-safe-button'
 
 const initialHtml = `
 <p id="main">
@@ -55,7 +56,10 @@ const HtmlTabsView = () => {
         <TabsList>
           <TabsTrigger value="account">Prettier</TabsTrigger>
           <TabsTrigger value="password">PlainText</TabsTrigger>
-          <IpcSafeButton data={location.state} className="sm:ml-20 md:ml-40" />
+          <IpcSafeButton
+            data={location.state}
+            className="uppercase sm:ml-20 md:ml-40"
+          />
         </TabsList>
         <TabsContent value="account" className="min-w-96 p-2">
           <div>{parse(html, options)}</div>
