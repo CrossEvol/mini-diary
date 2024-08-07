@@ -1,10 +1,10 @@
+import { EChannel } from '@/shared/enums'
 import { NavigateData } from '@/views/home-view'
-import { ipcRenderer } from 'electron'
 import React from 'react'
 import { Button } from './ui/button'
 
 interface IProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  data: NavigateData
+  data: Omit<NavigateData, 'date'>
 }
 
 const IpcButton = ({ data, className }: IProps) => {
@@ -13,7 +13,11 @@ const IpcButton = ({ data, className }: IProps) => {
       className={className}
       onClick={async () => {
         console.log(data)
-        ipcRenderer.send('')
+        console.log(`send data to ${EChannel.EDITOR_CONTENT}...`)
+        window.postMessage(
+          { ...data, channel: EChannel.EDITOR_CONTENT },
+          { targetOrigin: '*' }
+        )
       }}
     >
       Send

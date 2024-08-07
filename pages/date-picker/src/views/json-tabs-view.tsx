@@ -16,7 +16,7 @@ const JsonTabsView = () => {
   const location: Location<NavigateData> = useLocation()
 
   React.useEffect(() => {
-    if (!!location.state) {
+    if (location.state) {
       setJson(JSON.parse(location.state.content))
     }
 
@@ -37,15 +37,7 @@ const JsonTabsView = () => {
         <TabsContent value="password">
           <div className="rounded-md bg-black">
             <pre style={{ whiteSpace: 'pre-wrap' }} className="p-2 text-white">
-              {JSON.stringify(
-                {
-                  name: 'John Doe',
-                  age: 30,
-                  city: 'New York'
-                },
-                null,
-                2
-              )}
+              {JSON.stringify(json, null, 2)}
             </pre>
           </div>
         </TabsContent>

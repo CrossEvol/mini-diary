@@ -42,7 +42,7 @@ const HtmlTabsView = () => {
   const location: Location<NavigateData> = useLocation()
 
   React.useEffect(() => {
-    if (!!location.state) {
+    if (location.state) {
       setHtml(location.state.content)
     }
 

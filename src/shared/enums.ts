@@ -8,6 +8,7 @@ export enum EChannel {
     PORT_FROM_WORKER = 'port_from_worker',
     SEND_MESSAGE_PORT = 'send_message_port',
     SEND_SERVER_PORT = 'send_server_port',
+    EDITOR_CONTENT = 'editor_content',
     CLICK_MESSAGE = 'click_message',
     IMPORT_DIARY = 'import_diary',
     IMPORT_ALL_DIARY = 'import_all_diary',

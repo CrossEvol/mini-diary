@@ -9,8 +9,11 @@ import { useAtom } from 'jotai'
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 
-const createDiaryKey = (userID: number, date: string) =>
+export const createDiaryKey = (userID: number, date: string) =>
     `diary-${userID}-${date}`
+
+export const createDiaryPath = (username: string, date: string) =>
+    `diary-${username}-${date}`
 
 export default function Editor() {
     const location = useLocation()

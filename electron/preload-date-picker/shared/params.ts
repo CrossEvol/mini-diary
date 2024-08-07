@@ -1,4 +1,4 @@
-import { EFormat } from './enums'
+import { EChannel, EFormat } from './enums'
 
 export type EventResult<T> = {
     status: number
@@ -24,4 +24,21 @@ export type ExportParam = {
 export type ExportResult = {
     format: EFormat
     fileItems: FileItem[]
+}
+
+export type SendMessagePortData = {
+    format: EFormat
+    channel: EChannel
+}
+
+export type PickDateAndFormat = {
+    date: Date
+    format: EFormat
+}
+
+export type EditorContentData = {
+    format: EFormat
+    channel: EChannel
+    path: string
+    content: string
 }

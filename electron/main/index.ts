@@ -359,7 +359,7 @@ async function createWindow() {
             // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
             // Consider using contextBridge.exposeInMainWorld
             // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
-            nodeIntegration: false,
+            nodeIntegration: true,
             contextIsolation: true,
         },
     })
@@ -396,13 +396,15 @@ async function createWindow() {
 }
 
 app.whenReady().then(() => {
-    ipcMain.on(
+    // will be replaced by EChannel.EDITOR_CONTENT
+    /*  ipcMain.on(
         EChannel.EXPORT_DIARY_VALUE,
         (_event, value: EventResult<ExportResult>) => {
             console.log(value) // will print value to Node console
             win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
         }
-    )
+    ) */
+
     ipcMain.on(
         EChannel.EXPORT_ALL_DIARY_VALUE,
         (_event, value: EventResult<ExportResult>) => {

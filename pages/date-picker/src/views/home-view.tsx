@@ -21,14 +21,16 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { toast } from '@/components/ui/use-toast'
-import { portAtom } from '@/layout'
 import { cn } from '@/lib/utils'
 import { EFormat } from '@/shared/enums'
 import { useAtom } from 'jotai'
 import { useNavigate } from 'react-router-dom'
+import { portAtom } from '@/atoms/port.atom'
+import { formatAtom } from '@/atoms/format.atom'
 
 const EventDataSchema = z.object({
   format: z.enum([EFormat.HTML, EFormat.JSON, EFormat.MARKDOWN]),
+  path: z.string(),
   content: z.string()
 })
 
@@ -47,14 +49,26 @@ const FormSchema = z.object({
 export function CalendarForm() {
   const navigate = useNavigate()
   const [port] = useAtom(portAtom)
+  const [outputFormat] = useAtom(formatAtom)
   const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema)
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      chosenDate: new Date()
+    }
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    if (!!port) {
-      port.postMessage(data.chosenDate)
+    if (port) {
+      port.postMessage({ date: data.chosenDate, format: outputFormat })
       port.onmessage = (event: MessageEvent<EventData>) => {
+        if (!event.data.content) {
+          toast({
+            variant: 'destructive',
+            title: 'Uh oh! Something went wrong.',
+            description: 'There was a problem with your request.'
+          })
+          return
+        }
         switch (event.data.format) {
           case EFormat.HTML: {
             navigate(`/${EFormat.HTML}`, {

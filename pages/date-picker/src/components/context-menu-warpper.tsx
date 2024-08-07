@@ -1,8 +1,8 @@
 import {
-    ContextMenu,
-    ContextMenuContent,
-    ContextMenuItem,
-    ContextMenuTrigger
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger
 } from '@/components/ui/context-menu'
 import { EFormat } from '@/shared/enums'
 import { PropsWithChildren } from 'react'

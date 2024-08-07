@@ -1,7 +1,14 @@
-import { BrowserWindow, dialog } from 'electron'
-import { readFile } from 'node:fs/promises'
+import { BrowserWindow, dialog, ipcMain, MessageChannelMain } from 'electron'
+import { readFile, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import mainLogger from './logging/main.logger'
 import { EChannel, EFormat } from './shared/enums'
-import { ExportParam, FileItem, ImportParam } from './shared/params'
+import {
+    EditorContentData,
+    ExportParam,
+    FileItem,
+    ImportParam,
+} from './shared/params'
 
 // TODO wait for worker bundle
 /* export let port = 0
@@ -20,10 +27,82 @@ export const exportDiaryHandler = async (
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openDirectory'],
     })
-    mainWindow?.webContents.send(EChannel.EXPORT_DIARY, {
+    const dir = openDialogReturnValue.filePaths[0]
+
+    // deprecated
+    /*  mainWindow?.webContents.send(EChannel.EXPORT_DIARY, {
         format,
-        dir: openDialogReturnValue.filePaths[0],
-    } as ExportParam)
+        dir,
+    } as ExportParam) */
+
+    // set up the channel.
+    const { port1, port2 } = new MessageChannelMain()
+
+    const subWindow = new BrowserWindow({
+        width: 800,
+        height: 1080,
+        parent: undefined,
+        modal: true,
+        title: 'Editor Content Preview',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: true,
+            preload: join(__dirname, '../preload-date-picker/index.js'),
+        },
+        autoHideMenuBar: false,
+        resizable: false,
+    })
+
+    const datePickerUrl =
+        process.env.NODE_ENV === 'development'
+            ? 'pages/date-picker/dist/index.html'
+            : join(process.env.DIST, 'pages/date-picker/dist/index.html')
+    console.log(datePickerUrl)
+    subWindow.loadFile(datePickerUrl)
+
+    mainWindow?.webContents.postMessage(EChannel.SEND_MESSAGE_PORT, format, [
+        port1,
+    ])
+    // The preload script will receive this IPC message and transfer the port
+    // over to the main world.
+    subWindow.once('ready-to-show', () => {
+        subWindow.webContents.postMessage(EChannel.SEND_MESSAGE_PORT, format, [
+            port2,
+        ])
+    })
+
+    ipcMain.once(
+        EChannel.EDITOR_CONTENT,
+        async (_event, value: EditorContentData) => {
+            const { path, format, content } = value
+            mainLogger.info(value)
+            try {
+                await writeFile(join(dir, `${path}.${format}`), content, {
+                    encoding: 'utf-8',
+                })
+                subWindow.close()
+                setTimeout(
+                    () =>
+                        mainWindow?.webContents.send(
+                            EChannel.NOTIFY_SUCCESS,
+                            'SUCCESS'
+                        ),
+                    500
+                )
+            } catch (error) {
+                mainLogger.error(error)
+                subWindow.close()
+                setTimeout(
+                    () =>
+                        mainWindow?.webContents.send(
+                            EChannel.NOTIFY_ERROR,
+                            error
+                        ),
+                    500
+                )
+            }
+        }
+    )
 }
 
 export const exportAllDiariesHandler = async (

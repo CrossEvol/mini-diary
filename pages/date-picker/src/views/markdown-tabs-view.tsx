@@ -25,7 +25,7 @@ const MarkdownTabsView = () => {
   const location: Location<NavigateData> = useLocation()
 
   React.useEffect(() => {
-    if (!!location.state) {
+    if (location.state) {
       setMarkdown(location.state.content)
     }
 
