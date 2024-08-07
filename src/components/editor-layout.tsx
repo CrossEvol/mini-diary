@@ -26,7 +26,7 @@ const EditorLayout = () => {
     React.useEffect(() => {
         if (!!port) {
             // We can also receive messages from the main world of the renderer.
-            port.onmessage = (event) => {
+            port.onmessage = (event:MessageEvent) => {
                 console.log(
                     'from renderer main world:',
                     formatDateTime(event.data, DateTimeFormatEnum.DAY_FORMAT)

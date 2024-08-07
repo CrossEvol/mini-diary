@@ -1,17 +1,20 @@
+import IpcSafeButton from '@/components/ipc-safe-button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import parse, {
   DOMNode,
   domToReact,
   HTMLReactParserOptions
 } from 'html-react-parser'
-import React from 'react'
+import React, { useState } from 'react'
+import { Location, useLocation } from 'react-router-dom'
+import { NavigateData } from './home-view'
 
-const html = `
-  <p id="main">
-    <span class="prettify">
-      keep me and make me pretty!
-    </span>
-  </p>
+const initialHtml = `
+<p id="main">
+  <span class="prettify">
+    keep me and make me pretty!
+  </span>
+</p>
 `
 
 const options: HTMLReactParserOptions = {
@@ -35,23 +38,31 @@ const options: HTMLReactParserOptions = {
 }
 
 const HtmlTabsView = () => {
+  const [html, setHtml] = useState(initialHtml)
+  const location: Location<NavigateData> = useLocation()
+
   React.useEffect(() => {
+    if (!!location.state) {
+      setHtml(location.state.content)
+    }
+
     return () => {}
-  }, [])
+  }, [location.state])
 
   return (
     <div className="flex h-screen w-screen items-start justify-center">
-      <Tabs defaultValue="account" className="w-[400px]">
+      <Tabs defaultValue="account" className="m-4 w-[400px]">
         <TabsList>
-          <TabsTrigger value="account">Show</TabsTrigger>
-          <TabsTrigger value="password">Text</TabsTrigger>
+          <TabsTrigger value="account">Prettier</TabsTrigger>
+          <TabsTrigger value="password">PlainText</TabsTrigger>
+          <IpcSafeButton data={location.state} className="sm:ml-20 md:ml-40" />
         </TabsList>
-        <TabsContent value="account">
+        <TabsContent value="account" className="min-w-96 p-2">
           <div>{parse(html, options)}</div>
         </TabsContent>
         <TabsContent value="password">
-          <div className="bg-black">
-            <pre style={{ whiteSpace: 'pre-wrap' }} className="text-white">
+          <div className="rounded-md bg-black">
+            <pre style={{ whiteSpace: 'pre-wrap' }} className="p-2 text-white">
               {html}
             </pre>
           </div>

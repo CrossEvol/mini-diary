@@ -1,7 +1,7 @@
-import React, { lazy, Suspense, startTransition } from 'react'
-import { createHashRouter, RouteObject } from 'react-router-dom'
-import Layout from '../layout'
-import FallbackComponent from '@/components/fallback-component' // Import your fallback component
+import FallbackComponent from '@/components/fallback-component'; // Import your fallback component
+import React, { lazy, startTransition, Suspense } from 'react';
+import { createHashRouter, RouteObject } from 'react-router-dom';
+import Layout from '../layout';
 
 const loadComponent = (
   importFunction: () => Promise<{ default: React.ComponentType<any> }>
@@ -32,7 +32,7 @@ const routes: RouteObject[] = [
       { path: '', index: true, element: <HomeView /> },
       { path: 'json', element: <JsonTabsView /> },
       { path: 'html', element: <HtmlTabsView /> },
-      { path: 'markdown', element: <MarkdownTabsView /> }
+      { path: 'md', element: <MarkdownTabsView /> }
     ].map((route) => ({
       ...route,
       element: (

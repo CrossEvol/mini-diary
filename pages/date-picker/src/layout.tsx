@@ -1,6 +1,7 @@
 import { atom, useAtom } from 'jotai'
-import React, { useState } from 'react'
+import React from 'react'
 import { Outlet } from 'react-router-dom'
+import ContextMenuWrapper from './components/context-menu-warpper'
 import { EChannel } from './shared/enums'
 
 export const portAtom = atom<MessagePort | null>(null)
@@ -25,7 +26,9 @@ const Layout = () => {
 
   return (
     <div>
-      <Outlet />
+      <ContextMenuWrapper>
+        <Outlet />
+      </ContextMenuWrapper>
     </div>
   )
 }

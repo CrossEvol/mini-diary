@@ -21,17 +21,31 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { toast } from '@/components/ui/use-toast'
-import { cn } from '@/lib/utils'
-import { useAtom } from 'jotai'
 import { portAtom } from '@/layout'
+import { cn } from '@/lib/utils'
+import { EFormat } from '@/shared/enums'
+import { useAtom } from 'jotai'
+import { useNavigate } from 'react-router-dom'
+
+const EventDataSchema = z.object({
+  format: z.enum([EFormat.HTML, EFormat.JSON, EFormat.MARKDOWN]),
+  content: z.string()
+})
+
+type EventData = z.infer<typeof EventDataSchema>
+
+const NavigateDataSchema = EventDataSchema.extend({ date: z.date() })
+
+export type NavigateData = z.infer<typeof NavigateDataSchema>
 
 const FormSchema = z.object({
-  dob: z.date({
+  chosenDate: z.date({
     required_error: 'A date of birth is required.'
   })
 })
 
 export function CalendarForm() {
+  const navigate = useNavigate()
   const [port] = useAtom(portAtom)
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema)
@@ -39,9 +53,28 @@ export function CalendarForm() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     if (!!port) {
-      port.postMessage(data.dob)
-      port.onmessage = (event) => {
-        console.log('from main process:', event.data)
+      port.postMessage(data.chosenDate)
+      port.onmessage = (event: MessageEvent<EventData>) => {
+        switch (event.data.format) {
+          case EFormat.HTML: {
+            navigate(`/${EFormat.HTML}`, {
+              state: { ...event.data, date: data.chosenDate }
+            })
+            break
+          }
+          case EFormat.JSON: {
+            navigate(`/${EFormat.JSON}`, {
+              state: { ...event.data, date: data.chosenDate }
+            })
+            break
+          }
+          case EFormat.MARKDOWN: {
+            navigate(`/${EFormat.MARKDOWN}`, {
+              state: { ...event.data, date: data.chosenDate }
+            })
+            break
+          }
+        }
       }
       port.start()
     }
@@ -61,7 +94,7 @@ export function CalendarForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="dob"
+          name="chosenDate"
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Date of birth</FormLabel>
