@@ -37,7 +37,7 @@ const EventDataSchema = z.object({
 
 type EventData = z.infer<typeof EventDataSchema>
 
-const NavigateDataSchema = EventDataSchema.extend({ date: z.date() })
+const NavigateDataSchema = EventDataSchema.extend({ date: z.string() })
 
 export type NavigateData = z.infer<typeof NavigateDataSchema>
 
@@ -73,19 +73,19 @@ export function CalendarForm() {
         switch (event.data.format) {
           case EFormat.HTML: {
             navigate(`/${EFormat.HTML}`, {
-              state: { ...event.data, date: data.chosenDate }
+              state: { ...event.data}
             })
             break
           }
           case EFormat.JSON: {
             navigate(`/${EFormat.JSON}`, {
-              state: { ...event.data, date: data.chosenDate }
+              state: { ...event.data}
             })
             break
           }
           case EFormat.MARKDOWN: {
             navigate(`/${EFormat.MARKDOWN}`, {
-              state: { ...event.data, date: data.chosenDate }
+              state: { ...event.data }
             })
             break
           }

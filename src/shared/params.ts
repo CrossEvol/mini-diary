@@ -56,3 +56,11 @@ export type EditorContentData = {
     content: string
     contentToBeDiff: string
 }
+
+export type NotifyParam = {
+    message: string
+    hasSucceed: boolean
+    redirectUrl?: string
+}
+
+export const newNotifyParam = (param: NotifyParam) => param

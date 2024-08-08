@@ -22,6 +22,7 @@ const JsonTabsView = () => {
   const shouldDiff = !!secondaryJson && JSON.stringify(secondaryJson) !== '{}'
 
   React.useEffect(() => {
+    console.log(location.state)
     if (location.state) {
       setPrimaryJson(JSON.parse(location.state.content))
       location.state.contentToBeImported &&

@@ -12,7 +12,6 @@ const IpcButton = ({ data, className }: IProps) => {
     <Button
       className={className}
       onClick={async () => {
-        console.log(data)
         console.log(`send data to ${EChannel.EDITOR_CONTENT}...`)
         window.postMessage(
           { ...data, channel: EChannel.EDITOR_CONTENT },

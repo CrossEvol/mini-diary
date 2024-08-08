@@ -50,8 +50,8 @@ export default defineConfig(({ command }) => {
                                 return `vendor-mdast-util`
                             if (id.includes('unist-util'))
                                 return `vendor-unist-util`
-                            if (id.includes('markdown'))
-                                return `vendor-markdown`
+                            if (id.includes('markdown-it'))
+                                return `vendor-markdown-it`
                             if (id.includes('@floating-ui'))
                                 return `vendor-floating-ui`
                             if (id.includes('@mui')) return 'vendor-mui'

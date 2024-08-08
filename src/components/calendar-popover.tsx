@@ -16,8 +16,9 @@ import * as React from 'react'
 import { useState } from 'react'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 
+import { extraDateFromEditorRoute, isEditorRoute } from '@/utils/regExp.utils'
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
@@ -136,6 +137,7 @@ const CalendarBar = () => {
 
 export default function CalendarPopover() {
     const navigate = useNavigate()
+    const location = useLocation()
     const [chosenDate, setChosenDate] = useState<Value>(new Date())
 
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
@@ -152,6 +154,12 @@ export default function CalendarPopover() {
 
     const open = Boolean(anchorEl)
     const id = open ? 'simple-popover' : undefined
+
+    React.useEffect(() => {
+        if (isEditorRoute(location.pathname)) {
+            setChosenDate(extraDateFromEditorRoute(location.pathname))
+        }
+    }, [location.pathname])
 
     return (
         <div>

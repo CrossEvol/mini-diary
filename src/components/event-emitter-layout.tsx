@@ -67,10 +67,17 @@ const EventEmitterLayout = () => {
             })
 
             window.electronAPI.onNotifySuccess((value) => {
-                navigate('/counter')
-                setTimeout(() => notifySuccess(value), 100)
+                setTimeout(() => notifySuccess(value.message), 100)
+                if (value.redirectUrl) {
+                    navigate(value.redirectUrl)
+                }
             })
-            window.electronAPI.onNotifyError((value) => notifyError(value))
+            window.electronAPI.onNotifyError((value) => {
+                setTimeout(() => notifyError(value.message), 100)
+                if (value.redirectUrl) {
+                    navigate(value.redirectUrl)
+                }
+            })
         }
 
         return () => {

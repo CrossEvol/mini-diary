@@ -23,7 +23,12 @@ import {
 import mainLogger from './logging/main.logger'
 import { showMessageBox } from './message-box'
 import { EChannel, EFormat } from './shared/enums'
-import { EventResult, ExportResult, ImportResult } from './shared/params'
+import {
+    EventResult,
+    ExportResult,
+    ImportResult,
+    newNotifyParam,
+} from './shared/params'
 import { update } from './update'
 import { startHonoServer } from './util/net.util'
 
@@ -399,15 +404,6 @@ async function createWindow() {
 }
 
 app.whenReady().then(() => {
-    // will be replaced by EChannel.EDITOR_CONTENT
-    /*  ipcMain.on(
-        EChannel.EXPORT_DIARY_VALUE,
-        (_event, value: EventResult<ExportResult>) => {
-            console.log(value) // will print value to Node console
-            win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
-        }
-    ) */
-
     ipcMain.on(
         EChannel.EXPORT_ALL_DIARY_VALUE,
         (_event, value: EventResult<ExportResult>) => {
@@ -421,25 +417,28 @@ app.whenReady().then(() => {
                 )
             )
                 .then((res) =>
-                    win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
+                    win?.webContents.send(
+                        EChannel.NOTIFY_SUCCESS,
+                        newNotifyParam({ message: 'SUCCESS', hasSucceed: true })
+                    )
                 )
                 .catch((err) =>
-                    win?.webContents.send(EChannel.NOTIFY_ERROR, err)
+                    win?.webContents.send(
+                        EChannel.NOTIFY_ERROR,
+                        newNotifyParam({ message: err, hasSucceed: false })
+                    )
                 )
         }
     )
-    // ipcMain.on(
-    //     EChannel.IMPORT_DIARY_VALUE,
-    //     (_event, value: EventResult<ImportResult>) => {
-    //         mainLogger.info(value)
-    //         win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
-    //     }
-    // )
+
     ipcMain.on(
         EChannel.IMPORT_ALL_DIARY_VALUE,
         (_event, value: EventResult<ImportResult>) => {
             mainLogger.info(value)
-            win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
+            win?.webContents.send(
+                EChannel.NOTIFY_ERROR,
+                newNotifyParam({ message: 'ERROR', hasSucceed: false })
+            )
         }
     )
     // ipcMain.on(EChannel.PORT_FROM_WORKER, handlePortFromWorkerThread) // maybe be useful once I solve how to  bundle the worker

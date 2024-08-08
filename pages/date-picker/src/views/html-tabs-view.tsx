@@ -47,6 +47,7 @@ const HtmlTabsView = () => {
   const shouldDiff = !!secondaryHtml.length
 
   React.useEffect(() => {
+    console.log(location.state)
     if (location.state) {
       setPrimaryHtml(location.state.content)
       location.state.contentToBeImported &&

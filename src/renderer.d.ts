@@ -4,6 +4,7 @@ import {
     ExportResult,
     ImportParam,
     ImportResult,
+    NotifyParam,
 } from '@/shared/params'
 
 export interface IElectronAPI {
@@ -22,8 +23,8 @@ export interface IElectronAPI {
     onImportAllDiaries: (callback: (arg0: ImportParam) => void) => void
     allDiaryImportsValue: (value: EventResult<ImportResult>) => void
 
-    onNotifySuccess: (callback: (arg0: string) => void) => void
-    onNotifyError: (callback: (arg0: string) => void) => void
+    onNotifySuccess: (callback: (arg0: NotifyParam) => void) => void
+    onNotifyError: (callback: (arg0: NotifyParam) => void) => void
 }
 
 declare global {

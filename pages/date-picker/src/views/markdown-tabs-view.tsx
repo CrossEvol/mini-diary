@@ -30,6 +30,7 @@ const MarkdownTabsView = () => {
   const shouldDiff = !!secondaryMarkdown
 
   React.useEffect(() => {
+    console.log(location.state)
     if (location.state) {
       setPrimaryMarkdown(location.state.content)
       location.state.contentToBeImported &&

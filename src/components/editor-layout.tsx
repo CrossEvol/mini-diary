@@ -78,21 +78,20 @@ const EditorLayout = () => {
             // We can also receive messages from the main world of the renderer.
             port.onmessage = async (event: MessageEvent<PickDateAndFormat>) => {
                 const { date, format } = event.data
-                console.log(
-                    'from renderer main world:',
-                    formatDateTime(date, DateTimeFormatEnum.DAY_FORMAT)
+                const formattedDate = formatDateTime(
+                    date,
+                    DateTimeFormatEnum.DATE_FORMAT
                 )
+                console.log('from renderer main world:', formattedDate)
                 const content = await loadContent(
-                    createDiaryKey(
-                        profile?.id ?? 0,
-                        formatDateTime(date, DateTimeFormatEnum.DATE_FORMAT)
-                    )
+                    createDiaryKey(profile?.id ?? 0, formattedDate)
                 )
                 port.postMessage({
+                    date: formattedDate,
                     format,
                     path: createDiaryPath(
                         profile?.nickname ?? 'unknown',
-                        formatDateTime(date, DateTimeFormatEnum.DATE_FORMAT)
+                        formattedDate
                     ),
                     content: toBeImported
                         ? content

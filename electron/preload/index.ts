@@ -5,6 +5,7 @@ import {
     ExportResult,
     ImportParam,
     ImportResult,
+    NotifyParam,
     SendMessagePortData,
     VerifyImportData,
 } from './shared/params'
@@ -72,12 +73,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     allDiaryImportsValue: (value: EventResult<ImportResult>) =>
         ipcRenderer.send(EChannel.IMPORT_ALL_DIARY_VALUE, value),
 
-    onNotifySuccess: (callback: (arg0: string) => void) =>
-        ipcRenderer.on(EChannel.NOTIFY_SUCCESS, (_event, value: string) =>
+    onNotifySuccess: (callback: (arg0: NotifyParam) => void) =>
+        ipcRenderer.on(EChannel.NOTIFY_SUCCESS, (_event, value: NotifyParam) =>
             callback(value)
         ),
-    onNotifyError: (callback: (arg0: string) => void) =>
-        ipcRenderer.on(EChannel.NOTIFY_ERROR, (_event, value: string) =>
+    onNotifyError: (callback: (arg0: NotifyParam) => void) =>
+        ipcRenderer.on(EChannel.NOTIFY_ERROR, (_event, value: NotifyParam) =>
             callback(value)
         ),
 })

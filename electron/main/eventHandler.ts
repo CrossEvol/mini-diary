@@ -16,6 +16,7 @@ import {
     FileItem,
     ImportAllParam,
     ImportParam,
+    newNotifyParam,
     SendMessagePortData,
 } from './shared/params'
 
@@ -69,7 +70,10 @@ export const exportDiaryHandler = async (
                     () =>
                         mainWindow?.webContents.send(
                             EChannel.NOTIFY_SUCCESS,
-                            'SUCCESS'
+                            newNotifyParam({
+                                message: 'SUCCESS',
+                                hasSucceed: true,
+                            })
                         ),
                     500
                 )
@@ -80,7 +84,10 @@ export const exportDiaryHandler = async (
                     () =>
                         mainWindow?.webContents.send(
                             EChannel.NOTIFY_ERROR,
-                            error
+                            newNotifyParam({
+                                message: JSON.stringify(error),
+                                hasSucceed: false,
+                            })
                         ),
                     500
                 )
@@ -107,6 +114,7 @@ export const importDiaryHandler = async (
     format: EFormat
 ) => {
     const openDialogReturnValue = await dialog.showOpenDialog({
+        filters: [createFileFilters(format)],
         properties: ['openFile'],
     })
     if (openDialogReturnValue.canceled) {
@@ -147,7 +155,11 @@ export const importDiaryHandler = async (
                                 () =>
                                     mainWindow?.webContents.send(
                                         EChannel.NOTIFY_SUCCESS,
-                                        'SUCCESS'
+                                        newNotifyParam({
+                                            message: 'SUCCESS',
+                                            hasSucceed: true,
+                                            redirectUrl: `/editor/${date}`,
+                                        })
                                     ),
                                 500
                             )
@@ -158,7 +170,10 @@ export const importDiaryHandler = async (
                                 () =>
                                     mainWindow?.webContents.send(
                                         EChannel.NOTIFY_ERROR,
-                                        error
+                                        newNotifyParam({
+                                            message: JSON.stringify(error),
+                                            hasSucceed: true,
+                                        })
                                     ),
                                 500
                             )
@@ -240,4 +255,18 @@ const createTempSubWindow = <T>(
         ])
     })
     return subWindow
+}
+
+const createFileFilters = (format: EFormat): Electron.FileFilter => {
+    switch (format) {
+        case EFormat.JSON:
+            return { name: 'json-filter', extensions: ['json'] }
+        case EFormat.HTML:
+            return { name: 'html-filter', extensions: ['html', 'htm'] }
+        case EFormat.MARKDOWN:
+            return {
+                name: 'md-filter',
+                extensions: ['md', 'mdown', 'markdown'],
+            }
+    }
 }
