@@ -8,6 +8,7 @@ import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import fetchClient from '@/utils/fetch.client'
 import { beautifyHtml } from '@/utils/html.util'
 import { extractDataByDiaryKey } from '@/utils/regExp.utils'
+import { createDiaryKey, createDiaryPath } from '@/utils/string.util'
 import { PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
@@ -17,7 +18,6 @@ import { useAtom } from 'jotai'
 import localforage from 'localforage'
 import { join } from 'path-browserify'
 import React from 'react'
-import { createDiaryKey, createDiaryPath } from './editor'
 
 const EditorLayout = () => {
     const [port] = useAtom(portAtom)

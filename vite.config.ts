@@ -5,6 +5,7 @@ import { defineConfig } from 'vite'
 import electron from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
 import pkg from './package.json'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -33,9 +34,29 @@ export default defineConfig(({ command }) => {
                     assetFileNames: 'assets/[name][extname]',
                     manualChunks: (id, {}) => {
                         if (id.includes('node_modules')) {
+                            if (id.includes('parse5')) return `vendor-parse5`
+                            if (id.includes('@mantine')) return `vendor-mantine`
+                            if (id.includes('micromark'))
+                                return `vendor-micromark`
+                            if (id.includes('@popperjs')) return `vendor-popper`
+                            if (id.includes('emoji')) return `vendor-emoji`
+                            if (id.includes('@tiptap')) return `vendor-tiptap`
+                            if (id.includes('prosemirror'))
+                                return `vendor-prosemirror`
+                            if (id.includes('yjs')) return `vendor-yjs`
+                            if (id.includes('hast-util'))
+                                return `vendor-hast-util`
+                            if (id.includes('mdast-util'))
+                                return `vendor-mdast-util`
+                            if (id.includes('unist-util'))
+                                return `vendor-unist-util`
+                            if (id.includes('markdown'))
+                                return `vendor-markdown`
+                            if (id.includes('@floating-ui'))
+                                return `vendor-floating-ui`
+                            if (id.includes('@mui')) return 'vendor-mui'
                             if (id.includes('@blocknote'))
                                 return 'vender-block-note'
-                            if (id.includes('@mui')) return 'vendor-mui'
                             if (id.includes('@emotion')) return 'vendor-emotion'
                             if (id.includes('js-beautify'))
                                 return 'vendor-js-beautify'
@@ -56,6 +77,7 @@ export default defineConfig(({ command }) => {
         },
         plugins: [
             react(),
+            visualizer({ open: true, filename: 'ce-stats.html' }),
             electron([
                 {
                     // Main-Process entry file of the Electron App.

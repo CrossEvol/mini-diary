@@ -1,5 +1,6 @@
 import { profileAtom } from '@/atoms/profile.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
+import { createDiaryKey } from '@/utils/string.util'
 import { uploadFile } from '@/utils/uploadFile'
 import { BlockNoteEditor, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
@@ -8,12 +9,6 @@ import '@blocknote/mantine/style.css'
 import { useAtom } from 'jotai'
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-
-export const createDiaryKey = (userID: number, date: string) =>
-    `diary-${userID}-${date}`
-
-export const createDiaryPath = (username: string, date: string) =>
-    `diary-${username}-${date}`
 
 export default function Editor() {
     const location = useLocation()

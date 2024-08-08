@@ -1,16 +1,8 @@
 import ErrorPage from '@/error-page'
+import React, { Suspense } from 'react'
 import { createHashRouter, RouteObject } from 'react-router-dom'
 import Layout from '../layout'
-// import EditorView from '@/views/editor-view'
-// import Counter from '../views/counter'
-// import Home from '../views/home'
-// import Len from '../views/len'
-// import SignIn from '../views/sign-in'
-// import SignUp from '../views/sign-up'
-// import TodoList from '../views/todo-list'
-import { Suspense } from 'react'
 import Loading from './loading'
-import React from 'react'
 
 const EditorView = React.lazy(() => import('@/views/editor-view'))
 const Counter = React.lazy(() => import('@/views/counter'))
