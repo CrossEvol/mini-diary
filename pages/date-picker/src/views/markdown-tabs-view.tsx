@@ -32,7 +32,7 @@ const MarkdownTabsView = () => {
   React.useEffect(() => {
     if (location.state) {
       setPrimaryMarkdown(location.state.content)
-      setSecondaryMarkdown(location.state.contentToBeDiff)
+      setSecondaryMarkdown(location.state.contentToBeImported)
     }
 
     return () => {}

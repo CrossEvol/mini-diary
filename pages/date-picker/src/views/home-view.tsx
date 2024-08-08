@@ -32,7 +32,7 @@ const EventDataSchema = z.object({
   format: z.enum([EFormat.HTML, EFormat.JSON, EFormat.MARKDOWN]),
   path: z.string(),
   content: z.string(),
-  contentToBeDiff:z.string()
+  contentToBeImported: z.string()
 })
 
 type EventData = z.infer<typeof EventDataSchema>

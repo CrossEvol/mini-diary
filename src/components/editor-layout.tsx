@@ -82,7 +82,7 @@ const EditorLayout = () => {
                         formatDateTime(date, DateTimeFormatEnum.DATE_FORMAT)
                     ),
                     content: await formatEditorContent(format, content),
-                    contentToBeDiff: await loadImportContent(),
+                    contentToBeImported: await loadImportContent(),
                 })
                 port.start()
             }

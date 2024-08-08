@@ -24,7 +24,7 @@ const JsonTabsView = () => {
   React.useEffect(() => {
     if (location.state) {
       setPrimaryJson(JSON.parse(location.state.content))
-      setSecondaryJson(JSON.parse(location.state.contentToBeDiff))
+      setSecondaryJson(JSON.parse(location.state.contentToBeImported))
     }
 
     return () => {}

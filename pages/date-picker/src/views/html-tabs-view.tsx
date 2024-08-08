@@ -49,7 +49,7 @@ const HtmlTabsView = () => {
   React.useEffect(() => {
     if (location.state) {
       setPrimaryHtml(location.state.content)
-      setSecondaryHtml(location.state.contentToBeDiff)
+      setSecondaryHtml(location.state.contentToBeImported)
     }
 
     return () => {}
