@@ -1,4 +1,7 @@
+import DiffBox from '@/components/diff-box'
 import IpcSafeButton from '@/components/ipc-safe-button'
+import PlainTextDiffBox from '@/components/plain-text-diff-box'
+import PlainTextFrame from '@/components/plain-text-frame'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import React, { useState } from 'react'
 import Markdown from 'react-markdown'
@@ -21,19 +24,22 @@ A table:
 `
 
 const MarkdownTabsView = () => {
-  const [markdown, setMarkdown] = useState(initialMarkdown)
+  const [primaryMarkdown, setPrimaryMarkdown] = useState(initialMarkdown)
+  const [secondaryMarkdown, setSecondaryMarkdown] = useState('')
   const location: Location<NavigateData> = useLocation()
+  const shouldDiff = !!secondaryMarkdown
 
   React.useEffect(() => {
     if (location.state) {
-      setMarkdown(location.state.content)
+      setPrimaryMarkdown(location.state.content)
+      setSecondaryMarkdown(location.state.contentToBeDiff)
     }
 
     return () => {}
   }, [location.state])
 
   return (
-    <div className="flex h-screen w-screen items-start justify-center">
+    <div className="flex h-screen w-screen items-start justify-start">
       <Tabs defaultValue="account" className="m-4 w-[400px]">
         <TabsList>
           <TabsTrigger value="account">Prettier</TabsTrigger>
@@ -44,14 +50,32 @@ const MarkdownTabsView = () => {
           />
         </TabsList>
         <TabsContent value="account" className="min-w-96 p-2">
-          <Markdown remarkPlugins={[remarkGfm]}>{markdown}</Markdown>
+          {shouldDiff ? (
+            <DiffBox
+              primary={
+                <Markdown remarkPlugins={[remarkGfm]}>
+                  {primaryMarkdown}
+                </Markdown>
+              }
+              secondary={
+                <Markdown remarkPlugins={[remarkGfm]}>
+                  {secondaryMarkdown}
+                </Markdown>
+              }
+            />
+          ) : (
+            <Markdown remarkPlugins={[remarkGfm]}>{primaryMarkdown}</Markdown>
+          )}
         </TabsContent>
         <TabsContent value="password">
-          <div className="rounded-md bg-black">
-            <pre style={{ whiteSpace: 'pre-wrap' }} className="p-2 text-white">
-              {markdown}
-            </pre>
-          </div>
+          {shouldDiff ? (
+            <PlainTextDiffBox
+              primary={primaryMarkdown}
+              secondary={secondaryMarkdown}
+            />
+          ) : (
+            <PlainTextFrame plainText={primaryMarkdown} />
+          )}
         </TabsContent>
       </Tabs>
     </div>

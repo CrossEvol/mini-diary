@@ -2,6 +2,7 @@ import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { portAtom } from '@/atoms/message-port.atom'
 import { profileAtom } from '@/atoms/profile.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
+import { useImportContentStorage } from '@/hooks/useImportContentStorage'
 import { EFormat } from '@/shared/enums'
 import { ExportParam, ImportParam, PickDateAndFormat } from '@/shared/params'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
@@ -9,7 +10,7 @@ import fetchClient from '@/utils/fetch.client'
 import { beautifyHtml } from '@/utils/html.util'
 import { extractDataByDiaryKey } from '@/utils/regExp.utils'
 import { createDiaryKey, createDiaryPath } from '@/utils/string.util'
-import { PartialBlock } from '@blocknote/core'
+import { Block, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
 import { useCreateBlockNote } from '@blocknote/react'
@@ -23,8 +24,20 @@ const EditorLayout = () => {
     const [port] = useAtom(portAtom)
     const editor = useCreateBlockNote()
     const [eventEmitter] = useAtom(eventEmitterAtom)
-    const { loadContent } = useEditorStorage()
+    const { loadContent, saveContent } = useEditorStorage()
     const [profile] = useAtom(profileAtom)
+    const { removeImportContent, loadImportContent } = useImportContentStorage()
+
+    const parseEditorContent = async (format: EFormat, content: string) => {
+        switch (format) {
+            case EFormat.HTML:
+                return await editor.tryParseHTMLToBlocks(content)
+            case EFormat.MARKDOWN:
+                return await editor.tryParseMarkdownToBlocks(content)
+            case EFormat.JSON:
+                return JSON.parse(content) as Block[]
+        }
+    }
 
     const formatEditorContent = async (
         format: EFormat,
@@ -69,6 +82,7 @@ const EditorLayout = () => {
                         formatDateTime(date, DateTimeFormatEnum.DATE_FORMAT)
                     ),
                     content: await formatEditorContent(format, content),
+                    contentToBeDiff: await loadImportContent(),
                 })
                 port.start()
             }
@@ -148,11 +162,17 @@ const EditorLayout = () => {
             EmitterEvent.IMPORT_DIARY,
             async (value: ImportParam) => {
                 console.log(value)
-                window.electronAPI.diaryImportValue({
-                    data: null,
-                    status: StatusCodes.OK,
-                    message: '',
-                })
+                await saveContent(
+                    createDiaryKey(
+                        profile?.id ?? 0,
+                        formatDateTime(
+                            value.date,
+                            DateTimeFormatEnum.DATE_FORMAT
+                        )
+                    ),
+                    await parseEditorContent(value.format, value.content)
+                )
+                await removeImportContent()
             }
         )
         eventEmitter.on(

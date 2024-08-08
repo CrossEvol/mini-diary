@@ -8,7 +8,9 @@ import {
 
 export interface IElectronAPI {
     onUpdatePort: (callback: (port: number) => void) => void
-    onVerifyImport: (callback: (arg0: VerifyImportData) => boolean) => void
+    onVerifyImport: (
+        callback: (arg0: VerifyImportData) => Promise<boolean>
+    ) => void
 
     onExportDiary: (callback: (arg0: ExportParam) => void) => void
     diaryExportValue: (value: EventResult<ExportResult>) => void

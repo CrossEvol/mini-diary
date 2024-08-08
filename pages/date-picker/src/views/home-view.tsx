@@ -4,6 +4,8 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { formatAtom } from '@/atoms/format.atom'
+import { portAtom } from '@/atoms/port.atom'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -25,13 +27,12 @@ import { cn } from '@/lib/utils'
 import { EFormat } from '@/shared/enums'
 import { useAtom } from 'jotai'
 import { useNavigate } from 'react-router-dom'
-import { portAtom } from '@/atoms/port.atom'
-import { formatAtom } from '@/atoms/format.atom'
 
 const EventDataSchema = z.object({
   format: z.enum([EFormat.HTML, EFormat.JSON, EFormat.MARKDOWN]),
   path: z.string(),
-  content: z.string()
+  content: z.string(),
+  contentToBeDiff:z.string()
 })
 
 type EventData = z.infer<typeof EventDataSchema>

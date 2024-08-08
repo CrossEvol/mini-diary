@@ -10,6 +10,12 @@ export type FileItem = { path: string; content: string }
 
 export type ImportParam = {
     format: EFormat
+    date: Date
+    content: string
+}
+
+export type ImportAllParam = {
+    format: EFormat
     filePaths: string[]
     fileItems: FileItem[]
 }
@@ -44,6 +50,8 @@ export type VerifyImportData = {
 export type EditorContentData = {
     format: EFormat
     channel: EChannel
+    date: Date
     path: string
     content: string
+    contentToBeDiff: string
 }

@@ -1,5 +1,6 @@
 import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { profileAtom } from '@/atoms/profile.atom'
+import { useImportContentStorage } from '@/hooks/useImportContentStorage'
 import useNotify from '@/hooks/useNotify'
 import fetchClient from '@/utils/fetch.client'
 import { verifyContentFormat } from '@/utils/file.util'
@@ -12,6 +13,7 @@ const EventEmitterLayout = () => {
     const [eventEmitter] = useAtom(eventEmitterAtom)
     const { notifySuccess, notifyError } = useNotify()
     const [profile, setProfile] = useAtom(profileAtom)
+    const { saveImportContent } = useImportContentStorage()
 
     const setupUserProfile = async () => {
         if (!localStorage.getItem('token')) {
@@ -39,7 +41,8 @@ const EventEmitterLayout = () => {
                 localStorage.setItem('port', value.toString())
                 setupUserProfile()
             })
-            window.electronAPI.onVerifyImport((value) => {
+            window.electronAPI.onVerifyImport(async (value) => {
+                await saveImportContent(value.content)
                 return value.format === verifyContentFormat(value.content)
             })
 

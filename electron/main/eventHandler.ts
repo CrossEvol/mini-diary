@@ -1,4 +1,10 @@
-import { BrowserWindow, dialog, ipcMain, MessageChannelMain } from 'electron'
+import {
+    BrowserWindow,
+    BrowserWindowConstructorOptions,
+    dialog,
+    ipcMain,
+    MessageChannelMain,
+} from 'electron'
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import mainLogger from './logging/main.logger'
@@ -8,6 +14,7 @@ import {
     EventResult,
     ExportParam,
     FileItem,
+    ImportAllParam,
     ImportParam,
 } from './shared/params'
 
@@ -118,7 +125,40 @@ export const importDiaryHandler = async (
                     entryPath,
                     format
                 )
-                setTimeout(() => subWindow.close(), 3000)
+                ipcMain.once(
+                    EChannel.EDITOR_CONTENT,
+                    async (_event, value: EditorContentData) => {
+                        const { format, date } = value
+                        mainWindow?.webContents.send(EChannel.IMPORT_DIARY, {
+                            format,
+                            date,
+                            content: fileItems[0].content,
+                        } as ImportParam)
+                        mainLogger.info(value)
+                        try {
+                            subWindow.close()
+                            setTimeout(
+                                () =>
+                                    mainWindow?.webContents.send(
+                                        EChannel.NOTIFY_SUCCESS,
+                                        'SUCCESS'
+                                    ),
+                                500
+                            )
+                        } catch (error) {
+                            mainLogger.error(error)
+                            subWindow.close()
+                            setTimeout(
+                                () =>
+                                    mainWindow?.webContents.send(
+                                        EChannel.NOTIFY_ERROR,
+                                        error
+                                    ),
+                                500
+                            )
+                        }
+                    }
+                )
             } else {
                 await dialog.showMessageBox(mainWindow!, {
                     type: 'error',
@@ -132,11 +172,6 @@ export const importDiaryHandler = async (
         format,
         content: fileItems[0].content,
     })
-    // mainWindow?.webContents.send(EChannel.IMPORT_DIARY, {
-    //     format,
-    //     filePaths: openDialogReturnValue.filePaths,
-    //     fileItems,
-    // } as ImportParam)
 }
 export const importAllDiariesHandler = async (
     mainWindow: BrowserWindow | null,
@@ -155,12 +190,13 @@ export const importAllDiariesHandler = async (
         format,
         filePaths: openDialogReturnValue.filePaths,
         fileItems,
-    } as ImportParam)
+    } as ImportAllParam)
 }
 const createTempSubWindow = <T>(
     mainWindow: BrowserWindow,
     entryPath: string,
-    data: T
+    data: T,
+    options?: BrowserWindowConstructorOptions
 ) => {
     const { port1, port2 } = new MessageChannelMain()
 
@@ -177,6 +213,7 @@ const createTempSubWindow = <T>(
         },
         autoHideMenuBar: false,
         resizable: false,
+        ...options,
     })
 
     const subEntryUrl =

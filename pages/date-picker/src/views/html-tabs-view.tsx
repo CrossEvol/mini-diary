@@ -1,4 +1,7 @@
-import IpcButton from '@/components/ipc-button'
+import DiffBox from '@/components/diff-box'
+import IpcSafeButton from '@/components/ipc-safe-button'
+import PlainTextDiffBox from '@/components/plain-text-diff-box'
+import PlainTextFrame from '@/components/plain-text-frame'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import parse, {
   DOMNode,
@@ -8,7 +11,6 @@ import parse, {
 import React, { useState } from 'react'
 import { Location, useLocation } from 'react-router-dom'
 import { NavigateData } from './home-view'
-import IpcSafeButton from '@/components/ipc-safe-button'
 
 const initialHtml = `
 <p id="main">
@@ -39,19 +41,22 @@ const options: HTMLReactParserOptions = {
 }
 
 const HtmlTabsView = () => {
-  const [html, setHtml] = useState(initialHtml)
+  const [primaryHtml, setPrimaryHtml] = useState(initialHtml)
+  const [secondaryHtml, setSecondaryHtml] = useState('')
   const location: Location<NavigateData> = useLocation()
+  const shouldDiff = !!secondaryHtml.length
 
   React.useEffect(() => {
     if (location.state) {
-      setHtml(location.state.content)
+      setPrimaryHtml(location.state.content)
+      setSecondaryHtml(location.state.contentToBeDiff)
     }
 
     return () => {}
   }, [location.state])
 
   return (
-    <div className="flex h-screen w-screen items-start justify-center">
+    <div className="flex h-screen w-screen items-start justify-start">
       <Tabs defaultValue="account" className="m-4 w-[400px]">
         <TabsList>
           <TabsTrigger value="account">Prettier</TabsTrigger>
@@ -62,14 +67,21 @@ const HtmlTabsView = () => {
           />
         </TabsList>
         <TabsContent value="account" className="min-w-96 p-2">
-          <div>{parse(html, options)}</div>
+          {shouldDiff ? (
+            <DiffBox
+              primary={parse(primaryHtml, options)}
+              secondary={parse(secondaryHtml, options)}
+            />
+          ) : (
+            <div>{parse(primaryHtml, options)}</div>
+          )}
         </TabsContent>
         <TabsContent value="password">
-          <div className="rounded-md bg-black">
-            <pre style={{ whiteSpace: 'pre-wrap' }} className="p-2 text-white">
-              {html}
-            </pre>
-          </div>
+          {shouldDiff ? (
+            <PlainTextDiffBox primary={primaryHtml} secondary={secondaryHtml} />
+          ) : (
+            <PlainTextFrame plainText={primaryHtml} />
+          )}
         </TabsContent>
       </Tabs>
     </div>

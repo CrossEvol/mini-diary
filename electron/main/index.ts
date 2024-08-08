@@ -20,6 +20,7 @@ import {
     importAllDiariesHandler,
     importDiaryHandler,
 } from './eventHandler'
+import mainLogger from './logging/main.logger'
 import { showMessageBox } from './message-box'
 import { EChannel, EFormat } from './shared/enums'
 import { EventResult, ExportResult, ImportResult } from './shared/params'
@@ -410,7 +411,7 @@ app.whenReady().then(() => {
     ipcMain.on(
         EChannel.EXPORT_ALL_DIARY_VALUE,
         (_event, value: EventResult<ExportResult>) => {
-            console.log(value) // will print value to Node console
+            mainLogger.info(value)
             Promise.all(
                 value.data.fileItems.map(
                     async (fileItem) =>
@@ -427,17 +428,17 @@ app.whenReady().then(() => {
                 )
         }
     )
-    ipcMain.on(
-        EChannel.IMPORT_DIARY_VALUE,
-        (_event, value: EventResult<ImportResult>) => {
-            console.log(value) // will print value to Node console
-            win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
-        }
-    )
+    // ipcMain.on(
+    //     EChannel.IMPORT_DIARY_VALUE,
+    //     (_event, value: EventResult<ImportResult>) => {
+    //         mainLogger.info(value)
+    //         win?.webContents.send(EChannel.NOTIFY_SUCCESS, 'SUCCESS')
+    //     }
+    // )
     ipcMain.on(
         EChannel.IMPORT_ALL_DIARY_VALUE,
         (_event, value: EventResult<ImportResult>) => {
-            console.log(value) // will print value to Node console
+            mainLogger.info(value)
             win?.webContents.send(EChannel.NOTIFY_ERROR, 'ERROR')
         }
     )
