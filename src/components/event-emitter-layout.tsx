@@ -7,6 +7,7 @@ import { verifyContentFormat } from '@/utils/file.util'
 import { UserProfile, ZResult } from 'electron/main/server/zod.type'
 import { useAtom } from 'jotai'
 import * as React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const EventEmitterLayout = () => {
     let flag = true
@@ -14,6 +15,7 @@ const EventEmitterLayout = () => {
     const { notifySuccess, notifyError } = useNotify()
     const [profile, setProfile] = useAtom(profileAtom)
     const { saveImportContent } = useImportContentStorage()
+    const navigate = useNavigate()
 
     const setupUserProfile = async () => {
         if (!localStorage.getItem('token')) {
@@ -64,7 +66,10 @@ const EventEmitterLayout = () => {
                 eventEmitter.emit(EmitterEvent.IMPORT_ALL_DIARY, value)
             })
 
-            window.electronAPI.onNotifySuccess((value) => notifySuccess(value))
+            window.electronAPI.onNotifySuccess((value) => {
+                navigate('/counter')
+                setTimeout(() => notifySuccess(value), 100)
+            })
             window.electronAPI.onNotifyError((value) => notifyError(value))
         }
 

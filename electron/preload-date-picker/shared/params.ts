@@ -35,6 +35,7 @@ export type ExportResult = {
 export type SendMessagePortData = {
     format: EFormat
     channel: EChannel
+    toBeImported: boolean
 }
 
 export type PickDateAndFormat = {

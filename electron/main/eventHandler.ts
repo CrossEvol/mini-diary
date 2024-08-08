@@ -16,6 +16,7 @@ import {
     FileItem,
     ImportAllParam,
     ImportParam,
+    SendMessagePortData,
 } from './shared/params'
 
 // TODO wait for worker bundle
@@ -48,7 +49,11 @@ export const exportDiaryHandler = async (
 
     // set up the channel.
     const entryPath = 'pages/date-picker/dist/index.html'
-    const subWindow = createTempSubWindow(mainWindow!, entryPath, format)
+    const subWindow = createTempSubWindow<Omit<SendMessagePortData, 'channel'>>(
+        mainWindow!,
+        entryPath,
+        { format, toBeImported: false }
+    )
 
     ipcMain.once(
         EChannel.EDITOR_CONTENT,
@@ -120,11 +125,12 @@ export const importDiaryHandler = async (
             if (value.status === 200 && value.data) {
                 // set up the channel.
                 const entryPath = 'pages/date-picker/dist/index.html'
-                const subWindow = createTempSubWindow(
-                    mainWindow!,
-                    entryPath,
-                    format
-                )
+                const subWindow = createTempSubWindow<
+                    Omit<SendMessagePortData, 'channel'>
+                >(mainWindow!, entryPath, {
+                    format,
+                    toBeImported: true,
+                })
                 ipcMain.once(
                     EChannel.EDITOR_CONTENT,
                     async (_event, value: EditorContentData) => {

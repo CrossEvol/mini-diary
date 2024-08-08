@@ -1,4 +1,5 @@
 import { portAtom } from '@/atoms/message-port.atom'
+import { toBeImportedAtom } from '@/atoms/to-be-imported.atom'
 import { EChannel } from '@/shared/enums'
 import { SendMessagePortData } from '@/shared/params'
 import { useAtom } from 'jotai'
@@ -6,6 +7,7 @@ import React from 'react'
 
 const IPCLayout = () => {
     const [, setPort] = useAtom(portAtom)
+    const [, setToBeImported] = useAtom(toBeImportedAtom)
 
     React.useEffect(() => {
         window.onmessage = (event: MessageEvent<SendMessagePortData>) => {
@@ -17,6 +19,7 @@ const IPCLayout = () => {
             ) {
                 const [port] = event.ports
                 setPort(port)
+                setToBeImported(event.data.toBeImported)
             }
         }
         return () => {}

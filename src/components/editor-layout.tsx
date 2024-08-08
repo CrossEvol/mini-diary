@@ -1,6 +1,7 @@
 import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { portAtom } from '@/atoms/message-port.atom'
 import { profileAtom } from '@/atoms/profile.atom'
+import { toBeImportedAtom } from '@/atoms/to-be-imported.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
 import { useImportContentStorage } from '@/hooks/useImportContentStorage'
 import { EFormat } from '@/shared/enums'
@@ -22,6 +23,7 @@ import React from 'react'
 
 const EditorLayout = () => {
     const [port] = useAtom(portAtom)
+    const [toBeImported] = useAtom(toBeImportedAtom)
     const editor = useCreateBlockNote()
     const [eventEmitter] = useAtom(eventEmitterAtom)
     const { loadContent, saveContent } = useEditorStorage()
@@ -36,6 +38,17 @@ const EditorLayout = () => {
                 return await editor.tryParseMarkdownToBlocks(content)
             case EFormat.JSON:
                 return JSON.parse(content) as Block[]
+        }
+    }
+
+    const safeEditorContent = async (format: EFormat) => {
+        switch (format) {
+            case EFormat.HTML:
+                return '(empty HTML)'
+            case EFormat.MARKDOWN:
+                return '(empty MARKDOWN)'
+            case EFormat.JSON:
+                return JSON.stringify({ json: '(empty JSON)' })
         }
     }
 
@@ -81,8 +94,14 @@ const EditorLayout = () => {
                         profile?.nickname ?? 'unknown',
                         formatDateTime(date, DateTimeFormatEnum.DATE_FORMAT)
                     ),
-                    content: await formatEditorContent(format, content),
-                    contentToBeImported: await loadImportContent(),
+                    content: toBeImported
+                        ? content
+                            ? await formatEditorContent(format, content)
+                            : await safeEditorContent(format)
+                        : await formatEditorContent(format, content),
+                    contentToBeImported: toBeImported
+                        ? await loadImportContent()
+                        : undefined,
                 })
                 port.start()
             }
