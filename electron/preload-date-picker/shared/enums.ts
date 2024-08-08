@@ -10,6 +10,8 @@ export enum EChannel {
     SEND_SERVER_PORT = 'send_server_port',
     EDITOR_CONTENT = 'editor_content',
     CLICK_MESSAGE = 'click_message',
+    VERIFY_IMPORT = 'verify_import',
+    VERIFY_IMPORT_RESULT = 'verify_import_result',
     IMPORT_DIARY = 'import_diary',
     IMPORT_ALL_DIARY = 'import_all_diary',
     IMPORT_DIARY_VALUE = 'import_diary_value',

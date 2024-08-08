@@ -1,10 +1,16 @@
 /// <reference types="vitest" />
 
+import path from 'path'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  test: {
-    environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'],
-  },
+    resolve: {
+        alias: {
+            '@': path.join(__dirname, 'src'),
+        },
+    },
+    test: {
+        environment: 'jsdom',
+        setupFiles: ['./vitest.setup.ts'],
+    },
 })

@@ -20,6 +20,7 @@ import {
     importAllDiariesHandler,
     importDiaryHandler,
 } from './eventHandler'
+import { showMessageBox } from './message-box'
 import { EChannel, EFormat } from './shared/enums'
 import { EventResult, ExportResult, ImportResult } from './shared/params'
 import { update } from './update'
@@ -82,6 +83,7 @@ const buildMenus = (mainWindow: BrowserWindow) => {
         {
             label: app.name,
             submenu: [
+                { label: 'b', click: () => showMessageBox(win!) },
                 {
                     click: () => {
                         const datePickerWindow = new BrowserWindow({

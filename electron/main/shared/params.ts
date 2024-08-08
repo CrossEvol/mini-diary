@@ -36,6 +36,11 @@ export type PickDateAndFormat = {
     format: EFormat
 }
 
+export type VerifyImportData = {
+    format: EFormat
+    content: string
+}
+
 export type EditorContentData = {
     format: EFormat
     channel: EChannel

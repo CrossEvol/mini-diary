@@ -5,6 +5,7 @@ import mainLogger from './logging/main.logger'
 import { EChannel, EFormat } from './shared/enums'
 import {
     EditorContentData,
+    EventResult,
     ExportParam,
     FileItem,
     ImportParam,
@@ -39,40 +40,8 @@ export const exportDiaryHandler = async (
     } as ExportParam) */
 
     // set up the channel.
-    const { port1, port2 } = new MessageChannelMain()
-
-    const subWindow = new BrowserWindow({
-        width: 800,
-        height: 1080,
-        parent: undefined,
-        modal: true,
-        title: 'Editor Content Preview',
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: true,
-            preload: join(__dirname, '../preload-date-picker/index.js'),
-        },
-        autoHideMenuBar: false,
-        resizable: false,
-    })
-
-    const datePickerUrl =
-        process.env.NODE_ENV === 'development'
-            ? 'pages/date-picker/dist/index.html'
-            : join(process.env.DIST, 'pages/date-picker/dist/index.html')
-    console.log(datePickerUrl)
-    subWindow.loadFile(datePickerUrl)
-
-    mainWindow?.webContents.postMessage(EChannel.SEND_MESSAGE_PORT, format, [
-        port1,
-    ])
-    // The preload script will receive this IPC message and transfer the port
-    // over to the main world.
-    subWindow.once('ready-to-show', () => {
-        subWindow.webContents.postMessage(EChannel.SEND_MESSAGE_PORT, format, [
-            port2,
-        ])
-    })
+    const entryPath = 'pages/date-picker/dist/index.html'
+    const subWindow = createTempSubWindow(mainWindow!, entryPath, format)
 
     ipcMain.once(
         EChannel.EDITOR_CONTENT,
@@ -128,17 +97,46 @@ export const importDiaryHandler = async (
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openFile'],
     })
+    if (openDialogReturnValue.canceled) {
+        return
+    }
     const fileItems = await Promise.all(
         openDialogReturnValue.filePaths.map(async (path) => {
             const content = await readFile(path, { encoding: 'utf-8' })
             return { path, content } as FileItem
         })
     )
-    mainWindow?.webContents.send(EChannel.IMPORT_DIARY, {
+    mainLogger.info(fileItems)
+    ipcMain.once(
+        EChannel.VERIFY_IMPORT_RESULT,
+        async (_event, value: EventResult<boolean>) => {
+            if (value.status === 200 && value.data) {
+                // set up the channel.
+                const entryPath = 'pages/date-picker/dist/index.html'
+                const subWindow = createTempSubWindow(
+                    mainWindow!,
+                    entryPath,
+                    format
+                )
+                setTimeout(() => subWindow.close(), 3000)
+            } else {
+                await dialog.showMessageBox(mainWindow!, {
+                    type: 'error',
+                    message: `*.${format} FILE MIS_MATCHED.`,
+                })
+            }
+        }
+    )
+
+    mainWindow?.webContents.send(EChannel.VERIFY_IMPORT, {
         format,
-        filePaths: openDialogReturnValue.filePaths,
-        fileItems,
-    } as ImportParam)
+        content: fileItems[0].content,
+    })
+    // mainWindow?.webContents.send(EChannel.IMPORT_DIARY, {
+    //     format,
+    //     filePaths: openDialogReturnValue.filePaths,
+    //     fileItems,
+    // } as ImportParam)
 }
 export const importAllDiariesHandler = async (
     mainWindow: BrowserWindow | null,
@@ -158,4 +156,45 @@ export const importAllDiariesHandler = async (
         filePaths: openDialogReturnValue.filePaths,
         fileItems,
     } as ImportParam)
+}
+const createTempSubWindow = <T>(
+    mainWindow: BrowserWindow,
+    entryPath: string,
+    data: T
+) => {
+    const { port1, port2 } = new MessageChannelMain()
+
+    const subWindow = new BrowserWindow({
+        width: 800,
+        height: 1080,
+        parent: undefined,
+        modal: true,
+        title: 'Editor Content Preview',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: true,
+            preload: join(__dirname, '../preload-date-picker/index.js'),
+        },
+        autoHideMenuBar: false,
+        resizable: false,
+    })
+
+    const subEntryUrl =
+        process.env.NODE_ENV === 'development'
+            ? entryPath
+            : join(process.env.DIST, entryPath)
+    mainLogger.info(subEntryUrl)
+    subWindow.loadFile(subEntryUrl)
+
+    mainWindow?.webContents.postMessage(EChannel.SEND_MESSAGE_PORT, data, [
+        port1,
+    ])
+    // The preload script will receive this IPC message and transfer the port
+    // over to the main world.
+    subWindow.once('ready-to-show', () => {
+        subWindow.webContents.postMessage(EChannel.SEND_MESSAGE_PORT, data, [
+            port2,
+        ])
+    })
+    return subWindow
 }

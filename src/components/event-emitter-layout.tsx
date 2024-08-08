@@ -1,8 +1,8 @@
 import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { profileAtom } from '@/atoms/profile.atom'
 import useNotify from '@/hooks/useNotify'
-import { EChannel } from '@/shared/enums'
 import fetchClient from '@/utils/fetch.client'
+import { verifyContentFormat } from '@/utils/file.util'
 import { UserProfile, ZResult } from 'electron/main/server/zod.type'
 import { useAtom } from 'jotai'
 import * as React from 'react'
@@ -38,6 +38,9 @@ const EventEmitterLayout = () => {
             window.electronAPI.onUpdatePort((value) => {
                 localStorage.setItem('port', value.toString())
                 setupUserProfile()
+            })
+            window.electronAPI.onVerifyImport((value) => {
+                return value.format === verifyContentFormat(value.content)
             })
 
             window.electronAPI.onExportDiary((value) => {

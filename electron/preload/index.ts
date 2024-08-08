@@ -5,6 +5,7 @@ import {
     ExportResult,
     ImportParam,
     ImportResult,
+    VerifyImportData,
 } from './shared/params'
 
 const { contextBridge, ipcRenderer } = require('electron')
@@ -22,7 +23,26 @@ contextBridge.exposeInMainWorld('electronAPI', {
         ),
     onClickMessage: (value: string) =>
         ipcRenderer.send(EChannel.CLICK_MESSAGE, value),
-
+    onVerifyImport: (callback: (arg0: VerifyImportData) => boolean) => {
+        ipcRenderer.on(
+            EChannel.VERIFY_IMPORT,
+            (_event, value: VerifyImportData) => {
+                if (callback(value)) {
+                    ipcRenderer.send(EChannel.VERIFY_IMPORT_RESULT, {
+                        status: 200,
+                        data: true,
+                        message: 'OK',
+                    })
+                } else {
+                    ipcRenderer.send(EChannel.VERIFY_IMPORT_RESULT, {
+                        status: 500,
+                        data: false,
+                        message: 'ERROR',
+                    })
+                }
+            }
+        )
+    },
     onExportDiary: (callback: (arg0: ExportParam) => void) =>
         ipcRenderer.on(EChannel.EXPORT_DIARY, (_event, value: ExportParam) =>
             callback(value)
