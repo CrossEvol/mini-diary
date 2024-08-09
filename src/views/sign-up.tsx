@@ -15,6 +15,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { User, ZResult } from 'electron/main/server/zod.type'
 import * as React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function Copyright(props: any) {
     return (
@@ -34,11 +35,30 @@ function Copyright(props: any) {
     )
 }
 
+const SignUpSuccessToast = () => {
+    const navigate = useNavigate()
+
+    return (
+        <div>
+            <div>{'Sign Up Success!'}</div>
+            <div>{'Redirect in 3 seconds...'}</div>
+            <Button
+                variant='contained'
+                color='success'
+                onClick={() => navigate('/sign-in')}
+            >
+                Now!
+            </Button>
+        </div>
+    )
+}
+
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme()
 
 export default function SignUp() {
     const { notifySuccess, notifyError } = useNotify()
+    const navigate = useNavigate()
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -55,7 +75,8 @@ export default function SignUp() {
             }
         )
         if (res.status === 200) {
-            notifySuccess('Sign Up Success!')
+            notifySuccess(<SignUpSuccessToast />)
+            setTimeout(() => navigate('/sign-in'), 3000)
         } else {
             notifyError('Sign Up Error!')
         }

@@ -5,6 +5,8 @@ import './index.css'
 import ColorModeProvider from './providers/color-mode-provider'
 import { JotaiProvider } from './providers/jotai-provider'
 
+localStorage.removeItem('port')
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <ColorModeProvider>
@@ -12,5 +14,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 <App />
             </JotaiProvider>
         </ColorModeProvider>
-    </React.StrictMode>,
+    </React.StrictMode>
 )

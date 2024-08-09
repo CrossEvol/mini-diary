@@ -2,9 +2,8 @@ import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { profileAtom } from '@/atoms/profile.atom'
 import { useImportContentStorage } from '@/hooks/useImportContentStorage'
 import useNotify from '@/hooks/useNotify'
-import fetchClient from '@/utils/fetch.client'
+import useProfile from '@/hooks/useProfile'
 import { verifyContentFormat } from '@/utils/file.util'
-import { UserProfile, ZResult } from 'electron/main/server/zod.type'
 import { useAtom } from 'jotai'
 import * as React from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -16,26 +15,27 @@ const EventEmitterLayout = () => {
     const [profile, setProfile] = useAtom(profileAtom)
     const { saveImportContent } = useImportContentStorage()
     const navigate = useNavigate()
+    const { setupUserProfile } = useProfile()
 
-    const setupUserProfile = async () => {
-        if (!localStorage.getItem('token')) {
-            return
-        }
-        if (!!profile) {
-            return
-        }
-        const res = await fetchClient.get<ZResult<UserProfile>>(
-            `http://localhost:${localStorage.getItem('port')}/profile`,
-            {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            }
-        )
-        if (res.status === 200) {
-            setProfile(res.data)
-        }
-    }
+    // const setupUserProfile = async () => {
+    //     if (!localStorage.getItem('token')) {
+    //         return
+    //     }
+    //     if (!!profile) {
+    //         return
+    //     }
+    //     const res = await fetchClient.get<ZResult<UserProfile>>(
+    //         `http://localhost:${localStorage.getItem('port')}/profile`,
+    //         {
+    //             headers: {
+    //                 Authorization: `Bearer ${localStorage.getItem('token')}`,
+    //             },
+    //         }
+    //     )
+    //     if (res.status === 200) {
+    //         setProfile(res.data)
+    //     }
+    // }
 
     React.useEffect(() => {
         if (flag) {

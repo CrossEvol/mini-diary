@@ -23,11 +23,13 @@ import Typography from '@mui/material/Typography'
 import { useAtom } from 'jotai'
 import * as React from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
 import { profileAtom } from './atoms/profile.atom'
 import CalendarPopover from './components/calendar-popover'
 import EditorLayout from './components/editor-layout'
 import EventEmitterLayout from './components/event-emitter-layout'
 import IPCLayout from './components/ipc-layout'
+import UserProfileLayout from './components/user-profile-layout'
 import { ColorModeContext } from './providers/color-mode-provider'
 import { DateTimeFormatEnum, formatDateTime } from './utils/datetime.utils'
 
@@ -171,9 +173,11 @@ const Layout = () => {
             <EventEmitterLayout />
             <EditorLayout />
             <IPCLayout />
+            <UserProfileLayout />
             <Drawer open={open} onClose={toggleDrawer(false)}>
                 {DrawerList}
             </Drawer>
+            <ToastContainer />
         </div>
     )
 }

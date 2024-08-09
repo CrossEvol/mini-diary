@@ -1,9 +1,12 @@
-import { Bounce, toast } from 'react-toastify'
+import { Bounce, toast, ToastContent } from 'react-toastify'
 
 const useNotify = () => {
-    const notify = (hasSucceed: boolean, message: string) => {
+    const notify = (hasSucceed: boolean, message: ToastContent<unknown>) => {
+        if (typeof message === 'string') {
+            message = `🦄 ${message}`
+        }
         if (hasSucceed) {
-            toast.success(`🦄 ${message}`, {
+            toast.success(message, {
                 position: 'top-right',
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -15,7 +18,7 @@ const useNotify = () => {
                 transition: Bounce,
             })
         } else {
-            toast.error(`🦄 ${message}`, {
+            toast.error(message, {
                 position: 'top-right',
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -29,8 +32,10 @@ const useNotify = () => {
         }
     }
 
-    const notifySuccess = (message: string) => notify(true, message)
-    const notifyError = (message: string) => notify(false, message)
+    const notifySuccess = (message: ToastContent<unknown>) =>
+        notify(true, message)
+    const notifyError = (message: ToastContent<unknown>) =>
+        notify(false, message)
 
     return { notifySuccess, notifyError }
 }

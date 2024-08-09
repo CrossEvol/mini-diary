@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography'
 import { ZResult } from 'electron/main/server/zod.type'
 import { useAtom } from 'jotai'
 import * as React from 'react'
+import { useNavigate } from 'react-router'
 
 function Copyright(props: any) {
     return (
@@ -36,12 +37,31 @@ function Copyright(props: any) {
     )
 }
 
+const SignInSuccessToast = () => {
+    const navigate = useNavigate()
+
+    return (
+        <div>
+            <div>{'Sign In Success!'}</div>
+            <div>{'Redirect in 3 seconds...'}</div>
+            <Button
+                variant='contained'
+                color='success'
+                onClick={() => navigate('/')}
+            >
+                Now!
+            </Button>
+        </div>
+    )
+}
+
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme()
 
 export default function SignIn() {
     const { notifySuccess, notifyError } = useNotify()
     const [, setProfile] = useAtom(profileAtom)
+    const navigate = useNavigate()
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -59,7 +79,8 @@ export default function SignIn() {
         if (res.status === 200) {
             localStorage.setItem('token', res.data.token)
             setProfile(null)
-            notifySuccess('Sign In Success!')
+            notifySuccess(<SignInSuccessToast />)
+            setTimeout(() => navigate('/'), 3000)
         } else {
             notifyError('Sign In Error!')
         }
