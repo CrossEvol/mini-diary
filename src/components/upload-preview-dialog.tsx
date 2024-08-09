@@ -1,18 +1,18 @@
-import * as React from 'react'
+import fetchClient from '@/utils/fetch.client'
 import Button from '@mui/material/Button'
-import Dialog, { DialogProps } from '@mui/material/Dialog'
+import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Paper, { PaperProps } from '@mui/material/Paper'
+import * as React from 'react'
 import Draggable from 'react-draggable'
 import {
     UploadFile,
     UploadFileResponse,
     UploadResponseCallback,
 } from './upload-zone'
-import fetchClient from '@/utils/fetch.client'
 
 function PaperComponent(props: PaperProps) {
     return (
@@ -44,12 +44,11 @@ export default function UploadPreviewDialog({
         formData.append('image', file as File)
 
         try {
-            const response = await fetchClient.post<UploadFileResponse>(
+            const response = await fetchClient.postForm<UploadFileResponse>(
                 `http://localhost:${localStorage.getItem('port')}/upload`,
                 {
                     body: formData,
                     headers: {
-                        'Content-Type': 'multipart/form-data',
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
                 }
@@ -66,6 +65,7 @@ export default function UploadPreviewDialog({
                 onFailure(error)
             }
         }
+        setOpen(false)
     }
 
     return (

@@ -438,7 +438,7 @@ app.openapi(
         return c.json(
             {
                 local_path: imagePath,
-                avatar_url: imageName,
+                avatar_url: `static/${imageName}`,
             },
             200
         )

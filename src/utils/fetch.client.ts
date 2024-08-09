@@ -36,6 +36,23 @@ const post = async <T>(
     return data
 }
 
+const postForm = async <T>(
+    url: string | URL | globalThis.Request,
+    options?: RequestInit
+): Promise<T> => {
+    // Omitting 'Content-Type' header as fetch automatically sets it for FormData
+    const response = await fetch(url, {
+        ...options,
+        method: HttpMethod.POST,
+        headers: { ...options?.headers },
+    })
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data: T = await response.json()
+    return data
+}
+
 const put = async <T>(
     url: string | URL | globalThis.Request,
     options?: RequestInit
@@ -86,6 +103,7 @@ const patch = async <T>(
 export default {
     get,
     post,
+    postForm,
     put,
     delete: delete0,
     patch,

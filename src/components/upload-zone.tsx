@@ -24,6 +24,18 @@ const UploadZone = ({
     const [open, setOpen] = useState(false)
 
     const { getRootProps, getInputProps } = useDropzone({
+        accept: {
+            'image/jpeg': ['.jpeg', '.jpg'],
+            'image/png': ['.png'],
+            'image/gif': ['.gif'],
+            'image/webp': ['.webp'],
+            'image/bmp': ['.bmp'],
+            'image/tiff': ['.tiff', '.tif'],
+            'image/svg+xml': ['.svg'],
+            'image/x-icon': ['.ico'],
+            'image/heic': ['.heic'],
+            'image/heif': ['.heif'],
+        },
         onDropAccepted(files, _event) {
             console.log('onDropAccepted')
             console.log(files)

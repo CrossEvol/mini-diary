@@ -1,3 +1,4 @@
+import useNotify from '@/hooks/useNotify'
 import {
     Box,
     Button,
@@ -5,7 +6,6 @@ import {
     CardContent,
     CardMedia,
     FormControl,
-    Input,
     InputLabel,
     OutlinedInput,
     Tab,
@@ -15,7 +15,6 @@ import {
 } from '@mui/material'
 import React, { useState } from 'react'
 import UploadZone from './upload-zone'
-import useNotify from '@/hooks/useNotify'
 
 interface UserProfileProps {
     user: {
@@ -46,7 +45,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
     })
     const { notifySuccess, notifyError } = useNotify()
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (
+        _event: React.SyntheticEvent,
+        newValue: number
+    ) => {
         setValue(newValue)
     }
 
@@ -54,16 +56,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
         const { name, value } = e.target
         setEditUser({ ...editUser, [name]: value })
     }
-
-    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (e.target.files && e.target.files[0]) {
-    //         const reader = new FileReader()
-    //         reader.onload = () => {
-    //             setEditUser({ ...editUser, avatar: reader.result as string })
-    //         }
-    //         reader.readAsDataURL(e.target.files[0])
-    //     }
-    // }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -98,7 +90,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
 
             <TabPanel value={value} index={1}>
                 <form onSubmit={handleSubmit}>
-                    <FormControl fullWidth margin='normal'>
+                    <FormControl fullWidth margin='normal' variant='outlined'>
                         <TextField
                             id='email'
                             name='email'
@@ -109,7 +101,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
                             required
                         />
                     </FormControl>
-                    <FormControl fullWidth margin='normal'>
+                    <FormControl fullWidth margin='normal' variant='outlined'>
                         <TextField
                             id='nickname'
                             name='nickname'
@@ -120,7 +112,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
                             required
                         />
                     </FormControl>
-                    <FormControl fullWidth margin='normal'>
+                    <FormControl fullWidth margin='normal' variant='outlined'>
                         <TextField
                             id='password'
                             name='password'
@@ -131,7 +123,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
                             required
                         />
                     </FormControl>
-                    <FormControl fullWidth margin='normal'>
+                    <FormControl fullWidth margin='normal' variant='outlined'>
                         <TextField
                             id='pin_code'
                             name='pin_code'
@@ -142,7 +134,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
                             required
                         />
                     </FormControl>
-                    <FormControl fullWidth margin='normal'>
+                    <FormControl fullWidth margin='normal' variant='outlined'>
                         <InputLabel htmlFor='upload-zone-avatar'>
                             Avatar
                         </InputLabel>
@@ -150,8 +142,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
                             id='upload-zone-avatar'
                             name='avatar'
                             label='Avatar'
-                            inputProps={{ accept: 'image/*' }}
-                            // onChange={handleFileChange}
+                            value={editUser.avatar}
                             required
                             endAdornment={
                                 <UploadZone
@@ -162,7 +153,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
                                         })
                                         notifySuccess('Upload Success!')
                                     }}
-                                    onFailure={(error) =>
+                                    onFailure={(_error) =>
                                         notifyError('Upload Failed')
                                     }
                                 />
