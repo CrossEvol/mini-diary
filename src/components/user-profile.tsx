@@ -7,11 +7,15 @@ import {
     FormControl,
     Input,
     InputLabel,
+    OutlinedInput,
     Tab,
     Tabs,
+    TextField,
     Typography,
 } from '@mui/material'
 import React, { useState } from 'react'
+import UploadZone from './upload-zone'
+import useNotify from '@/hooks/useNotify'
 
 interface UserProfileProps {
     user: {
@@ -40,6 +44,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
         password: user.password,
         avatar: user.avatar,
     })
+    const { notifySuccess, notifyError } = useNotify()
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue)
@@ -50,15 +55,15 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
         setEditUser({ ...editUser, [name]: value })
     }
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const reader = new FileReader()
-            reader.onload = () => {
-                setEditUser({ ...editUser, avatar: reader.result as string })
-            }
-            reader.readAsDataURL(e.target.files[0])
-        }
-    }
+    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (e.target.files && e.target.files[0]) {
+    //         const reader = new FileReader()
+    //         reader.onload = () => {
+    //             setEditUser({ ...editUser, avatar: reader.result as string })
+    //         }
+    //         reader.readAsDataURL(e.target.files[0])
+    //     }
+    // }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -94,53 +99,74 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
             <TabPanel value={value} index={1}>
                 <form onSubmit={handleSubmit}>
                     <FormControl fullWidth margin='normal'>
-                        <InputLabel htmlFor='email'>Email</InputLabel>
-                        <Input
+                        <TextField
                             id='email'
                             name='email'
+                            label='Email'
+                            variant='outlined'
                             value={editUser.email}
                             onChange={handleInputChange}
                             required
                         />
                     </FormControl>
                     <FormControl fullWidth margin='normal'>
-                        <InputLabel htmlFor='nickname'>Nickname</InputLabel>
-                        <Input
+                        <TextField
                             id='nickname'
                             name='nickname'
+                            label='NickName'
+                            variant='outlined'
                             value={editUser.nickname}
                             onChange={handleInputChange}
                             required
                         />
                     </FormControl>
                     <FormControl fullWidth margin='normal'>
-                        <InputLabel htmlFor='password'>Password</InputLabel>
-                        <Input
+                        <TextField
                             id='password'
                             name='password'
+                            label='Password'
+                            variant='outlined'
                             value={editUser.password}
                             onChange={handleInputChange}
                             required
                         />
                     </FormControl>
                     <FormControl fullWidth margin='normal'>
-                        <InputLabel htmlFor='pin_code'>PinCode</InputLabel>
-                        <Input
+                        <TextField
                             id='pin_code'
                             name='pin_code'
+                            label='PinCode'
+                            variant='outlined'
                             value={editUser.pin_code}
                             onChange={handleInputChange}
                             required
                         />
                     </FormControl>
                     <FormControl fullWidth margin='normal'>
-                        <InputLabel htmlFor='avatar'>Avatar</InputLabel>
-                        <Input
-                            type='file'
-                            id='avatar'
+                        <InputLabel htmlFor='upload-zone-avatar'>
+                            Avatar
+                        </InputLabel>
+                        <OutlinedInput
+                            id='upload-zone-avatar'
                             name='avatar'
+                            label='Avatar'
                             inputProps={{ accept: 'image/*' }}
-                            onChange={handleFileChange}
+                            // onChange={handleFileChange}
+                            required
+                            endAdornment={
+                                <UploadZone
+                                    onSuccess={(resp) => {
+                                        setEditUser({
+                                            ...editUser,
+                                            avatar: `http://localhost:${localStorage.getItem('port')}/${resp.avatar_url}`,
+                                        })
+                                        notifySuccess('Upload Success!')
+                                    }}
+                                    onFailure={(error) =>
+                                        notifyError('Upload Failed')
+                                    }
+                                />
+                            }
                         />
                     </FormControl>
                     <Box sx={{ mt: 2 }}>

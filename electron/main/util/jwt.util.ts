@@ -1,16 +1,16 @@
-import isDev from 'electron-is-dev'
 import { readFileSync } from 'fs'
 import jwt, { JsonWebTokenError, JwtPayload, SignOptions } from 'jsonwebtoken'
 import { join } from 'path'
+import { isDev } from './electron.util'
 
 const privateKeyPath = 'private.key'
 const publicPemPath = 'public.pem'
 
 const privateKey = readFileSync(
-    isDev ? privateKeyPath : join(process.resourcesPath, privateKeyPath)
+    isDev() ? privateKeyPath : join(process.resourcesPath, privateKeyPath)
 )
 const cert = readFileSync(
-    isDev ? publicPemPath : join(process.resourcesPath, publicPemPath)
+    isDev() ? publicPemPath : join(process.resourcesPath, publicPemPath)
 )
 
 export const createJWT = (

@@ -50,3 +50,7 @@ public.pem
 # tmp
 tmp/
 ce-stats.html
+
+# static
+static/
+!!static/go.jpg

@@ -1,0 +1,110 @@
+import * as React from 'react'
+import Button from '@mui/material/Button'
+import Dialog, { DialogProps } from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Paper, { PaperProps } from '@mui/material/Paper'
+import Draggable from 'react-draggable'
+import {
+    UploadFile,
+    UploadFileResponse,
+    UploadResponseCallback,
+} from './upload-zone'
+import fetchClient from '@/utils/fetch.client'
+
+function PaperComponent(props: PaperProps) {
+    return (
+        <Draggable
+            handle='#draggable-dialog-title'
+            cancel={'[class*="MuiDialogContent-root"]'}
+        >
+            <Paper {...props} />
+        </Draggable>
+    )
+}
+
+export default function UploadPreviewDialog({
+    open,
+    setOpen,
+    file,
+    onSuccess,
+    onFailure,
+}: IDialogProps & { file: UploadFile | null } & {
+    onSuccess?: UploadResponseCallback
+    onFailure?: (error: unknown) => void
+}) {
+    const handleClose = () => {
+        setOpen(false)
+    }
+
+    const handleSubmit = async () => {
+        const formData = new FormData()
+        formData.append('image', file as File)
+
+        try {
+            const response = await fetchClient.post<UploadFileResponse>(
+                `http://localhost:${localStorage.getItem('port')}/upload`,
+                {
+                    body: formData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                }
+            )
+
+            if (onSuccess) {
+                onSuccess(response)
+            }
+
+            console.log('Image uploaded successfully')
+        } catch (error) {
+            console.error('Error uploading image:', error)
+            if (onFailure) {
+                onFailure(error)
+            }
+        }
+    }
+
+    return (
+        <React.Fragment>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                PaperComponent={PaperComponent}
+                aria-labelledby='draggable-dialog-title'
+            >
+                <DialogTitle
+                    style={{ cursor: 'move' }}
+                    id='draggable-dialog-title'
+                >
+                    Preview
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {file ? (
+                            <img
+                                src={file.preview}
+                                className='block h-auto w-[24rem]'
+                                // Revoke data uri after image is loaded
+                                onLoad={() => {
+                                    URL.revokeObjectURL(file.preview)
+                                }}
+                            />
+                        ) : (
+                            <img src='/static/go.jpg' className='w-[24rem]' />
+                        )}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button autoFocus onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmit}>Upload</Button>
+                </DialogActions>
+            </Dialog>
+        </React.Fragment>
+    )
+}
