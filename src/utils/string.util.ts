@@ -3,3 +3,6 @@ export const createDiaryKey = (userID: number, date: string) =>
 
 export const createDiaryPath = (username: string, date: string) =>
     `diary-${username}-${date}`
+
+export const ApiUrl = () =>
+    `http://localhost:${localStorage.getItem('port') ?? 3000}`

@@ -1,6 +1,7 @@
 import { profileAtom } from '@/atoms/profile.atom'
 import useNotify from '@/hooks/useNotify'
 import fetchClient from '@/utils/fetch.client'
+import { ApiUrl } from '@/utils/string.util'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -67,7 +68,7 @@ export default function SignIn() {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
         const res = await fetchClient.post<ZResult<{ token: string }>>(
-            `http://localhost:${localStorage.getItem('port')}/auth/sign-in`,
+            `${ApiUrl()}/auth/sign-in`,
             {
                 body: JSON.stringify({
                     email: data.get('email'),

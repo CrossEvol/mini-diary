@@ -56,7 +56,6 @@ export const createUser = async ({
 }
 
 type UpdateUserParams = {
-    id: number
     email?: string
     nickname?: string
     password?: string
@@ -64,23 +63,29 @@ type UpdateUserParams = {
     avatar?: string
 }
 
-export const updateUser = async ({
-    id,
-    email,
-    nickname,
-    password,
-    pinCode,
-    avatar,
-}: UpdateUserParams) => {
+export const updateUser = async (
+    userID: number,
+    { email, nickname, password, pinCode, avatar }: UpdateUserParams
+) => {
     const updateResult = db
         .update(usersTable)
-        .set({ email, nickname, password, pinCode, avatar })
-        .where(eq(usersTable.id, id))
+        .set({
+            email,
+            nickname,
+            password: !!password ? password : undefined,
+            pinCode,
+            avatar,
+        })
+        .where(eq(usersTable.id, userID))
         .run()
     if (updateResult.changes === 0) {
         return null
     }
-    const user = db.select().from(usersTable).where(eq(usersTable.id, id)).get()
+    const user = db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.id, userID))
+        .get()
     return user
 }
 

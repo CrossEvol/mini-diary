@@ -17,26 +17,6 @@ const EventEmitterLayout = () => {
     const navigate = useNavigate()
     const { setupUserProfile } = useProfile()
 
-    // const setupUserProfile = async () => {
-    //     if (!localStorage.getItem('token')) {
-    //         return
-    //     }
-    //     if (!!profile) {
-    //         return
-    //     }
-    //     const res = await fetchClient.get<ZResult<UserProfile>>(
-    //         `http://localhost:${localStorage.getItem('port')}/profile`,
-    //         {
-    //             headers: {
-    //                 Authorization: `Bearer ${localStorage.getItem('token')}`,
-    //             },
-    //         }
-    //     )
-    //     if (res.status === 200) {
-    //         setProfile(res.data)
-    //     }
-    // }
-
     React.useEffect(() => {
         if (flag) {
             window.electronAPI.onUpdatePort((value) => {

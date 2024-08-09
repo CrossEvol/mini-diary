@@ -5,6 +5,7 @@ import Container from '@mui/material/Container'
 import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
 import ProTip from '../ProTip'
+import { ApiUrl } from '@/utils/string.util'
 
 function Copyright() {
     return (
@@ -20,14 +21,11 @@ function Copyright() {
 
 export default function Home() {
     const handleHttpRequest = async () => {
-        const res = await fetchClient.get(
-            `http://localhost:${localStorage.getItem('port')}/users`,
-            {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            }
-        )
+        const res = await fetchClient.get(`${ApiUrl()}/users`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
         console.log(res)
     }
 

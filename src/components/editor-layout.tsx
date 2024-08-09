@@ -10,7 +10,7 @@ import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import fetchClient from '@/utils/fetch.client'
 import { beautifyHtml } from '@/utils/html.util'
 import { extractDataByDiaryKey } from '@/utils/regExp.utils'
-import { createDiaryKey, createDiaryPath } from '@/utils/string.util'
+import { ApiUrl, createDiaryKey, createDiaryPath } from '@/utils/string.util'
 import { Block, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
@@ -118,15 +118,12 @@ const EditorLayout = () => {
                     ),
                 }))
             )
-            const res = await fetchClient.put(
-                `http://localhost:${localStorage.getItem('port')}/diaries`,
-                {
-                    body: JSON.stringify(diaries),
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                }
-            )
+            const res = await fetchClient.put(`${ApiUrl()}/diaries`, {
+                body: JSON.stringify(diaries),
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            })
             console.log(res)
         })
 

@@ -13,6 +13,7 @@ import {
     UploadFileResponse,
     UploadResponseCallback,
 } from './upload-zone'
+import { ApiUrl } from '@/utils/string.util'
 
 function PaperComponent(props: PaperProps) {
     return (
@@ -45,7 +46,7 @@ export default function UploadPreviewDialog({
 
         try {
             const response = await fetchClient.postForm<UploadFileResponse>(
-                `http://localhost:${localStorage.getItem('port')}/upload`,
+                `${ApiUrl()}/upload`,
                 {
                     body: formData,
                     headers: {

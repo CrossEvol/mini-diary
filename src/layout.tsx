@@ -32,6 +32,7 @@ import IPCLayout from './components/ipc-layout'
 import UserProfileLayout from './components/user-profile-layout'
 import { ColorModeContext } from './providers/color-mode-provider'
 import { DateTimeFormatEnum, formatDateTime } from './utils/datetime.utils'
+import { ApiUrl } from './utils/string.util'
 
 const Layout = () => {
     const [profile] = useAtom(profileAtom)
@@ -58,7 +59,11 @@ const Layout = () => {
                 marginLeft={1}
             >
                 <Avatar
-                    src={`http://localhost:${localStorage.getItem('port')}/static/go.jpg`}
+                    src={
+                        !!profile?.avatar
+                            ? `${ApiUrl()}/${profile.avatar}`
+                            : `${ApiUrl}/static/go.jpg`
+                    }
                 />
                 <Typography variant='h5'>
                     {profile?.nickname ?? 'Unknown'}

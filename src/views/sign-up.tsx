@@ -1,5 +1,6 @@
 import useNotify from '@/hooks/useNotify'
 import fetchClient from '@/utils/fetch.client'
+import { ApiUrl } from '@/utils/string.util'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -64,7 +65,7 @@ export default function SignUp() {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
         const res = await fetchClient.post<ZResult<Omit<User, 'password'>>>(
-            `http://localhost:${localStorage.getItem('port')}/auth/sign-up`,
+            `${ApiUrl()}/auth/sign-up`,
             {
                 body: JSON.stringify({
                     nickname: data.get('nickname'),

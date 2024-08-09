@@ -1,4 +1,6 @@
+import { profileAtom } from '@/atoms/profile.atom'
 import useNotify from '@/hooks/useNotify'
+import fetchClient from '@/utils/fetch.client'
 import {
     Box,
     Button,
@@ -13,37 +15,53 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
+import { User, ZResult } from 'electron/main/server/zod.type'
+import { useAtom } from 'jotai'
 import React, { useState } from 'react'
 import UploadZone from './upload-zone'
+import { ApiUrl } from '@/utils/string.util'
 
 interface UserProfileProps {
-    user: {
-        id: number
-        email: string
-        nickname: string
-        pin_code: string
-        password: string
-        avatar: string
-    }
-    onSave: (updatedUser: {
-        email: string
-        nickname: string
-        pin_code: string
-        password: string
-        avatar: string
-    }) => void
+    user: User
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
     const [value, setValue] = useState(0)
     const [editUser, setEditUser] = useState({
         email: user.email,
         nickname: user.nickname,
-        pin_code: user.pin_code,
+        pinCode: user.pinCode,
         password: user.password,
         avatar: user.avatar,
     })
     const { notifySuccess, notifyError } = useNotify()
+    const [, setProfile] = useAtom(profileAtom)
+
+    const updateUser = async (updatedUser: Omit<User, 'id'>) => {
+        console.log('Updated User:', updatedUser)
+        const { email, nickname, pinCode, password, avatar } = updatedUser
+        const res = await fetchClient.put<ZResult<User>>(
+            `${ApiUrl()}/users/${user.id}`,
+            {
+                body: JSON.stringify({
+                    email,
+                    nickname,
+                    pinCode,
+                    password,
+                    avatar: avatar?.replace(`${ApiUrl}/`, ''),
+                }),
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            }
+        )
+        if (res.status === 200) {
+            setProfile(res.data)
+            notifySuccess('Update Profile Success!')
+        } else {
+            notifyError('Update Profile Error!')
+        }
+    }
 
     const handleTabChange = (
         _event: React.SyntheticEvent,
@@ -59,7 +77,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onSave(editUser)
+        updateUser(editUser)
     }
 
     return (
@@ -74,7 +92,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
                     <CardMedia
                         sx={{ maxWidth: 345 }}
                         component='img'
-                        image={user.avatar}
+                        image={
+                            !!user.avatar
+                                ? `${ApiUrl()}/${user.avatar}`
+                                : `${ApiUrl()}/static/go.jpg`
+                        }
                         alt={`${user.nickname}'s avatar`}
                     />
                     <CardContent>
@@ -120,16 +142,16 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
                             variant='outlined'
                             value={editUser.password}
                             onChange={handleInputChange}
-                            required
+                            // required
                         />
                     </FormControl>
                     <FormControl fullWidth margin='normal' variant='outlined'>
                         <TextField
-                            id='pin_code'
-                            name='pin_code'
+                            id='pinCode'
+                            name='pinCode'
                             label='PinCode'
                             variant='outlined'
-                            value={editUser.pin_code}
+                            value={editUser.pinCode}
                             onChange={handleInputChange}
                             required
                         />
@@ -142,14 +164,18 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, onSave }) => {
                             id='upload-zone-avatar'
                             name='avatar'
                             label='Avatar'
-                            value={editUser.avatar}
+                            value={
+                                editUser.avatar?.startsWith('static')
+                                    ? `${ApiUrl()}/${editUser.avatar}`
+                                    : editUser.avatar
+                            }
                             required
                             endAdornment={
                                 <UploadZone
                                     onSuccess={(resp) => {
                                         setEditUser({
                                             ...editUser,
-                                            avatar: `http://localhost:${localStorage.getItem('port')}/${resp.avatar_url}`,
+                                            avatar: resp.avatar_url,
                                         })
                                         notifySuccess('Upload Success!')
                                     }}
