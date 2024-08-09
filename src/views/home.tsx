@@ -21,7 +21,12 @@ function Copyright() {
 export default function Home() {
     const handleHttpRequest = async () => {
         const res = await fetchClient.get(
-            `http://localhost:${localStorage.getItem('port')}/users`
+            `http://localhost:${localStorage.getItem('port')}/users`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            }
         )
         console.log(res)
     }

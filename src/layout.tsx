@@ -1,5 +1,5 @@
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined'
-import AddAlarmOutlinedIcon from '@mui/icons-material/AddAlarmOutlined'
+import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
 import Brightness4Icon from '@mui/icons-material/Brightness4'
 import Brightness7Icon from '@mui/icons-material/Brightness7'
 import FormatListNumberedOutlinedIcon from '@mui/icons-material/FormatListNumberedOutlined'
@@ -27,9 +27,9 @@ import { profileAtom } from './atoms/profile.atom'
 import CalendarPopover from './components/calendar-popover'
 import EditorLayout from './components/editor-layout'
 import EventEmitterLayout from './components/event-emitter-layout'
+import IPCLayout from './components/ipc-layout'
 import { ColorModeContext } from './providers/color-mode-provider'
 import { DateTimeFormatEnum, formatDateTime } from './utils/datetime.utils'
-import IPCLayout from './components/ipc-layout'
 
 const Layout = () => {
     const [profile] = useAtom(profileAtom)
@@ -92,27 +92,19 @@ const Layout = () => {
             <Divider />
             <List>
                 <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate('/profile')}>
+                        <ListItemIcon>
+                            <AccountBoxOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'Profile'} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
                     <ListItemButton onClick={() => navigate('/todo')}>
                         <ListItemIcon>
                             <FormatListNumberedOutlinedIcon />
                         </ListItemIcon>
                         <ListItemText primary={'Todo'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/counter')}>
-                        <ListItemIcon>
-                            <AddAlarmOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Counter'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/len')}>
-                        <ListItemIcon>
-                            <AbcOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Len'} />
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
