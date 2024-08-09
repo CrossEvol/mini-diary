@@ -6,9 +6,18 @@ import { BlockNoteEditor, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/mantine/style.css'
+import {
+    BlockColorsItem,
+    DragHandleMenu,
+    RemoveBlockItem,
+    SideMenu,
+    SideMenuController
+} from "@blocknote/react"
 import { useAtom } from 'jotai'
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+ 
+import { ResetBlockTypeItem } from "./reset-block-item"
 
 export default function Editor() {
     const location = useLocation()
@@ -49,10 +58,33 @@ export default function Editor() {
             <BlockNoteView
                 editor={editor}
                 emojiPicker={true}
+                sideMenu={false}
                 onChange={async () => {
                     saveContent(diaryKey, editor.document)
                 }}
-            />
+            >
+                <SideMenuController
+                    sideMenu={(props) => (
+                        <SideMenu
+                            {...props}
+                            dragHandleMenu={(props) => (
+                                <DragHandleMenu {...props}>
+                                    <RemoveBlockItem {...props}>
+                                        Delete
+                                    </RemoveBlockItem>
+                                    <BlockColorsItem {...props}>
+                                        Colors
+                                    </BlockColorsItem>
+                                    {/* Item which resets the hovered block's type. */}
+                                    <ResetBlockTypeItem {...props}>
+                                        Reset Type
+                                    </ResetBlockTypeItem>
+                                </DragHandleMenu>
+                            )}
+                        />
+                    )}
+                />
+            </BlockNoteView>
         </>
     )
 }
