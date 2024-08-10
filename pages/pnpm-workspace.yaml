@@ -1,2 +1,3 @@
 packages:
   - 'date-picker'
+  - 'imports-diff-box'

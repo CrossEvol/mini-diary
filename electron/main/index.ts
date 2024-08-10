@@ -111,7 +111,12 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                                 : join(process.env.DIST, 'date-picker.html')
                         console.log(datePickerUrl)
                         datePickerWindow.loadFile(datePickerUrl)
-                        // datePickerWindow.loadFile('date-picker.html')
+                        datePickerWindow.once('ready-to-show', () => {
+                            datePickerWindow.webContents.send(
+                                'date-init',
+                                '2011-01-01'
+                            )
+                        })
 
                         ipcMain.once('date-selected', (event, date) => {
                             dialog.showMessageBox(mainWindow!, {
@@ -122,6 +127,46 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                         })
                     },
                     label: 'Message',
+                },
+                {
+                    click: () => {
+                        const messageBoxWindow = new BrowserWindow({
+                            width: 1000,
+                            height: 800,
+                            parent: win!,
+                            modal: true,
+                            webPreferences: {
+                                nodeIntegration: true,
+                                contextIsolation: false,
+                            },
+                            autoHideMenuBar: false,
+                            resizable: false,
+                        })
+
+                        const messageBoxUrl =
+                            process.env.NODE_ENV === 'development'
+                                ? 'pages/imports-diff-box/dist/index.html'
+                                : join(
+                                      process.env.DIST,
+                                      'pages/imports-diff-box/dist/index.html'
+                                  )
+                        messageBoxWindow.loadFile(messageBoxUrl)
+                        messageBoxWindow.once('ready-to-show', () => {
+                            messageBoxWindow.webContents.send(
+                                'date-init',
+                                '2011-01-01'
+                            )
+                        })
+
+                        ipcMain.once('date-selected', (event, date) => {
+                            dialog.showMessageBox(mainWindow!, {
+                                type: 'info',
+                                message: `You selected: ${date}`,
+                            })
+                            messageBoxWindow.close()
+                        })
+                    },
+                    label: 'ImportsBox',
                 },
                 {
                     click: () => {

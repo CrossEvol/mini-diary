@@ -27,6 +27,7 @@ export default defineConfig(({ command }) => {
                     main: 'index.html',
                     datePicker: 'date-picker.html',
                     test: 'pages/date-picker/dist/index.html',
+                    messageBox: 'pages/message-box/dist/index.html',
                 },
                 output: {
                     entryFileNames: '[name].js', // Change JS file name if needed

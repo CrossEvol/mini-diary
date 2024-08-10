@@ -26,6 +26,10 @@
         <script>
             const { ipcRenderer } = require('electron')
 
+            ipcRenderer.on('date-init', (event, value) => {
+                document.getElementById('datePicker').value = value
+            })
+
             function submitDate() {
                 const date = document.getElementById('datePicker').value
                 ipcRenderer.send('date-selected', date)
