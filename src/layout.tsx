@@ -62,7 +62,7 @@ const Layout = () => {
                     src={
                         !!profile?.avatar
                             ? `${ApiUrl()}/${profile.avatar}`
-                            : `${ApiUrl}/static/go.jpg`
+                            : `${ApiUrl()}/static/go.jpg`
                     }
                 />
                 <Typography variant='h5'>

@@ -1,15 +1,17 @@
 import { useAtom } from 'jotai'
 import React from 'react'
 import { Outlet } from 'react-router-dom'
+import { formatAtom } from './atoms/format.atom'
+import { portAtom } from './atoms/port.atom'
+import { toBeImportedAtom } from './atoms/to-be-imported'
 import ContextMenuWrapper from './components/context-menu-warpper'
 import { EChannel } from './shared/enums'
 import { SendMessagePortData } from './shared/params'
-import { portAtom } from './atoms/port.atom'
-import { formatAtom } from './atoms/format.atom'
 
 const Layout = () => {
   const [, setPort] = useAtom(portAtom)
   const [, setFormat] = useAtom(formatAtom)
+  const [, setToBeImported] = useAtom(toBeImportedAtom)
 
   React.useEffect(() => {
     window.onmessage = (event: MessageEvent<SendMessagePortData>) => {
@@ -22,6 +24,7 @@ const Layout = () => {
         const [port] = event.ports
         setPort(port)
         setFormat(event.data.format)
+        setToBeImported(event.data.toBeImported)
       }
     }
     return () => {}
