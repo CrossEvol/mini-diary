@@ -5,7 +5,12 @@ import { toBeImportedAtom } from '@/atoms/to-be-imported.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
 import { useImportContentStorage } from '@/hooks/useImportContentStorage'
 import { EFormat } from '@/shared/enums'
-import { ExportParam, ImportParam, PickDateAndFormat } from '@/shared/params'
+import {
+    ExportParam,
+    ImportAllParam,
+    ImportParam,
+    PickDateAndFormat,
+} from '@/shared/params'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import fetchClient from '@/utils/fetch.client'
 import { beautifyHtml } from '@/utils/html.util'
@@ -192,17 +197,48 @@ const EditorLayout = () => {
         )
         eventEmitter.on(
             EmitterEvent.IMPORT_ALL_DIARY,
-            async (value: ImportParam) => {
-                console.log(value)
-                window.electronAPI.allDiaryImportsValue({
-                    data: null,
-                    status: StatusCodes.OK,
-                    message: '',
+            async (importAllParams: ImportAllParam) => {
+                const keys = await localforage.keys()
+                const fileItemEntries = importAllParams.fileItems.map(
+                    (fileItem) => ({
+                        key: createDiaryKey(profile?.id ?? 0, fileItem.path),
+                        value: fileItem.content,
+                    })
+                )
+                const toBeOverridden = await Promise.all(
+                    fileItemEntries
+                        .filter((entry) => keys.includes(entry.key))
+                        .map(async (entry) => ({
+                            date: extractDataByDiaryKey(entry.key)?.date!,
+                            contentToBeOverridden: await formatEditorContent(
+                                EFormat.MARKDOWN,
+                                (await loadContent(entry.key))!
+                            ),
+                            contentToBeImported: await formatEditorContent(
+                                EFormat.MARKDOWN,
+                                JSON.parse(entry.value)
+                            ),
+                        }))
+                )
+                const toBeCreated = await Promise.all(
+                    fileItemEntries
+                        .filter((entry) => !keys.includes(entry.key))
+                        .map(async (entry) => ({
+                            date: entry.key,
+                            contentToBeImported: await formatEditorContent(
+                                EFormat.MARKDOWN,
+                                JSON.parse(entry.value)
+                            ),
+                        }))
+                )
+                window.electronAPI.onPureRedirect({
+                    toBeOverridden,
+                    toBeCreated,
                 })
             }
         )
         return () => {
-            eventEmitter.removeListener('sync')
+            eventEmitter.removeListener(EmitterEvent.SYNC)
             eventEmitter.removeListener(EmitterEvent.EXPORT_DIARY)
             eventEmitter.removeListener(EmitterEvent.EXPORT_ALL_DIARY)
             eventEmitter.removeListener(EmitterEvent.IMPORT_DIARY)

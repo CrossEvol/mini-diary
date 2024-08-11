@@ -4,20 +4,19 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { isDevelopment } from '@/constants'
 import React, { useState } from 'react'
+import PulseLoader from 'react-spinners/PulseLoader'
 import { ConfirmDialog } from '../components/confirm-dialog'
 import PlainTextDiffBox from '../components/plain-text-diff-box'
 import PlainTextFrame from '../components/plain-text-frame'
 import { Button } from '../components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import PulseLoader from 'react-spinners/PulseLoader'
 
-const diffDiaries = Array.from({ length: 10 })
+const mockDiariesToBeOverridden = Array.from({ length: 10 })
   .map((_, i) => `2024-08-0${i}`)
   .map((date, i) => ({
-    id: i + 1,
     date,
     contentToBeOverridden: `
     # hello , diary in ${date}
@@ -41,10 +40,9 @@ const diffDiaries = Array.from({ length: 10 })
     `
   }))
 
-const importedDiaries = Array.from({ length: 10 })
+const mockDiariesToBeCreated = Array.from({ length: 10 })
   .map((_, i) => `2024-08-0${i}`)
   .map((date, i) => ({
-    id: i + 1,
     date,
     contentToBeImported: `
     # hello , diary in ${date}
@@ -77,6 +75,8 @@ function SkeletonCard() {
 
 export default function HomeView() {
   const [isLoading, setIsLoading] = useState(true)
+  const [diffDiaries, setDiffDiaries] = useState(mockDiariesToBeOverridden)
+  const [importedDiaries, setImportedDiaries] = useState(mockDiariesToBeCreated)
 
   React.useEffect(() => {
     setTimeout(() => setIsLoading(false), 2000)
@@ -89,8 +89,10 @@ export default function HomeView() {
       // Use electron APIs here
       const { ipcRenderer } = require('electron')
 
-      ipcRenderer.on('date-init', (_event: any, value: any) => {
+      ipcRenderer.on('pure_redirect', (_event: any, value: any) => {
         console.log(value)
+        setDiffDiaries(value.toBeOverridden)
+        setImportedDiaries(value.toBeCreated)
       })
     }
   }
@@ -129,9 +131,9 @@ export default function HomeView() {
         <TabsContent value="account">
           <div>
             {diffDiaries.map((diary) => (
-              <div key={diary.id}>
+              <div key={diary.date}>
                 <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value={diary.id.toString()}>
+                  <AccordionItem value={diary.date.toString()}>
                     <AccordionTrigger>{diary.date}</AccordionTrigger>
                     <AccordionContent>
                       <PlainTextDiffBox
@@ -148,9 +150,9 @@ export default function HomeView() {
         <TabsContent value="password">
           <div>
             {importedDiaries.map((diary) => (
-              <div key={diary.id}>
+              <div key={diary.date}>
                 <Accordion type="single" collapsible className="w-[36rem]">
-                  <AccordionItem value={diary.id.toString()}>
+                  <AccordionItem value={diary.date.toString()}>
                     <AccordionTrigger>{diary.date}</AccordionTrigger>
                     <AccordionContent>
                       <PlainTextFrame plainText={diary.contentToBeImported} />

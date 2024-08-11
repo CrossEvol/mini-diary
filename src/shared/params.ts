@@ -16,7 +16,6 @@ export type ImportParam = {
 
 export type ImportAllParam = {
     format: EFormat
-    filePaths: string[]
     fileItems: FileItem[]
 }
 

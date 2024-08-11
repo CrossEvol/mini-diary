@@ -22,4 +22,5 @@ export enum EChannel {
     EXPORT_ALL_DIARY_VALUE = 'export_all_diary_value',
     NOTIFY_SUCCESS = 'notify_success',
     NOTIFY_ERROR = 'notify_error',
+    PURE_REDIRECT = 'pure_redirect'
 }

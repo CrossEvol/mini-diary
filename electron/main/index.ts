@@ -240,12 +240,12 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                     label: 'import',
                     submenu: [
                         {
-                            label: 'to JSON',
+                            label: 'from JSON',
                             click: () =>
                                 importDiaryHandler(mainWindow, EFormat.JSON),
                         },
                         {
-                            label: 'to Markdown',
+                            label: 'from Markdown',
                             click: () =>
                                 importDiaryHandler(
                                     mainWindow,
@@ -253,7 +253,7 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                                 ),
                         },
                         {
-                            label: 'to HTML',
+                            label: 'from HTML',
                             click: () =>
                                 importDiaryHandler(mainWindow, EFormat.HTML),
                         },
@@ -286,7 +286,7 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                     label: 'imports',
                     submenu: [
                         {
-                            label: 'to JSON',
+                            label: 'from JSON',
                             click: () =>
                                 importAllDiariesHandler(
                                     mainWindow,
@@ -294,7 +294,7 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                                 ),
                         },
                         {
-                            label: 'to Markdown',
+                            label: 'from Markdown',
                             click: () =>
                                 importAllDiariesHandler(
                                     mainWindow,
@@ -302,7 +302,7 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                                 ),
                         },
                         {
-                            label: 'to HTML',
+                            label: 'from HTML',
                             click: () =>
                                 importAllDiariesHandler(
                                     mainWindow,

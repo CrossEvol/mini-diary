@@ -19,6 +19,7 @@ import {
     newNotifyParam,
     SendMessagePortData,
 } from './shared/params'
+import { extraDateFromPath } from './util/file.util'
 
 // TODO wait for worker bundle
 /* export let port = 0
@@ -50,11 +51,9 @@ export const exportDiaryHandler = async (
 
     // set up the channel.
     const entryPath = 'pages/date-picker/dist/index.html'
-    const subWindow = createTempSubWindow<Omit<SendMessagePortData, 'channel'>>(
-        mainWindow!,
-        entryPath,
-        { format, toBeImported: false }
-    )
+    const subWindow = createSubWindowWithMessageChannel<
+        Omit<SendMessagePortData, 'channel'>
+    >(mainWindow!, entryPath, { format, toBeImported: false })
 
     ipcMain.once(
         EChannel.EDITOR_CONTENT,
@@ -133,7 +132,7 @@ export const importDiaryHandler = async (
             if (value.status === 200 && value.data) {
                 // set up the channel.
                 const entryPath = 'pages/date-picker/dist/index.html'
-                const subWindow = createTempSubWindow<
+                const subWindow = createSubWindowWithMessageChannel<
                     Omit<SendMessagePortData, 'channel'>
                 >(mainWindow!, entryPath, {
                     format,
@@ -200,20 +199,66 @@ export const importAllDiariesHandler = async (
 ) => {
     const openDialogReturnValue = await dialog.showOpenDialog({
         properties: ['openFile', 'multiSelections'],
+        filters: [createFileFilters(format)],
     })
-    const fileItems = await Promise.all(
-        openDialogReturnValue.filePaths.map(async (path) => {
-            const content = await readFile(path, { encoding: 'utf-8' })
-            return { path, content } as FileItem
-        })
+    const fileItems: FileItem[] = (
+        await Promise.all(
+            openDialogReturnValue.filePaths.map(async (path) => {
+                const content = await readFile(path, { encoding: 'utf-8' })
+                return { path, content } as FileItem
+            })
+        )
     )
+        .map((fileItem) => ({
+            path: extraDateFromPath(fileItem.path),
+            content: fileItem.content,
+        }))
+        .filter((fileItem) => fileItem.path.length !== 0)
+    const set = new Set<FileItem>(fileItems)
+    if (set.keys.length !== fileItems.length) {
+        dialog.showMessageBoxSync({
+            type: 'warning',
+            message: 'Content in Duplicate date will be combined...',
+        })
+    }
+    const combinedFileItems = fileItems.reduce((acc, cur, _idx) => {
+        if (acc.map((fileItem) => fileItem.path).includes(cur.path)) {
+            acc = acc.map((fileItem) =>
+                fileItem.path === cur.path
+                    ? {
+                          ...fileItem,
+                          content: combineContent(format, {
+                              previous: fileItem.content,
+                              current: cur.content,
+                          }),
+                      }
+                    : fileItem
+            )
+        } else {
+            acc.push(cur)
+        }
+        return acc
+    }, [] as FileItem[])
+    mainLogger.info(combinedFileItems)
+
+    ipcMain.once(EChannel.PURE_REDIRECT, (_event, value) => {
+        mainLogger.warn(value)
+
+        // set up the channel.
+        const entryPath = 'pages/imports-diff-box/dist/index.html'
+        const subWindow = createSubWindow(entryPath)
+        subWindow.once('ready-to-show', () => {
+            mainLogger.info('ready to send initial data to sub window...')
+            subWindow.webContents.send(EChannel.PURE_REDIRECT, value)
+        })
+    })
+
     mainWindow?.webContents.send(EChannel.IMPORT_ALL_DIARY, {
         format,
-        filePaths: openDialogReturnValue.filePaths,
-        fileItems,
+        fileItems: combinedFileItems,
     } as ImportAllParam)
 }
-const createTempSubWindow = <T>(
+const createSubWindowWithMessageChannel = <T>(
     mainWindow: BrowserWindow,
     entryPath: string,
     data: T,
@@ -257,6 +302,35 @@ const createTempSubWindow = <T>(
     return subWindow
 }
 
+const createSubWindow = (
+    entryPath: string,
+    options?: BrowserWindowConstructorOptions
+) => {
+    const subWindow = new BrowserWindow({
+        width: 800,
+        height: 1080,
+        parent: undefined,
+        modal: true,
+        title: 'Editor Content Preview',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+        autoHideMenuBar: false,
+        resizable: true,
+        ...options,
+    })
+
+    const subEntryUrl =
+        process.env.NODE_ENV === 'development'
+            ? entryPath
+            : join(process.env.DIST, entryPath)
+    mainLogger.info(subEntryUrl)
+    subWindow.loadFile(subEntryUrl)
+
+    return subWindow
+}
+
 const createFileFilters = (format: EFormat): Electron.FileFilter => {
     switch (format) {
         case EFormat.JSON:
@@ -268,5 +342,22 @@ const createFileFilters = (format: EFormat): Electron.FileFilter => {
                 name: 'md-filter',
                 extensions: ['md', 'mdown', 'markdown'],
             }
+    }
+}
+
+const combineContent = (
+    format: EFormat,
+    { previous, current }: { previous: string; current: string }
+) => {
+    switch (format) {
+        case EFormat.HTML:
+            return previous + current
+        case EFormat.JSON:
+            return JSON.stringify([
+                ...JSON.parse(previous),
+                ...JSON.parse(current),
+            ])
+        case EFormat.MARKDOWN:
+            return previous + current
     }
 }
