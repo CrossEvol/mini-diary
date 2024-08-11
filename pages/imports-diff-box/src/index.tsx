@@ -1,4 +1,4 @@
-import HomeView from '@/components/home-view'
+import HomeView from '@/views/home-view'
 import { createRoot } from 'react-dom/client'
 import 'tailwindcss/tailwind.css'
 import './index.css'

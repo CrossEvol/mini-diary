@@ -1,4 +1,4 @@
-import HomeView from '@/components/home-view'
+import HomeView from '@/views/home-view'
 import Layout from '@/layout'
 import { createHashRouter, RouteObject } from 'react-router-dom'
 

@@ -6,34 +6,13 @@ import {
 } from '@/components/ui/accordion'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { isDevelopment } from '@/constants'
-import React from 'react'
-import { ConfirmDialog } from './confirm-dialog'
-import PlainTextDiffBox from './plain-text-diff-box'
-import PlainTextFrame from './plain-text-frame'
-import { Button } from './ui/button'
-
-const primaryMD = `
-# fjdsalfdsjflasd
-
-*   a
-*   b
-*   c
-
-❤️\
-🔤
-`
-
-const secondaryMD = `
-# hello, world
-
-*   a
-*   b
-*   c
-
-❤️\
-🔤
-
-`
+import React, { useState } from 'react'
+import { ConfirmDialog } from '../components/confirm-dialog'
+import PlainTextDiffBox from '../components/plain-text-diff-box'
+import PlainTextFrame from '../components/plain-text-frame'
+import { Button } from '../components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import PulseLoader from 'react-spinners/PulseLoader'
 
 const diffDiaries = Array.from({ length: 10 })
   .map((_, i) => `2024-08-0${i}`)
@@ -79,7 +58,32 @@ const importedDiaries = Array.from({ length: 10 })
     `
   }))
 
+function SkeletonCard() {
+  return (
+    <div className="flex flex-col space-y-3">
+      <div className="flex w-full justify-center">
+        <PulseLoader />
+      </div>
+      <Skeleton className="h-[125px] w-96 rounded-xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-96" />
+        <Skeleton className="h-4 w-80" />
+        <Skeleton className="h-4 w-96" />
+        <Skeleton className="h-4 w-80" />
+      </div>
+    </div>
+  )
+}
+
 export default function HomeView() {
+  const [isLoading, setIsLoading] = useState(true)
+
+  React.useEffect(() => {
+    setTimeout(() => setIsLoading(false), 2000)
+
+    return () => {}
+  }, [])
+
   const useDynamicImportElectronInEjs = async () => {
     if (!isDevelopment) {
       // Use electron APIs here
@@ -96,12 +100,24 @@ export default function HomeView() {
     return () => {}
   }, [])
 
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center">
+        <SkeletonCard />
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center">
       <Tabs defaultValue="account" className="w-[800px]">
         <TabsList>
-          <TabsTrigger value="account">ToBeOverridden</TabsTrigger>
-          <TabsTrigger value="password">ToBeCreated</TabsTrigger>
+          <TabsTrigger value="account">
+            ToBeOverridden{`(${diffDiaries.length})`}
+          </TabsTrigger>
+          <TabsTrigger value="password">
+            ToBeCreated{`(${importedDiaries.length})`}
+          </TabsTrigger>
           <div className="inline-block uppercase sm:ml-20 md:ml-40">
             <ConfirmDialog
               triggerButton={<Button className="uppercase">Send</Button>}
