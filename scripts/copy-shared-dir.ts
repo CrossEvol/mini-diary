@@ -8,6 +8,7 @@ const destDirs = [
     path.join(__dirname, '..', 'electron/preload-date-picker/shared'),
     path.join(__dirname, '..', 'src/shared'),
     path.join(__dirname, '..', 'pages/date-picker/src/shared'),
+    path.join(__dirname, '..', 'pages/imports-diff-box/src/shared'),
 ]
 
 // Function to copy files recursively

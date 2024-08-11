@@ -7,6 +7,7 @@ import { useImportContentStorage } from '@/hooks/useImportContentStorage'
 import { EFormat } from '@/shared/enums'
 import {
     ExportParam,
+    FinalImportsData,
     ImportAllParam,
     ImportParam,
     PickDateAndFormat,
@@ -43,6 +44,24 @@ const EditorLayout = () => {
                 return await editor.tryParseMarkdownToBlocks(content)
             case EFormat.JSON:
                 return JSON.parse(content) as Block[]
+        }
+    }
+
+    const parseEditorContent2JSON = async (
+        format: EFormat,
+        content: string
+    ) => {
+        switch (format) {
+            case EFormat.HTML:
+                return JSON.stringify(
+                    await editor.tryParseHTMLToBlocks(content)
+                )
+            case EFormat.MARKDOWN:
+                return JSON.stringify(
+                    await editor.tryParseMarkdownToBlocks(content)
+                )
+            case EFormat.JSON:
+                return content
         }
     }
 
@@ -199,11 +218,14 @@ const EditorLayout = () => {
             EmitterEvent.IMPORT_ALL_DIARY,
             async (importAllParams: ImportAllParam) => {
                 const keys = await localforage.keys()
-                const fileItemEntries = importAllParams.fileItems.map(
-                    (fileItem) => ({
+                const fileItemEntries = await Promise.all(
+                    importAllParams.fileItems.map(async (fileItem) => ({
                         key: createDiaryKey(profile?.id ?? 0, fileItem.path),
-                        value: fileItem.content,
-                    })
+                        value: await parseEditorContent2JSON(
+                            importAllParams.format,
+                            fileItem.content
+                        ),
+                    }))
                 )
                 const toBeOverridden = await Promise.all(
                     fileItemEntries
@@ -224,14 +246,42 @@ const EditorLayout = () => {
                     fileItemEntries
                         .filter((entry) => !keys.includes(entry.key))
                         .map(async (entry) => ({
-                            date: entry.key,
+                            date: extractDataByDiaryKey(entry.key)?.date!,
                             contentToBeImported: await formatEditorContent(
                                 EFormat.MARKDOWN,
                                 JSON.parse(entry.value)
                             ),
                         }))
                 )
-                window.electronAPI.onPureRedirect({
+
+                window.electronAPI.onPureRedirect<FinalImportsData>(
+                    async (value) => {
+                        try {
+                            for (const item of value.toBeCreated) {
+                                await saveContent(
+                                    createDiaryKey(profile?.id ?? 0, item.date),
+                                    await editor.tryParseMarkdownToBlocks(
+                                        item.contentToBeImported
+                                    )
+                                )
+                            }
+
+                            for (const item of value.toBeOverridden) {
+                                await saveContent(
+                                    createDiaryKey(profile?.id ?? 0, item.date),
+                                    await editor.tryParseMarkdownToBlocks(
+                                        item.contentToBeImported
+                                    )
+                                )
+                            }
+                        } catch (error) {
+                            console.log(value)
+                            console.error(error)
+                        }
+                    }
+                )
+
+                window.electronAPI.sendPureRedirect<FinalImportsData>({
                     toBeOverridden,
                     toBeCreated,
                 })

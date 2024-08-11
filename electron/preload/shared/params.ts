@@ -1,4 +1,5 @@
 import { EChannel, EFormat } from './enums'
+import * as z from 'zod'
 
 export type EventResult<T> = {
     status: number
@@ -63,3 +64,21 @@ export type NotifyParam = {
 }
 
 export const newNotifyParam = (param: NotifyParam) => param
+
+export const FinalImportsDataSchema = z.object({
+    toBeOverridden: z.array(
+        z.object({
+            date: z.string(),
+            contentToBeOverridden: z.string(),
+            contentToBeImported: z.string(),
+        })
+    ),
+    toBeCreated: z.array(
+        z.object({
+            date: z.string(),
+            contentToBeImported: z.string(),
+        })
+    ),
+})
+
+export type FinalImportsData = z.infer<typeof FinalImportsDataSchema>

@@ -26,7 +26,8 @@ export interface IElectronAPI {
     onNotifySuccess: (callback: (arg0: NotifyParam) => void) => void
     onNotifyError: (callback: (arg0: NotifyParam) => void) => void
 
-    onPureRedirect: <T>(value: T) => void
+    sendPureRedirect: <T>(value: T) => void
+    onPureRedirect: <T>(callback: (arg0: T) => void) => void
 }
 
 declare global {

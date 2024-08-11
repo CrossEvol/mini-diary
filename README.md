@@ -10,8 +10,8 @@ https://github.com/electron-vite/electron-vite-react
 - √ add reset button for diary editor.
 - √ supplement <Profile>, implement the uploading feature.
 - √ confirm dialog for import in sub window
-- import all (verify all, tell about how they are differed, and use the modal for confirmation)
-- can I use a simple *.html as the messageBox? so can I send message directly to sub window?
+- √ import all (verify all, tell about how they are differed, and use the modal for confirmation)
+- √ can I use a simple *.html as the messageBox? so can I send message directly to sub window?
 - complete <Todo> and <Settings>
 - Use the dnd-kit to operate the Todo Groups.
 - update any starter , includes electron, electron-sub-page, mui-vite .

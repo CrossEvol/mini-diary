@@ -201,6 +201,11 @@ export const importAllDiariesHandler = async (
         properties: ['openFile', 'multiSelections'],
         filters: [createFileFilters(format)],
     })
+
+    if (openDialogReturnValue.canceled) {
+        return
+    }
+
     const fileItems: FileItem[] = (
         await Promise.all(
             openDialogReturnValue.filePaths.map(async (path) => {
@@ -247,6 +252,17 @@ export const importAllDiariesHandler = async (
         // set up the channel.
         const entryPath = 'pages/imports-diff-box/dist/index.html'
         const subWindow = createSubWindow(entryPath)
+
+        ipcMain.once(EChannel.PURE_REDIRECT, (_event, value) => {
+            mainLogger.info(
+                'After confirmation in sub window, redirect the data to the main window...'
+            )
+            if (subWindow.isClosable()) {
+                subWindow.close()
+            }
+            mainWindow?.webContents.send(EChannel.PURE_REDIRECT, value)
+        })
+
         subWindow.once('ready-to-show', () => {
             mainLogger.info('ready to send initial data to sub window...')
             subWindow.webContents.send(EChannel.PURE_REDIRECT, value)

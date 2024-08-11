@@ -13,10 +13,12 @@ import { ConfirmDialog } from '../components/confirm-dialog'
 import PlainTextDiffBox from '../components/plain-text-diff-box'
 import PlainTextFrame from '../components/plain-text-frame'
 import { Button } from '../components/ui/button'
+import { FinalImportsData } from '@/shared/params'
+import { EChannel } from '@/shared/enums'
 
 const mockDiariesToBeOverridden = Array.from({ length: 10 })
   .map((_, i) => `2024-08-0${i}`)
-  .map((date, i) => ({
+  .map((date) => ({
     date,
     contentToBeOverridden: `
     # hello , diary in ${date}
@@ -42,7 +44,7 @@ const mockDiariesToBeOverridden = Array.from({ length: 10 })
 
 const mockDiariesToBeCreated = Array.from({ length: 10 })
   .map((_, i) => `2024-08-0${i}`)
-  .map((date, i) => ({
+  .map((date) => ({
     date,
     contentToBeImported: `
     # hello , diary in ${date}
@@ -79,7 +81,9 @@ export default function HomeView() {
   const [importedDiaries, setImportedDiaries] = useState(mockDiariesToBeCreated)
 
   React.useEffect(() => {
-    setTimeout(() => setIsLoading(false), 2000)
+    if (isDevelopment) {
+      setTimeout(() => setIsLoading(false), 2000)
+    }
 
     return () => {}
   }, [])
@@ -89,11 +93,27 @@ export default function HomeView() {
       // Use electron APIs here
       const { ipcRenderer } = require('electron')
 
-      ipcRenderer.on('pure_redirect', (_event: any, value: any) => {
-        console.log(value)
-        setDiffDiaries(value.toBeOverridden)
-        setImportedDiaries(value.toBeCreated)
-      })
+      ipcRenderer.on(
+        EChannel.PURE_REDIRECT,
+        (_event: any, value: FinalImportsData) => {
+          console.log(value)
+          setIsLoading(false)
+          setDiffDiaries(value.toBeOverridden)
+          setImportedDiaries(value.toBeCreated)
+        }
+      )
+    }
+  }
+
+  const handleSubmit = () => {
+    if (!isDevelopment) {
+      // Use electron APIs here
+      const { ipcRenderer } = require('electron')
+
+      ipcRenderer.send(EChannel.PURE_REDIRECT, {
+        toBeOverridden: diffDiaries,
+        toBeCreated: importedDiaries
+      } as FinalImportsData)
     }
   }
 
@@ -124,7 +144,7 @@ export default function HomeView() {
             <ConfirmDialog
               triggerButton={<Button className="uppercase">Send</Button>}
               description={'Imports all diaries and overridden them.'}
-              onClose={() => {}}
+              onClose={handleSubmit}
             />
           </div>
         </TabsList>

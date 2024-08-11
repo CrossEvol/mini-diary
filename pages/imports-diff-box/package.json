@@ -41,7 +41,8 @@
     "react-spinners": "^0.14.1",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "vite-plugin-electron-renderer": "^0.14.5"
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.8",

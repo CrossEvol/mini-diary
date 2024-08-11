@@ -1,11 +1,11 @@
 import react from '@vitejs/plugin-react'
 import { rmSync } from 'node:fs'
 import path from 'node:path'
+import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import electron from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
 import pkg from './package.json'
-import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -27,7 +27,7 @@ export default defineConfig(({ command }) => {
                     main: 'index.html',
                     datePicker: 'date-picker.html',
                     test: 'pages/date-picker/dist/index.html',
-                    messageBox: 'pages/message-box/dist/index.html',
+                    messageBox: 'pages/imports-diff-box/dist/index.html',
                 },
                 output: {
                     entryFileNames: '[name].js', // Change JS file name if needed
