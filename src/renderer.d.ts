@@ -1,4 +1,5 @@
 import {
+    EditorContentData,
     EventResult,
     ExportParam,
     ExportResult,
@@ -20,7 +21,7 @@ export interface IElectronAPI {
 
     onImportDiary: (callback: (arg0: ImportParam) => void) => void
     diaryImportValue: (value: EventResult<ImportResult>) => void
-    onImportAllDiaries: (callback: (arg0: ImportParam) => void) => void
+    onImportAllDiaries: (callback: (arg0: EditorContentData) => void) => void
     allDiaryImportsValue: (value: EventResult<ImportResult>) => void
 
     onNotifySuccess: (callback: (arg0: NotifyParam) => void) => void

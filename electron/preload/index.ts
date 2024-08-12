@@ -59,8 +59,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     allDiaryExportsValue: (value: EventResult<ExportResult>) =>
         ipcRenderer.send(EChannel.EXPORT_ALL_DIARY_VALUE, value),
 
-    onImportDiary: (callback: (arg0: ImportParam) => void) =>
-        ipcRenderer.on(EChannel.IMPORT_DIARY, (_event, value: ImportParam) =>
+    onImportDiary: <T>(callback: (arg0: T) => void) =>
+        ipcRenderer.on(EChannel.IMPORT_DIARY, (_event, value: T) =>
             callback(value)
         ),
     diaryImportValue: (value: EventResult<ImportResult>) =>

@@ -15,9 +15,8 @@ import {
     ExportParam,
     FileItem,
     ImportAllParam,
-    ImportParam,
     newNotifyParam,
-    SendMessagePortData,
+    SendMessagePortData
 } from './shared/params'
 import { extraDateFromPath } from './util/file.util'
 import { combineEditorContent } from './util/string.util'
@@ -142,12 +141,11 @@ export const importDiaryHandler = async (
                 ipcMain.once(
                     EChannel.EDITOR_CONTENT,
                     async (_event, value: EditorContentData) => {
-                        const { format, date } = value
-                        mainWindow?.webContents.send(EChannel.IMPORT_DIARY, {
-                            format,
-                            date,
-                            content: fileItems[0].content,
-                        } as ImportParam)
+                        const { date } = value
+                        mainWindow?.webContents.send(
+                            EChannel.IMPORT_DIARY,
+                            value
+                        )
                         mainLogger.info(value)
                         try {
                             subWindow.close()

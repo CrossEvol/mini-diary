@@ -12,7 +12,7 @@ https://github.com/electron-vite/electron-vite-react
 - √ confirm dialog for import in sub window
 - √ import all (verify all, tell about how they are differed, and use the modal for confirmation)
 - √ can I use a simple *.html as the messageBox? so can I send message directly to sub window?
-- when import, can choose combine content or override.
+- √ when import, can choose combine content or override.
 - complete <Todo> and <Settings>
 - Use the dnd-kit to operate the Todo Groups.
 - update any starter , includes electron, electron-sub-page, mui-vite .

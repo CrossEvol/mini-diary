@@ -6,11 +6,11 @@ import { useEditorStorage } from '@/hooks/useEditorStorage'
 import { useImportContentStorage } from '@/hooks/useImportContentStorage'
 import { EFormat } from '@/shared/enums'
 import {
+    EditorContentData,
     ExportParam,
     FinalImportsData,
     ImportAllParam,
-    ImportParam,
-    PickDateAndFormat,
+    PickDateAndFormat
 } from '@/shared/params'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import fetchClient from '@/utils/fetch.client'
@@ -21,6 +21,7 @@ import {
     combineEditorContent,
     createDiaryKey,
     createDiaryPath,
+    safeEditorContent,
 } from '@/utils/string.util'
 import { Block, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
@@ -70,17 +71,6 @@ const EditorLayout = () => {
         }
     }
 
-    const safeEditorContent = async (format: EFormat) => {
-        switch (format) {
-            case EFormat.HTML:
-                return '(empty HTML)'
-            case EFormat.MARKDOWN:
-                return '(empty MARKDOWN)'
-            case EFormat.JSON:
-                return JSON.stringify({ json: '(empty JSON)' })
-        }
-    }
-
     const formatEditorContent = async (
         format: EFormat,
         content?: PartialBlock[]
@@ -125,7 +115,7 @@ const EditorLayout = () => {
                     content: toBeImported
                         ? content
                             ? await formatEditorContent(format, content)
-                            : await safeEditorContent(format)
+                            : safeEditorContent(format)
                         : await formatEditorContent(format, content),
                     contentToBeImported: toBeImported
                         ? await loadImportContent()
@@ -204,7 +194,7 @@ const EditorLayout = () => {
 
         eventEmitter.on(
             EmitterEvent.IMPORT_DIARY,
-            async (value: ImportParam) => {
+            async (value: EditorContentData) => {
                 console.log(value)
                 await saveContent(
                     createDiaryKey(
@@ -214,7 +204,18 @@ const EditorLayout = () => {
                             DateTimeFormatEnum.DATE_FORMAT
                         )
                     ),
-                    await parseEditorContent(value.format, value.content)
+                    value.shouldBeOverridden
+                        ? await parseEditorContent(
+                              value.format,
+                              value.contentToBeImported
+                          )
+                        : await parseEditorContent(
+                              value.format,
+                              combineEditorContent(value.format, {
+                                  previous: value.content,
+                                  current: value.contentToBeImported,
+                              })
+                          )
                 )
                 await removeImportContent()
             }

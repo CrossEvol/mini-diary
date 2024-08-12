@@ -1,5 +1,5 @@
-import { EChannel, EFormat } from './enums'
 import * as z from 'zod'
+import { EChannel, EFormat } from './enums'
 
 export type EventResult<T> = {
     status: number
@@ -54,7 +54,8 @@ export type EditorContentData = {
     date: Date
     path: string
     content: string
-    contentToBeDiff: string
+    contentToBeImported: string
+    shouldBeOverridden: boolean
 }
 
 export type NotifyParam = {

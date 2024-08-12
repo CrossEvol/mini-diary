@@ -3,6 +3,7 @@ import IpcSafeButton from '@/components/ipc-safe-button'
 import PlainTextDiffBox from '@/components/plain-text-diff-box'
 import PlainTextFrame from '@/components/plain-text-frame'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import useImportTypeSelect from '@/hooks/use-import-type-select'
 import parse, {
   DOMNode,
   domToReact,
@@ -43,6 +44,7 @@ const options: HTMLReactParserOptions = {
 const HtmlTabsView = () => {
   const [primaryHtml, setPrimaryHtml] = useState(initialHtml)
   const [secondaryHtml, setSecondaryHtml] = useState('')
+  const { shouldBeOverridden, ImportTypeSelect } = useImportTypeSelect()
   const location: Location<NavigateData> = useLocation()
   const shouldDiff = !!secondaryHtml.length
 
@@ -63,10 +65,15 @@ const HtmlTabsView = () => {
         <TabsList>
           <TabsTrigger value="account">Prettier</TabsTrigger>
           <TabsTrigger value="password">PlainText</TabsTrigger>
-          <IpcSafeButton
-            data={location.state}
-            className="uppercase sm:ml-20 md:ml-40"
-          />
+          <div className="flex flex-row sm:ml-20 md:ml-40">
+            <div className="flex items-center space-x-2">
+              {ImportTypeSelect}
+            </div>
+            <IpcSafeButton
+              data={{ ...location.state, shouldBeOverridden }}
+              className="uppercase"
+            />
+          </div>
         </TabsList>
         <TabsContent value="account" className="min-w-96 p-2">
           {shouldDiff ? (

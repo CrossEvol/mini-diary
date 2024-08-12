@@ -3,6 +3,7 @@ import IpcSafeButton from '@/components/ipc-safe-button'
 import PlainTextDiffBox from '@/components/plain-text-diff-box'
 import PlainTextFrame from '@/components/plain-text-frame'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import useImportTypeSelect from '@/hooks/use-import-type-select'
 import React, { useState } from 'react'
 import ReactJson from 'react-json-view'
 import { Location, useLocation } from 'react-router-dom'
@@ -18,6 +19,7 @@ const JsonTabsView = () => {
   const [primaryJson, setPrimaryJson] =
     useState<Record<string, any>>(initialJson)
   const [secondaryJson, setSecondaryJson] = useState<Record<string, any>>()
+  const { shouldBeOverridden, ImportTypeSelect } = useImportTypeSelect()
   const location: Location<NavigateData> = useLocation()
   const shouldDiff = !!secondaryJson && JSON.stringify(secondaryJson) !== '{}'
 
@@ -38,10 +40,15 @@ const JsonTabsView = () => {
         <TabsList>
           <TabsTrigger value="account">Prettier</TabsTrigger>
           <TabsTrigger value="password">PlainText</TabsTrigger>
-          <IpcSafeButton
-            data={location.state}
-            className="uppercase sm:ml-20 md:ml-40"
-          />
+          <div className="flex flex-row sm:ml-20 md:ml-40">
+            <div className="flex items-center space-x-2">
+              {ImportTypeSelect}
+            </div>
+            <IpcSafeButton
+              data={{ ...location.state, shouldBeOverridden }}
+              className="uppercase"
+            />
+          </div>
         </TabsList>
         <TabsContent value="account" className="min-w-96 p-2">
           {shouldDiff ? (

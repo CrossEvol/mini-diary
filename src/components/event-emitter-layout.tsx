@@ -1,5 +1,4 @@
 import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
-import { profileAtom } from '@/atoms/profile.atom'
 import { useImportContentStorage } from '@/hooks/useImportContentStorage'
 import useNotify from '@/hooks/useNotify'
 import useProfile from '@/hooks/useProfile'
@@ -12,7 +11,6 @@ const EventEmitterLayout = () => {
     let flag = true
     const [eventEmitter] = useAtom(eventEmitterAtom)
     const { notifySuccess, notifyError } = useNotify()
-    const [profile, setProfile] = useAtom(profileAtom)
     const { saveImportContent } = useImportContentStorage()
     const navigate = useNavigate()
     const { setupUserProfile } = useProfile()
