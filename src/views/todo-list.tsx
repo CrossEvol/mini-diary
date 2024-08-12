@@ -14,7 +14,7 @@ const TodoList: React.FC = () => {
     }
 
     return (
-        <div className='mx-auto mt-10 max-w-md rounded-lg bg-white p-4 shadow-lg'>
+        <div className='mx-auto mt-10 max-w-md rounded-lg bg-white  p-4 shadow-lg'>
             <h1 className='mb-4 text-xl font-bold'>Todo List</h1>
             <div className='mb-4 flex'>
                 <input
@@ -25,7 +25,8 @@ const TodoList: React.FC = () => {
                 />
                 <button
                     className='ml-2 rounded-md bg-blue-500 p-2 text-white'
-                    onClick={handleAddTodo}>
+                    onClick={handleAddTodo}
+                >
                     Add
                 </button>
             </div>
@@ -33,7 +34,8 @@ const TodoList: React.FC = () => {
                 {todos.map((todo) => (
                     <li
                         key={todo.id}
-                        className='mb-2 flex items-center justify-between'>
+                        className='mb-2 flex items-center justify-between'
+                    >
                         <input
                             type='checkbox'
                             checked={todo.completed}
@@ -41,7 +43,8 @@ const TodoList: React.FC = () => {
                             className='mr-2'
                         />
                         <span
-                            className={`flex-grow ${todo.completed ? 'line-through' : ''}`}>
+                            className={`flex-grow ${todo.completed ? 'line-through' : ''}`}
+                        >
                             {todo.text}
                         </span>
                         {/* <span
@@ -54,7 +57,8 @@ const TodoList: React.FC = () => {
                         </span> */}
                         <button
                             className='ml-2 rounded-md bg-red-500 p-2 text-white'
-                            onClick={() => deleteTodo(todo.id)}>
+                            onClick={() => deleteTodo(todo.id)}
+                        >
                             Delete
                         </button>
                     </li>

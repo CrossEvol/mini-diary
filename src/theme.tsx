@@ -1,8 +1,8 @@
-import { createTheme } from '@mui/material/styles'
 import { red } from '@mui/material/colors'
+import { createTheme } from '@mui/material/styles'
 
 // A custom theme for this app
-const theme = createTheme({
+export const paletteTheme = createTheme({
     palette: {
         primary: {
             main: '#415edd',
@@ -16,4 +16,29 @@ const theme = createTheme({
     },
 })
 
-export default theme
+export const createRootTheme = (rootElement: HTMLElement) => {
+    return createTheme({
+        components: {
+            MuiPopover: {
+                defaultProps: {
+                    container: rootElement,
+                },
+            },
+            MuiPopper: {
+                defaultProps: {
+                    container: rootElement,
+                },
+            },
+            MuiDialog: {
+                defaultProps: {
+                    container: rootElement,
+                },
+            },
+            MuiModal: {
+                defaultProps: {
+                    container: rootElement,
+                },
+            },
+        },
+    })
+}

@@ -115,6 +115,14 @@ const Layout = () => {
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate('/todo-test')}>
+                        <ListItemIcon>
+                            <FormatListNumberedOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'Todo Test'} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
                     <ListItemButton
                         onClick={() =>
                             navigate(
