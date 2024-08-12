@@ -15,12 +15,17 @@ import PlainTextFrame from '../components/plain-text-frame'
 import { Button } from '../components/ui/button'
 import { FinalImportsData } from '@/shared/params'
 import { EChannel } from '@/shared/enums'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { TooltipWrapper } from '@/components/tooltip-wrapper'
 
-const mockDiariesToBeOverridden = Array.from({ length: 10 })
-  .map((_, i) => `2024-08-0${i}`)
-  .map((date) => ({
-    date,
-    contentToBeOverridden: `
+const mockDiariesToBeOverridden: FinalImportsData['toBeOverridden'] =
+  Array.from({ length: 10 })
+    .map((_, i) => `2024-08-0${i}`)
+    .map((date) => ({
+      date,
+      type: 'OVER_RIDE',
+      contentToBeOverridden: `
     # hello , diary in ${date}
     ## this diary will be overridden
     *   a
@@ -30,7 +35,7 @@ const mockDiariesToBeOverridden = Array.from({ length: 10 })
     ❤️\
     🔤
     `,
-    contentToBeImported: `
+      contentToBeImported: `
     # hello , diary in ${date}
     ## this diary will be imported!!
     *   a
@@ -40,12 +45,15 @@ const mockDiariesToBeOverridden = Array.from({ length: 10 })
     😀\
     (*^_^*)
     `
-  }))
+    }))
 
-const mockDiariesToBeCreated = Array.from({ length: 10 })
+const mockDiariesToBeCreated: FinalImportsData['toBeCreated'] = Array.from({
+  length: 10
+})
   .map((_, i) => `2024-08-0${i}`)
   .map((date) => ({
     date,
+    type: 'CREATE',
     contentToBeImported: `
     # hello , diary in ${date}
     ## this diary will be imported!!
@@ -82,7 +90,7 @@ export default function HomeView() {
 
   React.useEffect(() => {
     if (isDevelopment) {
-      setTimeout(() => setIsLoading(false), 2000)
+      setTimeout(() => setIsLoading(false), 1000)
     }
 
     return () => {}
@@ -145,6 +153,29 @@ export default function HomeView() {
               triggerButton={<Button className="uppercase">Send</Button>}
               description={'Imports all diaries and overridden them.'}
               onClose={handleSubmit}
+              dialogContent={
+                <div className="flex flex-col items-start space-y-2 px-4 font-semibold">
+                  <div className="grid w-full flex-1 gap-2 border-b-2 border-dotted">
+                    Import {importedDiaries.length}.
+                  </div>
+                  <div className="grid w-full flex-1 gap-2 border-b-2 border-dotted">
+                    Override{' '}
+                    {
+                      diffDiaries.filter((diary) => diary.type === 'OVER_RIDE')
+                        .length
+                    }
+                    .
+                  </div>
+                  <div className="grid w-full flex-1 gap-2 border-b-2 border-dotted">
+                    Combine{' '}
+                    {
+                      diffDiaries.filter((diary) => diary.type === 'COMBINE')
+                        .length
+                    }
+                    .
+                  </div>
+                </div>
+              }
             />
           </div>
         </TabsList>
@@ -154,7 +185,32 @@ export default function HomeView() {
               <div key={diary.date}>
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value={diary.date.toString()}>
-                    <AccordionTrigger>{diary.date}</AccordionTrigger>
+                    <AccordionTrigger>
+                      {diary.date}
+                      <TooltipWrapper>
+                        <div
+                          className="flex items-center space-x-2"
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          <Switch
+                            id="airplane-mode"
+                            onCheckedChange={(e) =>
+                              setDiffDiaries(
+                                diffDiaries.map((d) =>
+                                  d.date === diary.date
+                                    ? {
+                                        ...d,
+                                        type: e ? 'COMBINE' : 'OVER_RIDE'
+                                      }
+                                    : { ...d }
+                                )
+                              )
+                            }
+                          />
+                          <Label htmlFor="airplane-mode">{diary.type}</Label>
+                        </div>
+                      </TooltipWrapper>
+                    </AccordionTrigger>
                     <AccordionContent>
                       <PlainTextDiffBox
                         primary={diary.contentToBeImported}

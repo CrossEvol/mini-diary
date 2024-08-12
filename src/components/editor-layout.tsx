@@ -16,7 +16,12 @@ import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import fetchClient from '@/utils/fetch.client'
 import { beautifyHtml } from '@/utils/html.util'
 import { extractDataByDiaryKey } from '@/utils/regExp.utils'
-import { ApiUrl, createDiaryKey, createDiaryPath } from '@/utils/string.util'
+import {
+    ApiUrl,
+    combineEditorContent,
+    createDiaryKey,
+    createDiaryPath,
+} from '@/utils/string.util'
 import { Block, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
@@ -227,32 +232,37 @@ const EditorLayout = () => {
                         ),
                     }))
                 )
-                const toBeOverridden = await Promise.all(
-                    fileItemEntries
-                        .filter((entry) => keys.includes(entry.key))
-                        .map(async (entry) => ({
-                            date: extractDataByDiaryKey(entry.key)?.date!,
-                            contentToBeOverridden: await formatEditorContent(
-                                EFormat.MARKDOWN,
-                                (await loadContent(entry.key))!
-                            ),
-                            contentToBeImported: await formatEditorContent(
-                                EFormat.MARKDOWN,
-                                JSON.parse(entry.value)
-                            ),
-                        }))
-                )
-                const toBeCreated = await Promise.all(
-                    fileItemEntries
-                        .filter((entry) => !keys.includes(entry.key))
-                        .map(async (entry) => ({
-                            date: extractDataByDiaryKey(entry.key)?.date!,
-                            contentToBeImported: await formatEditorContent(
-                                EFormat.MARKDOWN,
-                                JSON.parse(entry.value)
-                            ),
-                        }))
-                )
+                const toBeOverridden: FinalImportsData['toBeOverridden'] =
+                    await Promise.all(
+                        fileItemEntries
+                            .filter((entry) => keys.includes(entry.key))
+                            .map(async (entry) => ({
+                                date: extractDataByDiaryKey(entry.key)?.date!,
+                                type: 'OVER_RIDE',
+                                contentToBeOverridden:
+                                    await formatEditorContent(
+                                        EFormat.MARKDOWN,
+                                        (await loadContent(entry.key))!
+                                    ),
+                                contentToBeImported: await formatEditorContent(
+                                    EFormat.MARKDOWN,
+                                    JSON.parse(entry.value)
+                                ),
+                            }))
+                    )
+                const toBeCreated: FinalImportsData['toBeCreated'] =
+                    await Promise.all(
+                        fileItemEntries
+                            .filter((entry) => !keys.includes(entry.key))
+                            .map(async (entry) => ({
+                                date: extractDataByDiaryKey(entry.key)?.date!,
+                                type: 'CREATE',
+                                contentToBeImported: await formatEditorContent(
+                                    EFormat.MARKDOWN,
+                                    JSON.parse(entry.value)
+                                ),
+                            }))
+                    )
 
                 window.electronAPI.onPureRedirect<FinalImportsData>(
                     async (value) => {
@@ -270,7 +280,17 @@ const EditorLayout = () => {
                                 await saveContent(
                                     createDiaryKey(profile?.id ?? 0, item.date),
                                     await editor.tryParseMarkdownToBlocks(
-                                        item.contentToBeImported
+                                        item.type === 'OVER_RIDE'
+                                            ? item.contentToBeImported
+                                            : combineEditorContent(
+                                                  importAllParams.format,
+                                                  {
+                                                      previous:
+                                                          item.contentToBeOverridden,
+                                                      current:
+                                                          item.contentToBeImported,
+                                                  }
+                                              )
                                     )
                                 )
                             }

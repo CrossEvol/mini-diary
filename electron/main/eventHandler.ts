@@ -20,6 +20,7 @@ import {
     SendMessagePortData,
 } from './shared/params'
 import { extraDateFromPath } from './util/file.util'
+import { combineEditorContent } from './util/string.util'
 
 // TODO wait for worker bundle
 /* export let port = 0
@@ -232,7 +233,7 @@ export const importAllDiariesHandler = async (
                 fileItem.path === cur.path
                     ? {
                           ...fileItem,
-                          content: combineContent(format, {
+                          content: combineEditorContent(format, {
                               previous: fileItem.content,
                               current: cur.content,
                           }),
@@ -251,7 +252,7 @@ export const importAllDiariesHandler = async (
 
         // set up the channel.
         const entryPath = 'pages/imports-diff-box/dist/index.html'
-        const subWindow = createSubWindow(entryPath)
+        const subWindow = createSubWindow(entryPath, { width: 1200 })
 
         ipcMain.once(EChannel.PURE_REDIRECT, (_event, value) => {
             mainLogger.info(
@@ -358,22 +359,5 @@ const createFileFilters = (format: EFormat): Electron.FileFilter => {
                 name: 'md-filter',
                 extensions: ['md', 'mdown', 'markdown'],
             }
-    }
-}
-
-const combineContent = (
-    format: EFormat,
-    { previous, current }: { previous: string; current: string }
-) => {
-    switch (format) {
-        case EFormat.HTML:
-            return previous + current
-        case EFormat.JSON:
-            return JSON.stringify([
-                ...JSON.parse(previous),
-                ...JSON.parse(current),
-            ])
-        case EFormat.MARKDOWN:
-            return previous + current
     }
 }

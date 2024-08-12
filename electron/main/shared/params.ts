@@ -65,10 +65,15 @@ export type NotifyParam = {
 
 export const newNotifyParam = (param: NotifyParam) => param
 
+const ImportTypeSchema = z.enum(['OVER_RIDE', 'CREATE', 'COMBINE'])
+
+export type ImportType = z.infer<typeof ImportTypeSchema>
+
 export const FinalImportsDataSchema = z.object({
     toBeOverridden: z.array(
         z.object({
             date: z.string(),
+            type: ImportTypeSchema,
             contentToBeOverridden: z.string(),
             contentToBeImported: z.string(),
         })
@@ -76,6 +81,7 @@ export const FinalImportsDataSchema = z.object({
     toBeCreated: z.array(
         z.object({
             date: z.string(),
+            type: ImportTypeSchema,
             contentToBeImported: z.string(),
         })
     ),
