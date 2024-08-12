@@ -26,3 +26,16 @@ export const projectsTable = sqliteTable('projects', {
         .notNull()
         .references(() => usersTable.id),
 })
+
+export const todosTable = sqliteTable('todos', {
+    id: integer('id').primaryKey(),
+    text: text('text'),
+    status: text('status', { enum: ['PENDING', 'PAUSED', 'COMPLETED'] }),
+    deadline: integer('deadline', { mode: 'timestamp_ms' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }),
+    priority: text('priority', { enum: ['HIGH', 'MEDIUM', 'LOW'] }),
+    createdBy: integer('created_by')
+        .notNull()
+        .references(() => usersTable.id),
+})

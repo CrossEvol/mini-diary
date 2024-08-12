@@ -3,8 +3,9 @@ import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 import { rmSync } from 'fs'
+import { writeFile } from 'fs/promises'
 import { afterAll, beforeAll, describe, it } from 'vitest'
-import { diariesTable, usersTable } from './schema'
+import { diariesTable, todosTable, usersTable } from './schema'
 import { seed } from './seed'
 
 const testDatabasePath = 'sqlite.test.db'
@@ -59,5 +60,29 @@ describe('databaseTest', () => {
             console.log(diaryRecords)
             console.log(JSON.stringify(diaryRecords[0]))
         })
+    })
+
+    it('group by todos by deadline', async () => {
+        const records = db.select().from(todosTable).all()
+
+        const todoMap = records.reduce((acc, cur, _idx) => {
+            if (acc.has(cur.deadline!.toDateString())) {
+                const a = acc.get(cur.deadline!.toDateString())!
+                acc.set(cur.deadline!.toDateString(), a.concat(cur))
+            } else {
+                acc.set(cur.deadline!.toDateString(), [])
+            }
+            return acc
+        }, new Map<string, (typeof records)[0][]>())
+
+        const result = todoMap.entries().reduce((acc, [key, value]) => {
+            acc[key] = value
+            return acc
+        }, Object.create(null))
+
+        await writeFile('todos.json', JSON.stringify(result, null, 2)),
+            {
+                encoding: 'utf-8',
+            }
     })
 })

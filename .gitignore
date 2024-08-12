@@ -50,6 +50,7 @@ public.pem
 # tmp
 tmp/
 ce-stats.html
+todos.json
 
 # static
 static/
