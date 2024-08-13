@@ -1,0 +1,1 @@
+ALTER TABLE `todos` ADD `order` integer DEFAULT 0 NOT NULL;

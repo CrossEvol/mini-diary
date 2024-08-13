@@ -29,6 +29,13 @@
       "when": 1723480911477,
       "tag": "0003_zippy_hellfire_club",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1723547054265,
+      "tag": "0004_fat_wolfpack",
+      "breakpoints": true
     }
   ]
 }

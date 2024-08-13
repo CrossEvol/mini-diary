@@ -65,6 +65,8 @@ describe('databaseTest', () => {
     it('group by todos by deadline', async () => {
         const records = db.select().from(todosTable).all()
 
+        type TodoRecord = (typeof records)[number]
+
         const todoMap = records.reduce((acc, cur, _idx) => {
             if (acc.has(cur.deadline!.toDateString())) {
                 const a = acc.get(cur.deadline!.toDateString())!
@@ -73,12 +75,12 @@ describe('databaseTest', () => {
                 acc.set(cur.deadline!.toDateString(), [])
             }
             return acc
-        }, new Map<string, (typeof records)[0][]>())
+        }, new Map<string, TodoRecord[]>())
 
-        const result = todoMap.entries().reduce((acc, [key, value]) => {
-            acc[key] = value
-            return acc
-        }, Object.create(null))
+        const result: Record<string, TodoRecord[]> = Object.create({})
+        for (const key of todoMap.keys()) {
+            result[key] = todoMap.get(key)!
+        }
 
         await writeFile('todos.json', JSON.stringify(result, null, 2)),
             {

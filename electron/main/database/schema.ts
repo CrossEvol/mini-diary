@@ -35,6 +35,7 @@ export const todosTable = sqliteTable('todos', {
     createdAt: integer('created_at', { mode: 'timestamp_ms' }),
     updatedAt: integer('updated_at', { mode: 'timestamp_ms' }),
     priority: text('priority', { enum: ['HIGH', 'MEDIUM', 'LOW'] }),
+    order: integer('order').notNull().default(0),
     createdBy: integer('created_by')
         .notNull()
         .references(() => usersTable.id),
