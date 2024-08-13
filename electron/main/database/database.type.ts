@@ -1,5 +1,4 @@
-import Database from 'better-sqlite3'
-import { BetterSQLite3Database, drizzle } from 'drizzle-orm/better-sqlite3'
+import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { diariesTable, projectsTable, todosTable, usersTable } from './schema'
 
 const user = (db: ReturnType<typeof drizzle>) => {

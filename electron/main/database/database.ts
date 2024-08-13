@@ -1,9 +1,12 @@
 import Database from 'better-sqlite3'
-import { and, between, eq, isNotNull, sql } from 'drizzle-orm'
+import { and, between, eq, isNotNull, max, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { join } from 'path'
 import { isDev } from '../util/electron.util'
-import { diariesTable, projectsTable, usersTable } from './schema'
+import { diariesTable, projectsTable, todosTable, usersTable } from './schema'
+import { TodoRecord } from './database.type'
+import { SQLiteAsyncDialect } from 'drizzle-orm/sqlite-core'
+import { ErrorConstants } from './error'
 
 const databasePath = 'sqlite.db'
 
@@ -175,9 +178,106 @@ export const updateDiary = async (id: number, content: unknown) => {
         .where(eq(diariesTable.id, id))
         .run()
 
-    if (result.changes !== 0) {
+    if (result.changes === 0) {
         return null
     }
     const diary = db.select().from(diariesTable).where(eq(diariesTable.id, id))
     return diary
+}
+
+type GetTodosParams = {
+    year: string
+    month: string
+}
+
+export const getAllTodos = (
+    userID: number,
+    { year, month }: GetTodosParams
+) => {
+    const startDay = new Date(`${year}-${month}-01`)
+    const endDay = new Date(`${year}-${month}-31`)
+    const result = db
+        .select()
+        .from(todosTable)
+        .where(
+            and(
+                eq(todosTable.createdBy, userID),
+                !!year && !!month
+                    ? between(todosTable.deadline, startDay, endDay)
+                    : undefined
+            )
+        )
+    return result
+}
+
+type CreateTodoParams = {
+    text: string
+    deadline: Date
+}
+
+export const createTodos = (
+    userID: number,
+    { text, deadline }: CreateTodoParams
+) => {
+    const result = db
+        .insert(todosTable)
+        .values({
+            text,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            deadline,
+            status: todosTable.status.enumValues[0],
+            priority: todosTable.priority.enumValues[1],
+            createdBy: userID,
+        })
+        .run()
+    if (result.changes === 0) {
+        return null
+    }
+    const newTodo = db
+        .select()
+        .from(todosTable)
+        .where(eq(todosTable.id, result.lastInsertRowid as number))
+        .get()
+    return newTodo
+}
+
+type UpdateTodoParams = Partial<
+    Pick<TodoRecord, 'text' | 'status' | 'deadline' | 'priority'>
+>
+
+export const updateTodos = (todoID: number, params: UpdateTodoParams) => {
+    const updateResult = db
+        .update(todosTable)
+        .set({ ...params })
+        .where(eq(todosTable.id, todoID))
+        .run()
+    if (updateResult.changes === 0) {
+        return null
+    }
+    const updatedTodo = db
+        .select()
+        .from(todosTable)
+        .where(eq(todosTable.id, todoID))
+        .get()!
+    return updatedTodo
+}
+
+export const deleteTodos = (todoID: number) => {
+    const target = db
+        .select()
+        .from(todosTable)
+        .where(eq(todosTable.id, todoID))
+        .get()
+    if (!target) {
+        throw new Error(ErrorConstants.SQL_NOT_FOUND)
+    }
+    const deleteResult = db
+        .delete(todosTable)
+        .where(eq(todosTable.id, todoID))
+        .run()
+    if (deleteResult.changes === 0) {
+        return null
+    }
+    return target
 }
