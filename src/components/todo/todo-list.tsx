@@ -100,6 +100,7 @@ export default function TodoList() {
         <div>
             {mockTodoList.map((todo) => (
                 <TodoItem
+                    key={todo.id}
                     initialTodo={todo}
                     expanded={expanded}
                     handleExpandedChange={handleExpandedChange}

@@ -2,6 +2,7 @@ import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined'
 import NotStartedOutlinedIcon from '@mui/icons-material/NotStartedOutlined'
+import PanToolOutlinedIcon from '@mui/icons-material/PanToolOutlined'
 import RotateLeftRoundedIcon from '@mui/icons-material/RotateLeftRounded'
 import { IconButton } from '@mui/material'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
@@ -13,6 +14,7 @@ import { styled } from '@mui/material/styles'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
+import { SortableItem } from '../dnd/sortable-item'
 import PrioritySelectMenu from './priority-select-menu'
 import TodoForm from './todo-form'
 import { Todo } from './todo-list'
@@ -83,8 +85,21 @@ export default function TodoItem({
                     id='panel1d-header'
                 >
                     <div className='w-full flex items-center justify-between'>
-                        <Typography>{todo.text}</Typography>
+                        <Typography className='overflow-ellipsis'>
+                            {todo.text}
+                        </Typography>
                         <div>
+                            <SortableItem
+                                element={'span'}
+                                id={todo.id.toString()}
+                            >
+                                <Tooltip title='Drag'>
+                                    <IconButton color='info'>
+                                        <PanToolOutlinedIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </SortableItem>
+
                             <PrioritySelectMenu
                                 onMenuItemClick={handleTodoPriorityChange}
                             />

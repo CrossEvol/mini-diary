@@ -1,8 +1,7 @@
+import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import { useState } from 'react'
 import { Day, DayPicker, DayProps } from 'react-day-picker'
 import 'react-day-picker/style.css'
-import React from 'react'
-import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import { Droppable } from './droppable'
 
 function MyDatePicker({ onClick }: any) {
@@ -18,18 +17,9 @@ function MyDatePicker({ onClick }: any) {
             }}
             components={{
                 Day: (props: DayProps) => {
-                    // React.useEffect(() => {
-                    //     console.log(
-                    //         formatDateTime(
-                    //             props.day.date,
-                    //             DateTimeFormatEnum.DATE_FORMAT
-                    //         )
-                    //     )
-                    //     return () => {}
-                    // }, [])
-
                     return (
                         <Droppable
+                            element={'td'}
                             id={formatDateTime(
                                 props.day.date,
                                 DateTimeFormatEnum.DATE_FORMAT

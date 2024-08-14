@@ -15,10 +15,11 @@ import {
     sortableKeyboardCoordinates,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
+import PanToolSharpIcon from '@mui/icons-material/PanToolSharp'
+import { IconButton } from '@mui/material'
 import React from 'react'
+import TodoList from '../todo/todo-list'
 import MyDatePicker from './my-date-picker'
-import { SortableItem } from './sortable-item'
-import { todo } from 'node:test'
 
 const initialBlocks = Array.from({ length: 30 }).map((_, idx) => ({
     id: idx,
@@ -97,8 +98,9 @@ const DndTodoDemo = () => {
 
     const handleDragStart = (event: DragStartEvent) => {
         const { active } = event
+        console.log(event)
 
-        setIsDragging(true)
+        setTimeout(() => setIsDragging(true), 1)
         setDraggingItem(
             todos.filter((todo) => todo.id === active.id.toString())[0]
         )
@@ -119,13 +121,20 @@ const DndTodoDemo = () => {
                         strategy={verticalListSortingStrategy}
                     >
                         <div className='flex flex-col items-end'>
-                            {todos.map((todo) => (
+                            <TodoList />
+                            {/* {todos.map((todo) => (
                                 <SortableItem key={todo.id} id={todo.id}>
-                                    <div className='m-2 border-2 border-solid border-blue-400 rounded-sm h-8 w-24'>
+                                    <div
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            console.log(todo.name)
+                                        }}
+                                        className='m-2 border-2 border-solid border-blue-400 rounded-sm h-8 w-24'
+                                    >
                                         {todo.name}
                                     </div>
                                 </SortableItem>
-                            ))}
+                            ))} */}
                         </div>
                     </SortableContext>
                     {/* {todos.map((todo) => (
@@ -160,8 +169,10 @@ const DndTodoDemo = () => {
             </div>
             <DragOverlay>
                 {isDragging ? (
-                    <div className='font-bold bg-purple-700 text-white border-dotted border-4 rounded-2xl text-center'>
-                        {draggingItem?.name}
+                    <div className='shadow-purple-500 bg-purple-600 border-purple-800 w-8 h-8 rounded-2xl flex items-center justify-center'>
+                        <IconButton>
+                            <PanToolSharpIcon className='text-white' />
+                        </IconButton>
                     </div>
                 ) : null}
             </DragOverlay>
