@@ -1,6 +1,6 @@
 import { profileAtom } from '@/atoms/profile.atom'
 import UserProfile from '@/components/user-profile'
-import { User } from 'electron/main/server/zod.type'
+import { User } from 'electron/main/server/api.type'
 import { useAtom } from 'jotai'
 
 const mockUser: User = {

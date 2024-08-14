@@ -1,6 +1,7 @@
 import { profileAtom } from '@/atoms/profile.atom'
 import useNotify from '@/hooks/useNotify'
 import fetchClient from '@/utils/fetch.client'
+import { ApiUrl } from '@/utils/string.util'
 import {
     Box,
     Button,
@@ -15,11 +16,10 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import { User, ZResult } from 'electron/main/server/zod.type'
+import { User, ZResult } from 'electron/main/server/api.type'
 import { useAtom } from 'jotai'
 import React, { useState } from 'react'
 import UploadZone from './upload-zone'
-import { ApiUrl } from '@/utils/string.util'
 
 interface UserProfileProps {
     user: User

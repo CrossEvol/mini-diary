@@ -1,4 +1,5 @@
 import * as z from 'zod'
+import { todosTable } from '../database/schema'
 
 export const ProjectSchema = z.object({
     id: z.number().nullable(),
@@ -58,3 +59,43 @@ export const ZResultSchema = <T>(dataSchema: z.ZodType<T>) =>
     })
 
 export type ZResult<T> = z.infer<ReturnType<typeof ZResultSchema<T>>>
+
+export const TodoSchema = z.object({
+    id: z.number(),
+    text: z.string().nullable(),
+    remark: z.string().nullable(),
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable(),
+    status: z.enum(todosTable.status.enumValues).nullable(),
+    deadline: z.date().nullable(),
+    priority: z.enum(todosTable.priority.enumValues).nullable(),
+    order: z.number(),
+    createdBy: z.number(),
+})
+
+export type Todo = z.infer<typeof TodoSchema>
+
+export const GetTodosSchema = z.object({
+    q: z.string().optional(),
+    startDay: z.date().optional(),
+    endDay: z.date().optional(),
+})
+
+export type GetTodosDTO = z.infer<typeof GetTodosSchema>
+
+export const CreateTodoSchema = z.object({
+    text: z.string(),
+    deadline: z.date(),
+})
+
+export type CreateTodoDTO = z.infer<typeof CreateTodoSchema>
+
+export const UpdateTodoSchema = TodoSchema.pick({
+    text: true,
+    remark: true,
+    status: true,
+    deadline: true,
+    priority: true,
+})
+
+export type UpdateTodoDTO = z.infer<typeof UpdateTodoSchema>

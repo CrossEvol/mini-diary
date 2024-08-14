@@ -1,7 +1,7 @@
 import { profileAtom } from '@/atoms/profile.atom'
 import fetchClient from '@/utils/fetch.client'
 import { ApiUrl } from '@/utils/string.util'
-import { UserProfile, ZResult } from 'electron/main/server/zod.type'
+import { UserProfile, ZResult } from 'electron/main/server/api.type'
 import { useAtom } from 'jotai'
 import { useCallback } from 'react'
 

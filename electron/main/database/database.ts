@@ -214,7 +214,7 @@ type CreateTodoParams = {
     deadline: Date
 }
 
-export const createTodos = (
+export const createTodo = (
     userID: number,
     { text, deadline }: CreateTodoParams
 ) => {
@@ -246,7 +246,7 @@ type UpdateTodoParams = Partial<
     Pick<TodoRecord, 'text' | 'remark' | 'status' | 'deadline' | 'priority'>
 >
 
-export const updateTodos = (todoID: number, params: UpdateTodoParams) => {
+export const updateTodo = (todoID: number, params: UpdateTodoParams) => {
     const updateResult = db
         .update(todosTable)
         .set({ ...params })
@@ -263,7 +263,7 @@ export const updateTodos = (todoID: number, params: UpdateTodoParams) => {
     return updatedTodo
 }
 
-export const deleteTodos = (todoID: number) => {
+export const deleteTodo = (todoID: number) => {
     const target = db
         .select()
         .from(todosTable)

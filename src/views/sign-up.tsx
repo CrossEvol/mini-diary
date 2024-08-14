@@ -14,7 +14,7 @@ import Link from '@mui/material/Link'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { User, ZResult } from 'electron/main/server/zod.type'
+import { User, ZResult } from 'electron/main/server/api.type'
 import * as React from 'react'
 import { useNavigate } from 'react-router-dom'
 

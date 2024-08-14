@@ -1,7 +1,14 @@
 import { Context, Next } from 'hono'
 import { getFromJWT } from '../util/jwt.util'
 
-const whiteList = ['/hello', '/ui', '/doc', '/auth/sign-in', '/auth/sign-up']
+const whiteList = [
+    '/hello',
+    '/ui',
+    '/doc',
+    '/auth/sign-in',
+    '/auth/sign-up',
+    '/favicon.ico',
+]
 
 const permissiveRegExp = ['/static/*'].map((s) => new RegExp(s))
 
