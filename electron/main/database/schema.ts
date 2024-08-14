@@ -30,6 +30,7 @@ export const projectsTable = sqliteTable('projects', {
 export const todosTable = sqliteTable('todos', {
     id: integer('id').primaryKey(),
     text: text('text'),
+    remark: text('remark'),
     status: text('status', { enum: ['PENDING', 'PAUSED', 'COMPLETED'] }),
     deadline: integer('deadline', { mode: 'timestamp_ms' }),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }),

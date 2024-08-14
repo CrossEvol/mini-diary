@@ -1,12 +1,11 @@
 import Database from 'better-sqlite3'
-import { and, between, eq, isNotNull, max, sql } from 'drizzle-orm'
+import { and, between, eq, isNotNull, like, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { join } from 'path'
 import { isDev } from '../util/electron.util'
-import { diariesTable, projectsTable, todosTable, usersTable } from './schema'
 import { TodoRecord } from './database.type'
-import { SQLiteAsyncDialect } from 'drizzle-orm/sqlite-core'
 import { ErrorConstants } from './error'
+import { diariesTable, projectsTable, todosTable, usersTable } from './schema'
 
 const databasePath = 'sqlite.db'
 
@@ -186,23 +185,23 @@ export const updateDiary = async (id: number, content: unknown) => {
 }
 
 type GetTodosParams = {
-    year: string
-    month: string
+    q?: string
+    startDay?: Date
+    endDay?: Date
 }
 
 export const getAllTodos = (
     userID: number,
-    { year, month }: GetTodosParams
+    { startDay, endDay, q }: GetTodosParams
 ) => {
-    const startDay = new Date(`${year}-${month}-01`)
-    const endDay = new Date(`${year}-${month}-31`)
     const result = db
         .select()
         .from(todosTable)
         .where(
             and(
                 eq(todosTable.createdBy, userID),
-                !!year && !!month
+                !!q ? like(todosTable.text, q) : undefined,
+                !!startDay && !!endDay
                     ? between(todosTable.deadline, startDay, endDay)
                     : undefined
             )
@@ -223,6 +222,7 @@ export const createTodos = (
         .insert(todosTable)
         .values({
             text,
+            remark: '',
             createdAt: new Date(),
             updatedAt: new Date(),
             deadline,
@@ -243,7 +243,7 @@ export const createTodos = (
 }
 
 type UpdateTodoParams = Partial<
-    Pick<TodoRecord, 'text' | 'status' | 'deadline' | 'priority'>
+    Pick<TodoRecord, 'text' | 'remark' | 'status' | 'deadline' | 'priority'>
 >
 
 export const updateTodos = (todoID: number, params: UpdateTodoParams) => {

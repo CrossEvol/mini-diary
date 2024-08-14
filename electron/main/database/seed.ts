@@ -11,6 +11,10 @@ const initialTodos = Array.from({ length: 30 })
     .map((n) =>
         Array.from({ length: 5 }).map((_, idx) => ({
             text: `Item ${idx}`,
+            remark: Array.from({ length: 10 })
+                .map((_) => Math.floor(Math.random() * 1000_000_000_000_000))
+                .map((n) => n.toString(36))
+                .join(' '),
             status: randomElement(todosTable.status.enumValues),
             deadline: new Date(`2024-08-${n}`),
             createdAt: new Date(),
