@@ -1,4 +1,4 @@
-import DndTodoDemo from '@/components/DndTodoDemo'
+import DndTodoDemo from '@/components/dnd/dnd-todo-demo'
 
 const TodoTest = () => {
     return (
