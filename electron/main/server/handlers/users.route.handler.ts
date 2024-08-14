@@ -1,4 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi'
+import { StatusCodes } from 'http-status-codes'
 import { updateUser } from '../../database/database'
 import {
     User,
@@ -14,7 +15,8 @@ const useUsersRoute = (app: HonoApp) => {
     app.openapi(
         createRoute({
             method: 'put',
-            path: '/users/:id',
+            path: '/users/{id}',
+            tags: ['User'],
             security: [
                 {
                     AuthorizationBearer: [], // <- Add security name (must be same)
@@ -72,7 +74,8 @@ const useUsersRoute = (app: HonoApp) => {
                     nickname: user!.nickname,
                     pinCode: user!.pinCode,
                     avatar: user!.avatar,
-                })
+                }),
+                StatusCodes.OK
             )
         }
     )

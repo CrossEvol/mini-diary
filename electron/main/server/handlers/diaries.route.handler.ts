@@ -1,10 +1,11 @@
 import { createRoute, z } from '@hono/zod-openapi'
-import { DateTimeFormatEnum, formatDateTime } from '../../util/datetime.utils'
+import { StatusCodes } from 'http-status-codes'
 import {
     createDiary,
     getAllDiaryIDs,
     updateDiary,
 } from '../../database/database'
+import { DateTimeFormatEnum, formatDateTime } from '../../util/datetime.utils'
 import {
     Diary,
     DiarySync,
@@ -21,6 +22,7 @@ const useDiariesRoute = (app: HonoApp) => {
         createRoute({
             method: 'put',
             path: '/diaries',
+            tags: ['Diary'],
             security: [
                 {
                     AuthorizationBearer: [], // <- Add security name (must be same)
@@ -98,7 +100,8 @@ const useDiariesRoute = (app: HonoApp) => {
                 okResponse<DiarySyncOutput>({
                     createdCount: createdDiaries.length,
                     updatedCount: updatedDiaries.length,
-                })
+                }),
+                StatusCodes.OK
             )
         }
     )

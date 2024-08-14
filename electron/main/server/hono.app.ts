@@ -6,6 +6,7 @@ import useAuthRoute from './handlers/auth.route.handler'
 import useDiariesRoute from './handlers/diaries.route.handler'
 import useExampleRoute from './handlers/example.route.handler'
 import useStorageRoute from './handlers/storage.route.handler'
+import useTodosRoute from './handlers/todos.route.handler'
 import useUsersRoute from './handlers/users.route.handler'
 import { bearerAuth } from './middlewares'
 import { getSafeStatusCode } from './server.aux'
@@ -51,6 +52,7 @@ useAuthRoute(app)
 useUsersRoute(app)
 useDiariesRoute(app)
 useStorageRoute(app)
+useTodosRoute(app)
 
 app.get(
     '/ui',

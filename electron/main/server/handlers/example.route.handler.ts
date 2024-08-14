@@ -1,4 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi'
+import { StatusCodes } from 'http-status-codes'
 import { getUsersWithProjects } from '../../database/database'
 import { UserJoin, UserJoinSchema, ZResultSchema } from '../api.type'
 import { HonoApp } from '../hono.app'
@@ -9,6 +10,7 @@ const useExampleRoute = (app: HonoApp) => {
         createRoute({
             method: 'get',
             path: '/hello',
+            tags: ['Example'],
             responses: {
                 200: {
                     description: 'Respond a message',
@@ -21,7 +23,7 @@ const useExampleRoute = (app: HonoApp) => {
             },
         }),
         (c) => {
-            return c.json(okResponse<string>('hello'))
+            return c.json(okResponse<string>('hello'), StatusCodes.OK)
         }
     )
 
@@ -29,6 +31,7 @@ const useExampleRoute = (app: HonoApp) => {
         createRoute({
             method: 'get',
             path: '/users',
+            tags: ['Example'],
             responses: {
                 200: {
                     description: 'Get Users with Projects',
@@ -43,7 +46,7 @@ const useExampleRoute = (app: HonoApp) => {
         async (c) => {
             const res = await getUsersWithProjects()
 
-            return c.json(okResponse<UserJoin>(res))
+            return c.json(okResponse<UserJoin>(res), StatusCodes.OK)
         }
     )
 }

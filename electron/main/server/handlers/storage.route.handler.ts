@@ -1,8 +1,9 @@
 import { serveStatic } from '@hono/node-server/serve-static'
 import { createRoute, z } from '@hono/zod-openapi'
-import { isDev } from '../../util/electron.util'
 import fs from 'fs'
+import { StatusCodes } from 'http-status-codes'
 import path from 'path'
+import { isDev } from '../../util/electron.util'
 import { HonoApp } from '../hono.app'
 
 export const useStorageRoute = (app: HonoApp) => {
@@ -17,6 +18,7 @@ export const useStorageRoute = (app: HonoApp) => {
         createRoute({
             method: 'post',
             path: '/upload',
+            tags: ['Upload'],
             security: [
                 {
                     AuthorizationBearer: [], // <- Add security name (must be same)
@@ -75,12 +77,18 @@ export const useStorageRoute = (app: HonoApp) => {
             // Retrieve the uploaded file
             const image = formData.get('image') as File
             if (!image) {
-                return c.json({ error: 'Image file is required' }, 400)
+                return c.json(
+                    { error: 'Image file is required' },
+                    StatusCodes.BAD_REQUEST
+                )
             }
 
             // Verify the file is an image
             if (!image.type.startsWith('image/')) {
-                return c.json({ error: 'Uploaded file is not an image' }, 400)
+                return c.json(
+                    { error: 'Uploaded file is not an image' },
+                    StatusCodes.BAD_REQUEST
+                )
             }
 
             // Extract the image extension from MIME type
@@ -124,7 +132,7 @@ export const useStorageRoute = (app: HonoApp) => {
                     local_path: imagePath,
                     avatar_url: `static/${imageName}`,
                 },
-                200
+                StatusCodes.OK
             )
         }
     )

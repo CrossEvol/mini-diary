@@ -5,7 +5,7 @@ import { join } from 'path'
 import { isDev } from '../util/electron.util'
 import { TodoRecord } from './database.type'
 import { ErrorConstants } from './error'
-import { diariesTable, projectsTable, todosTable, usersTable } from './schema'
+import { DiariesTable, ProjectsTable, TodosTable, UsersTable } from './schema'
 
 const databasePath = 'sqlite.db'
 
@@ -17,9 +17,9 @@ const db = drizzle(sqlite)
 export const getUsersWithProjects = async () => {
     const userWithProjects = db
         .select()
-        .from(usersTable)
-        .leftJoin(projectsTable, eq(usersTable.id, projectsTable.ownerId))
-        .where(sql`${usersTable.id} = 1`)
+        .from(UsersTable)
+        .leftJoin(ProjectsTable, eq(UsersTable.id, ProjectsTable.ownerId))
+        .where(sql`${UsersTable.id} = 1`)
         .all()
 
     const { users, projects } = userWithProjects[0]
@@ -41,7 +41,7 @@ export const createUser = async ({
     pinCode,
 }: CreateUserParams) => {
     const insertResult = db
-        .insert(usersTable)
+        .insert(UsersTable)
         .values({ email, nickname, password, pinCode })
         .run()
 
@@ -51,8 +51,8 @@ export const createUser = async ({
 
     const newUser = db
         .select()
-        .from(usersTable)
-        .where(eq(usersTable.id, insertResult.lastInsertRowid as number))
+        .from(UsersTable)
+        .where(eq(UsersTable.id, insertResult.lastInsertRowid as number))
         .get()!
     return newUser
 }
@@ -70,7 +70,7 @@ export const updateUser = async (
     { email, nickname, password, pinCode, avatar }: UpdateUserParams
 ) => {
     const updateResult = db
-        .update(usersTable)
+        .update(UsersTable)
         .set({
             email,
             nickname,
@@ -78,15 +78,15 @@ export const updateUser = async (
             pinCode,
             avatar,
         })
-        .where(eq(usersTable.id, userID))
+        .where(eq(UsersTable.id, userID))
         .run()
     if (updateResult.changes === 0) {
         return null
     }
     const user = db
         .select()
-        .from(usersTable)
-        .where(eq(usersTable.id, userID))
+        .from(UsersTable)
+        .where(eq(UsersTable.id, userID))
         .get()
     return user
 }
@@ -94,15 +94,15 @@ export const updateUser = async (
 export const getUserByEmail = async (email: string) => {
     const user = db
         .select()
-        .from(usersTable)
-        .where(eq(usersTable.email, email))
+        .from(UsersTable)
+        .where(eq(UsersTable.email, email))
         .get()
     return user
 }
 
 export const getUserByUserID = async (userID: number) => {
     const user =
-        db.select().from(usersTable).where(eq(usersTable.id, userID)).get() ??
+        db.select().from(UsersTable).where(eq(UsersTable.id, userID)).get() ??
         null
     return user
 }
@@ -120,13 +120,13 @@ export const getAllDiaries = async ({
 }: GetAllDiariesParams) => {
     const result = db
         .select()
-        .from(diariesTable)
+        .from(DiariesTable)
         .where(
             and(
-                eq(diariesTable.ownerId, userId),
+                eq(DiariesTable.ownerId, userId),
                 !!start && !!end
-                    ? between(diariesTable.createdAt, start, end)
-                    : isNotNull(diariesTable.createdAt)
+                    ? between(DiariesTable.createdAt, start, end)
+                    : isNotNull(DiariesTable.createdAt)
             )
         )
         .all()
@@ -136,11 +136,11 @@ export const getAllDiaries = async ({
 export const getAllDiaryIDs = async (userID: number) => {
     const result = db
         .select({
-            id: diariesTable.id,
-            createdAt: diariesTable.createdAt,
+            id: DiariesTable.id,
+            createdAt: DiariesTable.createdAt,
         })
-        .from(diariesTable)
-        .where(eq(diariesTable.ownerId, userID))
+        .from(DiariesTable)
+        .where(eq(DiariesTable.ownerId, userID))
         .all()
     return result
 }
@@ -151,7 +151,7 @@ export const createDiary = async (
     createdAt: Date
 ) => {
     const insertResult = db
-        .insert(diariesTable)
+        .insert(DiariesTable)
         .values({
             ownerId,
             createdAt,
@@ -161,26 +161,26 @@ export const createDiary = async (
         .run()
     const newDiary = db
         .select()
-        .from(diariesTable)
-        .where(eq(diariesTable.id, insertResult.lastInsertRowid as number))
+        .from(DiariesTable)
+        .where(eq(DiariesTable.id, insertResult.lastInsertRowid as number))
         .get()
     return newDiary
 }
 
 export const updateDiary = async (id: number, content: unknown) => {
     const result = db
-        .update(diariesTable)
+        .update(DiariesTable)
         .set({
             content,
             updatedAt: new Date(),
         })
-        .where(eq(diariesTable.id, id))
+        .where(eq(DiariesTable.id, id))
         .run()
 
     if (result.changes === 0) {
         return null
     }
-    const diary = db.select().from(diariesTable).where(eq(diariesTable.id, id))
+    const diary = db.select().from(DiariesTable).where(eq(DiariesTable.id, id))
     return diary
 }
 
@@ -196,16 +196,17 @@ export const getAllTodos = (
 ) => {
     const result = db
         .select()
-        .from(todosTable)
+        .from(TodosTable)
         .where(
             and(
-                eq(todosTable.createdBy, userID),
-                !!q ? like(todosTable.text, q) : undefined,
+                eq(TodosTable.createdBy, userID),
+                !!q ? like(TodosTable.text, q) : undefined,
                 !!startDay && !!endDay
-                    ? between(todosTable.deadline, startDay, endDay)
+                    ? between(TodosTable.deadline, startDay, endDay)
                     : undefined
             )
         )
+        .all()
     return result
 }
 
@@ -219,15 +220,15 @@ export const createTodo = (
     { text, deadline }: CreateTodoParams
 ) => {
     const result = db
-        .insert(todosTable)
+        .insert(TodosTable)
         .values({
             text,
             remark: '',
             createdAt: new Date(),
             updatedAt: new Date(),
             deadline,
-            status: todosTable.status.enumValues[0],
-            priority: todosTable.priority.enumValues[1],
+            status: TodosTable.status.enumValues[0],
+            priority: TodosTable.priority.enumValues[1],
             createdBy: userID,
         })
         .run()
@@ -236,29 +237,35 @@ export const createTodo = (
     }
     const newTodo = db
         .select()
-        .from(todosTable)
-        .where(eq(todosTable.id, result.lastInsertRowid as number))
+        .from(TodosTable)
+        .where(eq(TodosTable.id, result.lastInsertRowid as number))
         .get()
-    return newTodo
+    return newTodo!
 }
 
 type UpdateTodoParams = Partial<
-    Pick<TodoRecord, 'text' | 'remark' | 'status' | 'deadline' | 'priority'>
+    Partial<
+        Pick<TodoRecord, 'text' | 'remark' | 'status' | 'deadline' | 'priority'>
+    >
 >
 
-export const updateTodo = (todoID: number, params: UpdateTodoParams) => {
+export const updateTodo = (
+    todoID: number,
+    userID: number,
+    params: UpdateTodoParams
+) => {
     const updateResult = db
-        .update(todosTable)
+        .update(TodosTable)
         .set({ ...params })
-        .where(eq(todosTable.id, todoID))
+        .where(and(eq(TodosTable.id, todoID), eq(TodosTable.createdBy, userID)))
         .run()
     if (updateResult.changes === 0) {
         return null
     }
     const updatedTodo = db
         .select()
-        .from(todosTable)
-        .where(eq(todosTable.id, todoID))
+        .from(TodosTable)
+        .where(and(eq(TodosTable.id, todoID), eq(TodosTable.createdBy, userID)))
         .get()!
     return updatedTodo
 }
@@ -266,15 +273,15 @@ export const updateTodo = (todoID: number, params: UpdateTodoParams) => {
 export const deleteTodo = (todoID: number) => {
     const target = db
         .select()
-        .from(todosTable)
-        .where(eq(todosTable.id, todoID))
+        .from(TodosTable)
+        .where(eq(TodosTable.id, todoID))
         .get()
     if (!target) {
         throw new Error(ErrorConstants.SQL_NOT_FOUND)
     }
     const deleteResult = db
-        .delete(todosTable)
-        .where(eq(todosTable.id, todoID))
+        .delete(TodosTable)
+        .where(eq(TodosTable.id, todoID))
         .run()
     if (deleteResult.changes === 0) {
         return null

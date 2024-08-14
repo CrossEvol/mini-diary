@@ -22,6 +22,7 @@ const useAuthRoute = (app: HonoApp) => {
         createRoute({
             method: 'get',
             path: '/profile',
+            tags: ['Auth'],
             security: [
                 {
                     AuthorizationBearer: [], // <- Add security name (must be same)
@@ -41,7 +42,7 @@ const useAuthRoute = (app: HonoApp) => {
         async (c) => {
             const userID = c.get('userID')
             const user = await getUserByUserID(userID!)
-            return c.json(okResponse<UserProfile | null>(user))
+            return c.json(okResponse<UserProfile | null>(user), StatusCodes.OK)
         }
     )
 
@@ -49,6 +50,7 @@ const useAuthRoute = (app: HonoApp) => {
         createRoute({
             method: 'post',
             path: '/auth/sign-up',
+            tags: ['Auth'],
             request: {
                 body: {
                     content: {
@@ -90,7 +92,8 @@ const useAuthRoute = (app: HonoApp) => {
                     nickname: user!.nickname,
                     pinCode: user!.pinCode,
                     avatar: user!.avatar,
-                })
+                }),
+                StatusCodes.OK
             )
         }
     )
@@ -99,6 +102,7 @@ const useAuthRoute = (app: HonoApp) => {
         createRoute({
             method: 'post',
             path: '/auth/sign-in',
+            tags: ['Auth'],
             request: {
                 body: {
                     content: {
@@ -138,7 +142,7 @@ const useAuthRoute = (app: HonoApp) => {
                 userID: user.id!,
                 nickname: user.nickname!,
             })
-            return c.json(okResponse({ token: jwt }))
+            return c.json(okResponse({ token: jwt }), StatusCodes.OK)
         }
     )
 }

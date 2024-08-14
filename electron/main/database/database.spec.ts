@@ -5,7 +5,7 @@ import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 import { rmSync } from 'fs'
 import { writeFile } from 'fs/promises'
 import { afterAll, beforeAll, describe, it } from 'vitest'
-import { diariesTable, todosTable, usersTable } from './schema'
+import { DiariesTable, TodosTable, UsersTable } from './schema'
 import { seed } from './seed'
 
 const testDatabasePath = 'sqlite.test.db'
@@ -26,14 +26,14 @@ afterAll(() => {
 
 describe('databaseTest', () => {
     it('getUsers', () => {
-        const res = db.select().from(usersTable).all()
+        const res = db.select().from(UsersTable).all()
         console.log(res)
     })
 
     it('getUsersWithDiaries', async () => {
         await db.transaction(async (tx) => {
             const res = tx
-                .insert(usersTable)
+                .insert(UsersTable)
                 .values({
                     email: 'test',
                     nickname: 'test',
@@ -42,7 +42,7 @@ describe('databaseTest', () => {
                 })
                 .run()
             const userId = res.lastInsertRowid
-            tx.insert(diariesTable)
+            tx.insert(DiariesTable)
                 .values({
                     ownerId: userId as number,
                     content: JSON.stringify({ a: 1, b: '2' }),
@@ -51,19 +51,19 @@ describe('databaseTest', () => {
                 .run()
             const allUsersWithDiareis = db
                 .select()
-                .from(usersTable)
-                .leftJoin(diariesTable, eq(usersTable.id, diariesTable.ownerId))
+                .from(UsersTable)
+                .leftJoin(DiariesTable, eq(UsersTable.id, DiariesTable.ownerId))
                 .all()
             console.log(allUsersWithDiareis)
 
-            const diaryRecords = db.select().from(diariesTable).all()
+            const diaryRecords = db.select().from(DiariesTable).all()
             console.log(diaryRecords)
             console.log(JSON.stringify(diaryRecords[0]))
         })
     })
 
     it('group by todos by deadline', async () => {
-        const records = db.select().from(todosTable).all()
+        const records = db.select().from(TodosTable).all()
 
         type TodoRecord = (typeof records)[number]
 

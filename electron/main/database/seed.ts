@@ -1,5 +1,5 @@
 import { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3'
-import { projectsTable, todosTable, usersTable } from './schema'
+import { ProjectsTable, TodosTable, UsersTable } from './schema'
 
 const randomElement = <T>(array: T[]) => {
     const randomIndex = Math.floor(Math.random() * array.length)
@@ -15,11 +15,11 @@ const initialTodos = Array.from({ length: 30 })
                 .map((_) => Math.floor(Math.random() * 1000_000_000_000_000))
                 .map((n) => n.toString(36))
                 .join(' '),
-            status: randomElement(todosTable.status.enumValues),
+            status: randomElement(TodosTable.status.enumValues),
             deadline: new Date(`2024-08-${n}`),
             createdAt: new Date(),
             updatedAt: new Date(),
-            priority: randomElement(todosTable.priority.enumValues),
+            priority: randomElement(TodosTable.priority.enumValues),
             createdBy: 1,
         }))
     )
@@ -27,7 +27,7 @@ const initialTodos = Array.from({ length: 30 })
 
 export const seed = (db: BetterSQLite3Database<Record<string, never>>) => {
     const res = db
-        .insert(usersTable)
+        .insert(UsersTable)
         .values([
             {
                 email: '123@qq.com',
@@ -40,7 +40,7 @@ export const seed = (db: BetterSQLite3Database<Record<string, never>>) => {
 
     const userId = res.lastInsertRowid
 
-    db.insert(projectsTable)
+    db.insert(ProjectsTable)
         .values([
             {
                 name: 'Project_' + Date.now().toString(),
@@ -49,5 +49,5 @@ export const seed = (db: BetterSQLite3Database<Record<string, never>>) => {
         ])
         .run()
 
-    db.insert(todosTable).values(initialTodos).run()
+    db.insert(TodosTable).values(initialTodos).run()
 }
