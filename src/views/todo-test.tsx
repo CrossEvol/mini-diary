@@ -1,9 +1,12 @@
-import DndTodoDemo from '@/components/dnd/dnd-todo-demo'
+import TodoList from '@/components/todo/todo-list'
 
 const TodoTest = () => {
     return (
         <div>
-            <DndTodoDemo />
+            {/* <DndTodoDemo /> */}
+            <div className='w-[32rem]'>
+                <TodoList />
+            </div>
         </div>
     )
 }
