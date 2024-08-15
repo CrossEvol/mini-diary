@@ -1,4 +1,6 @@
 import todoApi from '@/api/todo-api'
+import { pickedDayAtom } from '@/atoms/picked-day.atom'
+import { createTodosQueryKey } from '@/utils/string.util'
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined'
@@ -14,8 +16,9 @@ import MuiAccordionSummary, {
 import { styled } from '@mui/material/styles'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Todo, UpdateTodoDTO } from 'electron/main/server/api.type'
+import { useAtom } from 'jotai'
 import * as React from 'react'
 import { SortableItem } from './dnd/sortable-item'
 import PrioritySelectMenu from './priority-select-menu'
@@ -70,7 +73,9 @@ export default function TodoItem({
     expanded,
     handleExpandedChange,
 }: IProps) {
+    const [pickedDay] = useAtom(pickedDayAtom)
     const [todo, setTodo] = React.useState(initialTodo)
+    const queryClient = useQueryClient()
 
     // Mutations
     const mutation = useMutation<
@@ -83,6 +88,16 @@ export default function TodoItem({
             if (data !== null) {
                 setTodo({ ...todo, ...data })
             }
+        },
+    })
+
+    // Mutations
+    const deletion = useMutation<Todo | null, Error, number>({
+        mutationFn: async (id) => await todoApi.deleteTodo(id),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: [createTodosQueryKey(pickedDay)],
+            })
         },
     })
 
@@ -168,6 +183,7 @@ export default function TodoItem({
                                 <IconButton
                                     onClick={(e) => {
                                         e.stopPropagation()
+                                        deletion.mutateAsync(todo.id)
                                     }}
                                 >
                                     <CancelOutlinedIcon color='error' />

@@ -44,6 +44,22 @@ export const updateTodo = async (
     }
 }
 
+export const deleteTodo = async (todoID: number) => {
+    const resp = await fetchClient.delete<ZResult<Todo>>(
+        `${ApiUrl(`todos/${todoID}`)}`,
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        }
+    )
+    if (resp.status === 200) {
+        return resp.data
+    } else {
+        return null
+    }
+}
+
 export const exchangeTodoOrder = async (firstTodo: Todo, secondTodo: Todo) => {
     const resp = await Promise.all([
         await fetchClient.patch<ZResult<Todo>>(
@@ -80,5 +96,6 @@ export const exchangeTodoOrder = async (firstTodo: Todo, secondTodo: Todo) => {
 export default {
     getTodos,
     updateTodo,
+    deleteTodo,
     exchangeTodoOrder,
 }

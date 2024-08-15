@@ -1,5 +1,10 @@
 import { EFormat } from '@/shared/enums'
 import queryString, { StringifyOptions } from 'query-string'
+import { DateTimeFormatEnum, formatDateTime } from './datetime.utils'
+
+export const createTodosQueryKey = (date: Date) => {
+    return `todos-${formatDateTime(date, DateTimeFormatEnum.DATE_FORMAT)}`
+}
 
 export const createDiaryKey = (userID: number, date: string) =>
     `diary-${userID}-${date}`

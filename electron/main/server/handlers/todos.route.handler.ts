@@ -1,6 +1,11 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { StatusCodes } from 'http-status-codes'
-import { createTodo, getAllTodos, updateTodo } from '../../database/database'
+import {
+    createTodo,
+    deleteTodo,
+    getAllTodos,
+    updateTodo,
+} from '../../database/database'
 import {
     CreateTodoDTO,
     CreateTodoSchema,
@@ -184,6 +189,47 @@ const useTodosRoute = (app: HonoApp) => {
                     ? new Date(updateTodoDTO.deadline!)
                     : undefined,
             })
+            return c.json(okResponse<Todo | null>(todo), StatusCodes.OK)
+        }
+    )
+
+    app.openapi(
+        createRoute({
+            method: 'delete',
+            path: '/todos/{id}',
+            tags: ['Todo'],
+            security: [
+                {
+                    AuthorizationBearer: [], // <- Add security name (must be same)
+                },
+            ],
+            request: {
+                params: z.object({
+                    id: z.string().openapi({
+                        param: {
+                            name: 'id',
+                            in: 'path',
+                        },
+                        type: 'integer', // <- you can still add type by adding key type
+                        example: '1',
+                    }),
+                }),
+            },
+            responses: {
+                200: {
+                    description: 'Delete Todo',
+                    content: {
+                        'application/json': {
+                            schema: ZResultSchema(TodoSchema.nullable()),
+                        },
+                    },
+                },
+            },
+        }),
+        async (c) => {
+            const userID = c.get('userID')
+            const { id: todoID } = c.req.valid('param')
+            const todo = deleteTodo(Number(todoID), userID)
             return c.json(okResponse<Todo | null>(todo), StatusCodes.OK)
         }
     )

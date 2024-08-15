@@ -5,7 +5,6 @@ import { join } from 'path'
 import { ErrorCause } from '../server/error'
 import { isDev } from '../util/electron.util'
 import { TodoRecord } from './database.type'
-import { ErrorConstants } from './error'
 import { DiariesTable, ProjectsTable, TodosTable, UsersTable } from './schema'
 
 const databasePath = 'sqlite.db'
@@ -272,21 +271,21 @@ export const updateTodo = (
     return updatedTodo
 }
 
-export const deleteTodo = (todoID: number) => {
-    const target = db
+export const deleteTodo = (todoID: number, userID: number) => {
+    const toBeRemoved = db
         .select()
         .from(TodosTable)
-        .where(eq(TodosTable.id, todoID))
+        .where(and(eq(TodosTable.id, todoID), eq(TodosTable.createdBy, userID)))
         .get()
-    if (!target) {
-        throw new Error(ErrorConstants.SQL_NOT_FOUND)
+    if (!toBeRemoved) {
+        throw new Error(ErrorCause.TODO_NOT_FOUND)
     }
     const deleteResult = db
         .delete(TodosTable)
-        .where(eq(TodosTable.id, todoID))
+        .where(and(eq(TodosTable.id, todoID), eq(TodosTable.createdBy, userID)))
         .run()
     if (deleteResult.changes === 0) {
         return null
     }
-    return target
+    return toBeRemoved
 }

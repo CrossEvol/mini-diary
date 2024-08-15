@@ -1,6 +1,6 @@
 import todoApi from '@/api/todo-api'
 import { pickedDayAtom } from '@/atoms/picked-day.atom'
-import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
+import { createTodosQueryKey } from '@/utils/string.util'
 import {
     closestCenter,
     DndContext,
@@ -54,9 +54,7 @@ const DndTodoMain = ({ todos }: IProps) => {
         onSuccess: () => {
             // Invalidate and refetch
             queryClient.invalidateQueries({
-                queryKey: [
-                    `todos-${formatDateTime(pickedDay, DateTimeFormatEnum.DATE_FORMAT)}`,
-                ],
+                queryKey: [createTodosQueryKey(pickedDay)],
             })
         },
     })
