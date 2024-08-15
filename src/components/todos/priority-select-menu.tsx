@@ -1,5 +1,5 @@
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined'
-import { IconButton } from '@mui/material'
+import { IconButton, Stack, Typography } from '@mui/material'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
@@ -7,10 +7,14 @@ import { Todo } from 'electron/main/server/api.type'
 import * as React from 'react'
 
 interface IProps {
+    priority: Todo['priority']
     onMenuItemClick: (priority: Todo['priority']) => void
 }
 
-export default function PrioritySelectMenu({ onMenuItemClick }: IProps) {
+export default function PrioritySelectMenu({
+    priority,
+    onMenuItemClick,
+}: IProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -23,6 +27,17 @@ export default function PrioritySelectMenu({ onMenuItemClick }: IProps) {
         setAnchorEl(null)
     }
 
+    const priority2color = (priority: Todo['priority']) => {
+        switch (priority) {
+            case 'HIGH':
+                return 'primary'
+            case 'MEDIUM':
+                return 'error'
+            case 'LOW':
+                return 'success'
+        }
+    }
+
     return (
         <div className='inline-block'>
             <Tooltip title='Priority'>
@@ -33,7 +48,7 @@ export default function PrioritySelectMenu({ onMenuItemClick }: IProps) {
                     aria-expanded={open ? 'true' : undefined}
                     onClick={handleClick}
                 >
-                    <BookmarkOutlinedIcon color='primary' />
+                    <BookmarkOutlinedIcon color={priority2color(priority)} />
                 </IconButton>
             </Tooltip>
             <Menu
@@ -51,7 +66,10 @@ export default function PrioritySelectMenu({ onMenuItemClick }: IProps) {
                         onMenuItemClick('HIGH')
                     }}
                 >
-                    HIGH
+                    <Stack direction={'row'}>
+                        <BookmarkOutlinedIcon color='primary' />
+                        <Typography>HIGH</Typography>
+                    </Stack>
                 </MenuItem>
                 <MenuItem
                     onClick={(e) => {
@@ -59,7 +77,10 @@ export default function PrioritySelectMenu({ onMenuItemClick }: IProps) {
                         onMenuItemClick('MEDIUM')
                     }}
                 >
-                    MEDIUM
+                    <Stack direction={'row'}>
+                        <BookmarkOutlinedIcon color='error' />
+                        <Typography>MEDIUM</Typography>
+                    </Stack>
                 </MenuItem>
                 <MenuItem
                     onClick={(e) => {
@@ -67,7 +88,10 @@ export default function PrioritySelectMenu({ onMenuItemClick }: IProps) {
                         onMenuItemClick('LOW')
                     }}
                 >
-                    LOW
+                    <Stack direction={'row'}>
+                        <BookmarkOutlinedIcon color='success' />
+                        <Typography>LOW</Typography>
+                    </Stack>
                 </MenuItem>
             </Menu>
         </div>

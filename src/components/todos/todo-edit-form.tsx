@@ -1,8 +1,10 @@
+import todoApi from '@/api/todo-api'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import { Todo } from 'electron/main/server/api.type'
+import { useMutation } from '@tanstack/react-query'
+import { Todo, UpdateTodoDTO } from 'electron/main/server/api.type'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 interface FormValues {
@@ -28,9 +30,23 @@ const TodoEditForm = ({ todo, setTodo }: IProps) => {
         },
     })
 
+    // Mutations
+    const mutation = useMutation<
+        Todo | null,
+        Error,
+        Omit<UpdateTodoDTO, 'order'>
+    >({
+        mutationFn: async (params) => await todoApi.updateTodo(todo.id, params),
+        onSuccess: (data) => {
+            if (data !== null) {
+                setTodo({ ...todo, ...data, deadline: new Date(data.deadline) })
+            }
+        },
+    })
+
     const onSubmit: SubmitHandler<FormValues> = (data) => {
         console.log(data)
-        setTodo({ ...todo, ...data, deadline: new Date(data.deadline) })
+        mutation.mutateAsync(data)
     }
 
     return (

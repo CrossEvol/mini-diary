@@ -1,6 +1,11 @@
 import fetchClient from '@/utils/fetch.client'
 import { ApiUrl } from '@/utils/string.util'
-import { GetTodosDTO, Todo, ZResult } from 'electron/main/server/api.type'
+import {
+    GetTodosDTO,
+    Todo,
+    UpdateTodoDTO,
+    ZResult,
+} from 'electron/main/server/api.type'
 
 const getTodos = async (getTodosDTO: GetTodosDTO) => {
     const response = await fetchClient.get<ZResult<Todo[]>>(
@@ -16,6 +21,26 @@ const getTodos = async (getTodosDTO: GetTodosDTO) => {
         return response.data
     } else {
         return []
+    }
+}
+
+export const updateTodo = async (
+    todoID: number,
+    updateTodo: Omit<UpdateTodoDTO, 'order'>
+) => {
+    const resp = await fetchClient.patch<ZResult<Todo>>(
+        `${ApiUrl(`todos/${todoID}`)}`,
+        {
+            body: JSON.stringify(updateTodo),
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        }
+    )
+    if (resp.status === 200) {
+        return resp.data
+    } else {
+        return null
     }
 }
 
@@ -54,5 +79,6 @@ export const exchangeTodoOrder = async (firstTodo: Todo, secondTodo: Todo) => {
 
 export default {
     getTodos,
+    updateTodo,
     exchangeTodoOrder,
 }

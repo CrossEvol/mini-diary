@@ -1,3 +1,4 @@
+import todoApi from '@/api/todo-api'
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined'
@@ -13,7 +14,8 @@ import MuiAccordionSummary, {
 import { styled } from '@mui/material/styles'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { Todo } from 'electron/main/server/api.type'
+import { useMutation } from '@tanstack/react-query'
+import { Todo, UpdateTodoDTO } from 'electron/main/server/api.type'
 import * as React from 'react'
 import { SortableItem } from './dnd/sortable-item'
 import PrioritySelectMenu from './priority-select-menu'
@@ -70,8 +72,22 @@ export default function TodoItem({
 }: IProps) {
     const [todo, setTodo] = React.useState(initialTodo)
 
+    // Mutations
+    const mutation = useMutation<
+        Todo | null,
+        Error,
+        Omit<UpdateTodoDTO, 'order'>
+    >({
+        mutationFn: async (params) => await todoApi.updateTodo(todo.id, params),
+        onSuccess: (data) => {
+            if (data !== null) {
+                setTodo({ ...todo, ...data })
+            }
+        },
+    })
+
     const handleTodoPriorityChange = (priority: Todo['priority']) => {
-        setTodo({ ...todo, priority })
+        mutation.mutateAsync({ priority })
     }
 
     return (
@@ -101,14 +117,14 @@ export default function TodoItem({
                             </SortableItem>
 
                             <PrioritySelectMenu
+                                priority={todo.priority}
                                 onMenuItemClick={handleTodoPriorityChange}
                             />
                             <Tooltip title='Complete'>
                                 <IconButton
                                     onClick={(e) => {
                                         e.stopPropagation()
-                                        setTodo({
-                                            ...todo,
+                                        mutation.mutateAsync({
                                             status: 'COMPLETED',
                                         })
                                     }}
@@ -116,33 +132,38 @@ export default function TodoItem({
                                     <DoneOutlineOutlinedIcon color='success' />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip title='Pause'>
-                                <IconButton
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        if (todo.status === 'PENDING') {
-                                            setTodo({
-                                                ...todo,
-                                                status: 'PAUSED',
-                                            })
-                                            return
-                                        }
-                                        if (todo.status === 'PAUSED') {
-                                            setTodo({
-                                                ...todo,
+                            {todo.status === 'PAUSED' ? (
+                                <Tooltip title='paused'>
+                                    <IconButton
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            mutation.mutateAsync({
                                                 status: 'PENDING',
                                             })
-                                        }
-                                    }}
-                                >
-                                    {todo.status === 'PENDING' ? (
-                                        <NotStartedOutlinedIcon color='warning' />
-                                    ) : null}
-                                    {todo.status === 'PAUSED' ? (
-                                        <RotateLeftRoundedIcon color='secondary' />
-                                    ) : null}
-                                </IconButton>
-                            </Tooltip>
+                                        }}
+                                    >
+                                        {todo.status === 'PAUSED' ? (
+                                            <RotateLeftRoundedIcon color='secondary' />
+                                        ) : null}
+                                    </IconButton>
+                                </Tooltip>
+                            ) : null}
+                            {todo.status === 'PENDING' ? (
+                                <Tooltip title='pending'>
+                                    <IconButton
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            mutation.mutateAsync({
+                                                status: 'PAUSED',
+                                            })
+                                        }}
+                                    >
+                                        {todo.status === 'PENDING' ? (
+                                            <NotStartedOutlinedIcon color='warning' />
+                                        ) : null}
+                                    </IconButton>
+                                </Tooltip>
+                            ) : null}
                             <Tooltip title='Delete'>
                                 <IconButton
                                     onClick={(e) => {
