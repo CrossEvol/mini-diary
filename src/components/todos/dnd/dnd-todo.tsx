@@ -13,15 +13,14 @@ import {
     useSensors,
 } from '@dnd-kit/core'
 import {
-    arrayMove,
     SortableContext,
     sortableKeyboardCoordinates,
-    verticalListSortingStrategy,
+    verticalListSortingStrategy
 } from '@dnd-kit/sortable'
 import PanToolSharpIcon from '@mui/icons-material/PanToolSharp'
 import { Divider, IconButton } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Todo } from 'electron/main/server/api.type'
+import { Todo, UpdateTodoDTO } from 'electron/main/server/api.type'
 import { useAtom } from 'jotai'
 import React from 'react'
 import TodoList from '../todo-list'
@@ -43,8 +42,8 @@ const DndTodoMain = ({ todos }: IProps) => {
         })
     )
 
-    // Mutations
-    const mutation = useMutation<
+    // Swap Order Mutations
+    const swapMutation = useMutation<
         boolean,
         Error,
         { firstTodo: Todo; secondTodo: Todo }
@@ -56,6 +55,24 @@ const DndTodoMain = ({ todos }: IProps) => {
             queryClient.invalidateQueries({
                 queryKey: [createTodosQueryKey(pickedDay)],
             })
+        },
+    })
+
+    // Mutations
+    const mutation = useMutation<
+        Todo | null,
+        Error,
+        { todoID: number; params: Pick<UpdateTodoDTO, 'deadline'> }
+    >({
+        mutationFn: async ({ todoID, params }) =>
+            await todoApi.updateTodo(todoID, params),
+        onSuccess: (data) => {
+            if (data !== null) {
+                // Invalidate and refetch
+                queryClient.invalidateQueries({
+                    queryKey: [createTodosQueryKey(pickedDay)],
+                })
+            }
         },
     })
 
@@ -72,16 +89,17 @@ const DndTodoMain = ({ todos }: IProps) => {
                 const newIndex = todos.findIndex(
                     (todo) => todo.id.toString() === over.id.toString()
                 )
-                const flag = await mutation.mutateAsync({
+                await swapMutation.mutateAsync({
                     firstTodo: todos[oldIndex],
                     secondTodo: todos[newIndex],
                 })
-                if (flag) arrayMove(todos, oldIndex, newIndex)
                 return
-            }
-
-            if (over?.id.toString().match(/\d{4}-\d{2}-\d{2}/)) {
-                // setTodos(todos.filter((todo) => todo.id !== active.id))
+            } else if (over?.id.toString().match(/^\d{4}-\d{2}-\d{2}$/)) {
+                debugger
+                mutation.mutateAsync({
+                    todoID: Number(active.id),
+                    params: { deadline: over?.id.toString() },
+                })
                 return
             }
         }

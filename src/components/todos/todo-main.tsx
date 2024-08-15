@@ -5,15 +5,14 @@ import { useQuery } from '@tanstack/react-query'
 import { useAtom } from 'jotai'
 import DndTodoMain from './dnd/dnd-todo'
 import TodoListLoading from './todo-list-loading'
+import { createTodosQueryKey } from '@/utils/string.util'
 
 const DndTodo = () => {
     const [pickedDay] = useAtom(pickedDayAtom)
 
     // Queries
     const query = useQuery({
-        queryKey: [
-            `todos-${formatDateTime(pickedDay, DateTimeFormatEnum.DATE_FORMAT)}`,
-        ],
+        queryKey: [createTodosQueryKey(pickedDay)],
         queryFn: () =>
             todoApi.getTodos({
                 startDay: formatDateTime(

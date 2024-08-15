@@ -66,7 +66,7 @@ export const exchangeTodoOrder = async (firstTodo: Todo, secondTodo: Todo) => {
             `${ApiUrl(`todos/${firstTodo.id}`)}`,
             {
                 body: JSON.stringify({
-                    order: firstTodo.order,
+                    order: secondTodo.order,
                 }),
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -78,7 +78,7 @@ export const exchangeTodoOrder = async (firstTodo: Todo, secondTodo: Todo) => {
             `${ApiUrl(`todos/${secondTodo.id}`)}`,
             {
                 body: JSON.stringify({
-                    order: secondTodo.order,
+                    order: firstTodo.order,
                 }),
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
