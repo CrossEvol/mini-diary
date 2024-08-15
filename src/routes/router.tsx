@@ -8,8 +8,7 @@ const EditorView = React.lazy(() => import('@/views/editor-view'))
 const Home = React.lazy(() => import('@/views/home'))
 const SignIn = React.lazy(() => import('@/views/sign-in'))
 const SignUp = React.lazy(() => import('@/views/sign-up'))
-const TodoList = React.lazy(() => import('@/views/todo-list'))
-const TodoTest = React.lazy(() => import('@/views/todo-test'))
+const TodoView = React.lazy(() => import('@/views/todo-view'))
 const UserProfileView = React.lazy(() => import('@/views/profile-view'))
 
 const routes: RouteObject[] = [
@@ -21,8 +20,7 @@ const routes: RouteObject[] = [
             { path: '', index: true, element: <Home /> },
             { path: 'sign-in', element: <SignIn /> },
             { path: 'sign-up', element: <SignUp /> },
-            { path: 'todo', element: <TodoList /> },
-            { path: 'todo-test', element: <TodoTest /> },
+            { path: 'todo', element: <TodoView /> },
             { path: 'profile', element: <UserProfileView /> },
             { path: 'editor/:date', element: <EditorView /> },
         ].map((route) => ({

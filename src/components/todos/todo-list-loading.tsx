@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack'
 
 export default function TodoListLoading() {
     return (
-        <Stack direction={'row'} spacing={5}>
+        <Stack direction={'row'} spacing={2}>
             <Stack spacing={2}>
                 {/* For variant="text", adjust the height via font-size */}
                 <Stack

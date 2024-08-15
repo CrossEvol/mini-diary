@@ -15,9 +15,9 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { Todo } from 'electron/main/server/api.type'
 import * as React from 'react'
-import { SortableItem } from '../dnd/sortable-item'
+import { SortableItem } from './dnd/sortable-item'
 import PrioritySelectMenu from './priority-select-menu'
-import TodoForm from './todo-form'
+import TodoEditForm from './todo-edit-form'
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -156,7 +156,7 @@ export default function TodoItem({
                     </div>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <TodoForm todo={todo} setTodo={setTodo} />
+                    <TodoEditForm todo={todo} setTodo={setTodo} />
                 </AccordionDetails>
             </Accordion>
         </div>

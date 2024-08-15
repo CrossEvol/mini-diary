@@ -24,14 +24,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Todo } from 'electron/main/server/api.type'
 import { useAtom } from 'jotai'
 import React from 'react'
-import TodoList from '../todo/todo-list'
-import MyDatePicker from './my-date-picker'
+import TodoList from '../todo-list'
+import MyDatePicker from './deadline-date-picker'
 
 interface IProps {
     todos: Todo[]
 }
 
-const DndTodoDemo = ({ todos }: IProps) => {
+const DndTodoMain = ({ todos }: IProps) => {
     const queryClient = useQueryClient()
     const [pickedDay] = useAtom(pickedDayAtom)
     const [isDragging, setIsDragging] = React.useState(false)
@@ -112,7 +112,7 @@ const DndTodoDemo = ({ todos }: IProps) => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className='flex flex-row w-[96vw] mx-auto'>
+            <div className='flex flex-row max-w-[96vw] mx-auto'>
                 <div className=' w-1/2 max-h-screen border-2 border-solid  border-white rounded-lg p-4'>
                     <SortableContext
                         items={todos}
@@ -141,4 +141,4 @@ const DndTodoDemo = ({ todos }: IProps) => {
     )
 }
 
-export default DndTodoDemo
+export default DndTodoMain

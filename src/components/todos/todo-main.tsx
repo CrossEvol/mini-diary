@@ -3,10 +3,10 @@ import { pickedDayAtom } from '@/atoms/picked-day.atom'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import { useQuery } from '@tanstack/react-query'
 import { useAtom } from 'jotai'
+import DndTodoMain from './dnd/dnd-todo'
 import TodoListLoading from './todo-list-loading'
-import DndTodoDemo from './dnd-todo-demo'
 
-const DndTodoQuery = () => {
+const DndTodo = () => {
     const [pickedDay] = useAtom(pickedDayAtom)
 
     // Queries
@@ -29,7 +29,7 @@ const DndTodoQuery = () => {
 
     if (query.isLoading) {
         return (
-            <div className='flex justify-center items-center w-screen h-screen'>
+            <div className='flex max-w-[96vw] mx-auto'>
                 <TodoListLoading />
             </div>
         )
@@ -41,9 +41,9 @@ const DndTodoQuery = () => {
 
     return (
         <div>
-            <DndTodoDemo todos={query.data} />
+            <DndTodoMain todos={query.data} />
         </div>
     )
 }
 
-export default DndTodoQuery
+export default DndTodo

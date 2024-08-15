@@ -1,7 +1,7 @@
 import { Divider } from '@mui/material'
 import { Todo } from 'electron/main/server/api.type'
 import * as React from 'react'
-import TodoInput from './todo-input'
+import TodoCreateOrSearchInput from './todo-create-or-search-input'
 import TodoItem from './todo-item'
 
 interface IProps {
@@ -19,7 +19,7 @@ export default function TodoList({ todos }: IProps) {
 
     return (
         <div className='space-y-2'>
-            <TodoInput />
+            <TodoCreateOrSearchInput />
             <Divider />
             <div className='overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-slate-200 scrollbar-track-white'>
                 {todos

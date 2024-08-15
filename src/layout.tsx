@@ -115,14 +115,6 @@ const Layout = () => {
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/todo-test')}>
-                        <ListItemIcon>
-                            <FormatListNumberedOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Todo Test'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
                     <ListItemButton
                         onClick={() =>
                             navigate(
@@ -141,7 +133,10 @@ const Layout = () => {
     )
 
     return (
-        <div id='app'>
+        <div
+            id='app'
+            className='overflow-scroll scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-blue-200 scrollbar-corner-blue-200 scrollbar-track-white'
+        >
             <CssBaseline />
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position='static'>
@@ -181,7 +176,9 @@ const Layout = () => {
                         </Tooltip>
                     </Toolbar>
                 </AppBar>
-                <Outlet />
+                <div className='overflow-scroll scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-slate-200 scrollbar-corner-slate-200 scrollbar-track-white'>
+                    <Outlet />
+                </div>
             </Box>
             <EventEmitterLayout />
             <EditorLayout />

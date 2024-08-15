@@ -11,7 +11,7 @@ import * as React from 'react'
 
 type InputState = 'create' | 'search'
 
-export default function TodoInput() {
+export default function TodoCreateOrSearchInput() {
     const [inputState, setInputState] = React.useState<InputState>('create')
 
     return (

@@ -16,7 +16,7 @@ interface IProps {
     setTodo: React.Dispatch<React.SetStateAction<Todo>>
 }
 
-const TodoForm = ({ todo, setTodo }: IProps) => {
+const TodoEditForm = ({ todo, setTodo }: IProps) => {
     const { control, handleSubmit } = useForm<FormValues>({
         defaultValues: {
             text: todo.text,
@@ -99,4 +99,4 @@ const TodoForm = ({ todo, setTodo }: IProps) => {
     )
 }
 
-export default TodoForm
+export default TodoEditForm
