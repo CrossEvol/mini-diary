@@ -405,6 +405,8 @@ async function createWindow() {
     const port = await startHonoServer()
 
     win = new BrowserWindow({
+        width: 1000,
+        height: 800,
         title: 'Main window',
         icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
         webPreferences: {

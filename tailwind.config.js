@@ -8,7 +8,9 @@ export default {
     extend: {},
   },
   important: '#root',
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar')({ preferredStrategy: 'pseudoelements' })
+  ],
   corePlugins: {
     preflight: false,
   },

@@ -19,7 +19,7 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import PanToolSharpIcon from '@mui/icons-material/PanToolSharp'
-import { IconButton } from '@mui/material'
+import { Divider, IconButton } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Todo } from 'electron/main/server/api.type'
 import { useAtom } from 'jotai'
@@ -112,8 +112,8 @@ const DndTodoDemo = ({ todos }: IProps) => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className='flex flex-row w-[96vw] h-screen'>
-                <div className=' w-1/2 h-screen border-2 border-solid  border-blue-500 rounded-lg p-4'>
+            <div className='flex flex-row w-[96vw] mx-auto'>
+                <div className=' w-1/2 max-h-screen border-2 border-solid  border-white rounded-lg p-4'>
                     <SortableContext
                         items={todos}
                         strategy={verticalListSortingStrategy}
@@ -123,7 +123,8 @@ const DndTodoDemo = ({ todos }: IProps) => {
                         </div>
                     </SortableContext>
                 </div>
-                <div className='w-1/2 h-screen border-2 border-solid border-red-500 rounded-lg p-4 flex flex-wrap justify-start'>
+                <Divider orientation='vertical' flexItem />
+                <div className='w-1/2 max-h-screen border-2 border-solid border-white rounded-lg p-4 flex flex-wrap justify-start'>
                     <MyDatePicker onClick={() => {}} />
                 </div>
             </div>
