@@ -65,6 +65,18 @@ export default defineConfig(({ command }) => {
                                 return 'vendor-localforage'
                             if (id.includes('react-toastify'))
                                 return 'vendor-react-toastify'
+                            if (id.includes('date-fns')) {
+                                return 'vendor-date-fns'
+                            }
+                            if (id.includes('@tanstack')) {
+                                return 'vendor-@tanstack'
+                            }
+                            if (id.includes('@dnd-kit')) {
+                                return 'vendor-@dnd-kit'
+                            }
+                            if (id.includes('react-day-picker')) {
+                                return 'vendor-react-day-picker'
+                            }
                             if (id.includes('react-calendar'))
                                 return 'vendor-react-calendar'
                             return 'vendor'

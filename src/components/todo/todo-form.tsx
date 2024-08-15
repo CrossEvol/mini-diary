@@ -30,7 +30,7 @@ const TodoForm = ({ todo, setTodo }: IProps) => {
 
     const onSubmit: SubmitHandler<FormValues> = (data) => {
         console.log(data)
-        setTodo({ ...todo, ...data })
+        setTodo({ ...todo, ...data, deadline: new Date(data.deadline) })
     }
 
     return (

@@ -19,6 +19,7 @@ const initialTodos = Array.from({ length: 30 })
             deadline: new Date(`2024-08-${n}`),
             createdAt: new Date(),
             updatedAt: new Date(),
+            order: idx,
             priority: randomElement(TodosTable.priority.enumValues),
             createdBy: 1,
         }))

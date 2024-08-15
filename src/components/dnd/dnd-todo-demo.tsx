@@ -159,11 +159,11 @@ const DndTodoDemo = () => {
                         </Droppable>
                     ))} */}
                     <MyDatePicker
-                        onClick={() =>
-                            setTodos(
-                                blocks[Math.floor(Math.random() * 30)].data
-                            )
-                        }
+                        onClick={() => {
+                            // setTodos(
+                            //     blocks[Math.floor(Math.random() * 30)].data
+                            // )
+                        }}
                     />
                 </div>
             </div>

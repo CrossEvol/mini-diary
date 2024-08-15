@@ -1,14 +1,11 @@
-import {
-    CssBaseline,
-    StyledEngineProvider,
-    ThemeProvider
-} from '@mui/material'
+import { CssBaseline, StyledEngineProvider, ThemeProvider } from '@mui/material'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 import ColorModeProvider from './providers/color-mode-provider'
 import { JotaiProvider } from './providers/jotai-provider'
+import ReactQueryProvider from './providers/react-query-provider'
 import { createRootTheme } from './theme'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
@@ -27,10 +24,12 @@ root.render(
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={rootTheme}>
                 <ColorModeProvider>
-                    <JotaiProvider>
-                        <CssBaseline />
-                        <App />
-                    </JotaiProvider>
+                    <ReactQueryProvider>
+                        <JotaiProvider>
+                            <CssBaseline />
+                            <App />
+                        </JotaiProvider>
+                    </ReactQueryProvider>
                 </ColorModeProvider>
             </ThemeProvider>
         </StyledEngineProvider>

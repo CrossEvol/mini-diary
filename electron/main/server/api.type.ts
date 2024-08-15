@@ -62,13 +62,13 @@ export type ZResult<T> = z.infer<ReturnType<typeof ZResultSchema<T>>>
 
 export const TodoSchema = z.object({
     id: z.number(),
-    text: z.string().nullable(),
-    remark: z.string().nullable(),
-    createdAt: z.date().nullable(),
-    updatedAt: z.date().nullable(),
-    status: z.enum(TodosTable.status.enumValues).nullable(),
-    deadline: z.date().nullable(),
-    priority: z.enum(TodosTable.priority.enumValues).nullable(),
+    text: z.string(),
+    remark: z.string(),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    status: z.enum(TodosTable.status.enumValues),
+    deadline: z.date(),
+    priority: z.enum(TodosTable.priority.enumValues),
     order: z.number(),
     createdBy: z.number(),
 })
@@ -77,8 +77,8 @@ export type Todo = z.infer<typeof TodoSchema>
 
 export const GetTodosSchema = z.object({
     q: z.string().optional(),
-    startDay: z.date().optional(),
-    endDay: z.date().optional(),
+    startDay: z.string().optional(),
+    endDay: z.string().optional(),
 })
 
 export type GetTodosDTO = z.infer<typeof GetTodosSchema>

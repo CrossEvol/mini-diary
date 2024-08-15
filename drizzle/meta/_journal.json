@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1722311672170,
-      "tag": "0000_legal_greymalkin",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1722313385154,
-      "tag": "0001_confused_shriek",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1722420840092,
-      "tag": "0002_wild_thor_girl",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1723480911477,
-      "tag": "0003_zippy_hellfire_club",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1723547054265,
-      "tag": "0004_fat_wolfpack",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1723619312196,
-      "tag": "0005_sharp_vanisher",
+      "when": 1723657577839,
+      "tag": "0000_lonely_mentor",
       "breakpoints": true
     }
   ]

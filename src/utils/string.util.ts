@@ -1,4 +1,5 @@
 import { EFormat } from '@/shared/enums'
+import queryString, { StringifyOptions } from 'query-string'
 
 export const createDiaryKey = (userID: number, date: string) =>
     `diary-${userID}-${date}`
@@ -6,8 +7,12 @@ export const createDiaryKey = (userID: number, date: string) =>
 export const createDiaryPath = (username: string, date: string) =>
     `diary-${username}-${date}`
 
-export const ApiUrl = () =>
-    `http://localhost:${localStorage.getItem('port') ?? 3000}`
+export const ApiUrl = (
+    route?: string,
+    query?: Record<string, any>,
+    options?: StringifyOptions
+) =>
+    `http://localhost:${localStorage.getItem('port') ?? 3000}${!route ? '' : `/${route}`}${!query ? '' : `?${queryString.stringify(query, options)}`}`
 
 export const combineEditorContent = (
     format: EFormat,
