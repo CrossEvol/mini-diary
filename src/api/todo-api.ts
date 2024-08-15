@@ -5,11 +5,12 @@ import {
     GetTodosDTO,
     Todo,
     UpdateTodoDTO,
+    ZPageResult,
     ZResult,
 } from 'electron/main/server/api.type'
 
 const getTodos = async (getTodosDTO: GetTodosDTO) => {
-    const response = await fetchClient.get<ZResult<Todo[]>>(
+    const response = await fetchClient.get<ZPageResult<Todo>>(
         // `${ApiUrl('todos')}?${queryString.stringify(getTodosDTO)}`,
         `${ApiUrl('todos', getTodosDTO)}`,
         {
@@ -21,7 +22,7 @@ const getTodos = async (getTodosDTO: GetTodosDTO) => {
     if (response.status === 200) {
         return response.data
     } else {
-        return []
+        return { list: [], total_count: 0 }
     }
 }
 

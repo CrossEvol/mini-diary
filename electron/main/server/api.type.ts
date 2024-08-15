@@ -60,6 +60,18 @@ export const ZResultSchema = <T>(dataSchema: z.ZodType<T>) =>
 
 export type ZResult<T> = z.infer<ReturnType<typeof ZResultSchema<T>>>
 
+export const ZPageResultSchema = <T>(dataSchema: z.ZodType<T>) =>
+    z.object({
+        status: z.number(),
+        message: z.string(),
+        data: z.object({
+            list: z.array(dataSchema),
+            total_count: z.number(),
+        }),
+    })
+
+export type ZPageResult<T> = z.infer<ReturnType<typeof ZPageResultSchema<T>>>
+
 export const TodoSchema = z.object({
     id: z.number(),
     text: z.string(),

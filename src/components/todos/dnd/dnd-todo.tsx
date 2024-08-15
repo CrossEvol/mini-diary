@@ -23,8 +23,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Todo, UpdateTodoDTO } from 'electron/main/server/api.type'
 import { useAtom } from 'jotai'
 import React from 'react'
+import MyDatePicker from '../deadline-date-picker'
 import TodoList from '../todo-list'
-import MyDatePicker from './deadline-date-picker'
 
 interface IProps {
     todos: Todo[]

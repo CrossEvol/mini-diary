@@ -1,11 +1,13 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { StatusCodes } from 'http-status-codes'
 import {
+    countTodos,
     createTodo,
     deleteTodo,
     getAllTodos,
     updateTodo,
 } from '../../database/database'
+import { STR_1999_09_09 } from '../../shared/constants/date-constants'
 import {
     CreateTodoDTO,
     CreateTodoSchema,
@@ -13,10 +15,11 @@ import {
     TodoSchema,
     UpdateTodoDTO,
     UpdateTodoSchema,
-    ZResultSchema,
+    ZPageResultSchema,
+    ZResultSchema
 } from '../api.type'
 import { HonoApp } from '../hono.app'
-import { okResponse } from '../server.aux'
+import { okResponse, pageResponse } from '../server.aux'
 
 const useTodosRoute = (app: HonoApp) => {
     app.openapi(
@@ -77,7 +80,7 @@ const useTodosRoute = (app: HonoApp) => {
                     }),
                     content: {
                         'application/json': {
-                            schema: ZResultSchema(z.array(TodoSchema)),
+                            schema: ZPageResultSchema(TodoSchema),
                         },
                     },
                 },
@@ -86,13 +89,24 @@ const useTodosRoute = (app: HonoApp) => {
         (c) => {
             const userID = c.get('userID')
             const { q, startDay, endDay } = c.req.valid('query')
-            const todos = getAllTodos(userID, {
+            // TODO:use prettier to let
+            const paramsForWhere = {
                 q,
-                startDay: !!startDay ? new Date(startDay!) : undefined,
-                endDay: !!endDay ? new Date(endDay) : undefined,
-            })
-            c.header('Total-Count', todos.length.toString())
-            return c.json(okResponse<Todo[]>(todos), StatusCodes.OK)
+                startDay: !!startDay
+                    ? startDay === STR_1999_09_09
+                        ? undefined
+                        : new Date(startDay!)
+                    : undefined,
+                endDay: !!endDay
+                    ? endDay === STR_1999_09_09
+                        ? undefined
+                        : new Date(endDay)
+                    : undefined,
+            }
+            const todos = getAllTodos(userID, paramsForWhere)
+            const count = countTodos(userID, paramsForWhere)
+            c.header('Total-Count', count.toString())
+            return c.json(pageResponse<Todo>(todos, count), StatusCodes.OK)
         }
     )
 

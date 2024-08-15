@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3'
-import { and, between, eq, isNotNull, like, sql } from 'drizzle-orm'
+import { and, between, count, eq, isNotNull, like, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { join } from 'path'
 import { ErrorCause } from '../server/error'
@@ -201,14 +201,39 @@ export const getAllTodos = (
         .where(
             and(
                 eq(TodosTable.createdBy, userID),
-                !!q ? like(TodosTable.text, q) : undefined,
+                !!q ? like(TodosTable.text, `%${q}%`) : undefined,
                 !!startDay && !!endDay
                     ? between(TodosTable.deadline, startDay, endDay)
                     : undefined
             )
         )
+        .limit(30)
+        .offset(0)
         .all()
     return result
+}
+
+export const countTodos = (
+    userID: number,
+    { startDay, endDay, q }: GetTodosParams
+) => {
+    const result = db
+        .select({ count: count() })
+        .from(TodosTable)
+        .where(
+            and(
+                eq(TodosTable.createdBy, userID),
+                !!q ? like(TodosTable.text, `%${q}%`) : undefined,
+                !!startDay && !!endDay
+                    ? between(TodosTable.deadline, startDay, endDay)
+                    : undefined
+            )
+        )
+        .get()
+    if (!result) {
+        return 0
+    }
+    return result.count
 }
 
 type CreateTodoParams = {

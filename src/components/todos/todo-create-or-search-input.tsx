@@ -1,5 +1,7 @@
 import todoApi from '@/api/todo-api'
 import { pickedDayAtom } from '@/atoms/picked-day.atom'
+import { searchTextAtom } from '@/atoms/search-text.atom'
+import { DATE_1999_09_09 } from '@/shared/constants/date-constants'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import { createTodosQueryKey } from '@/utils/string.util'
 import DirectionsIcon from '@mui/icons-material/Directions'
@@ -19,8 +21,9 @@ import * as React from 'react'
 type InputState = 'create' | 'search'
 
 export default function TodoCreateOrSearchInput() {
+    const [, setSearchText] = useAtom(searchTextAtom)
     const [text, setText] = React.useState('')
-    const [pickedDay] = useAtom(pickedDayAtom)
+    const [pickedDay, setPickedDay] = useAtom(pickedDayAtom)
     const queryClient = useQueryClient()
     const [inputState, setInputState] = React.useState<InputState>('create')
 
@@ -73,20 +76,28 @@ export default function TodoCreateOrSearchInput() {
                 onKeyUp={(e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault()
-                        mutation.mutateAsync(
-                            {
-                                text,
-                                deadline: formatDateTime(
-                                    pickedDay,
-                                    DateTimeFormatEnum.DATE_FORMAT
-                                ),
-                            },
-                            {
-                                onSettled(data, error, variables, context) {
-                                    setText('')
+                        if (inputState === 'create') {
+                            mutation.mutateAsync(
+                                {
+                                    text,
+                                    deadline: formatDateTime(
+                                        pickedDay,
+                                        DateTimeFormatEnum.DATE_FORMAT
+                                    ),
                                 },
-                            }
-                        )
+                                {
+                                    onSettled(data, error, variables, context) {
+                                        setText('')
+                                    },
+                                }
+                            )
+                            return
+                        }
+                        if (inputState === 'search') {
+                            setPickedDay(DATE_1999_09_09)
+                            setSearchText(text)
+                            return
+                        }
                     }
                 }}
                 onChange={(e) => {
@@ -125,6 +136,10 @@ export default function TodoCreateOrSearchInput() {
                         type='button'
                         sx={{ p: '10px' }}
                         aria-label='search'
+                        onClick={() => {
+                            setSearchText(text)
+                            setPickedDay(DATE_1999_09_09)
+                        }}
                     >
                         <SearchIcon />
                     </IconButton>
