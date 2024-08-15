@@ -29,19 +29,26 @@ export default function TodoListLoading() {
                     spacing={1}
                     justifyContent={'space-evenly'}
                 >
-                    {Array.from({ length: 7 }).map((_) => (
-                        <Skeleton variant='rounded' width={60} height={40} />
+                    {Array.from({ length: 7 }).map((_, idx) => (
+                        <Skeleton
+                            key={idx}
+                            variant='rounded'
+                            width={60}
+                            height={40}
+                        />
                     ))}
                 </Stack>
                 <Divider />
-                {Array.from({ length: 4 }).map((_) => (
+                {Array.from({ length: 4 }).map((_, idx) => (
                     <Stack
+                        key={idx}
                         direction={'row'}
                         spacing={1}
                         justifyContent={'space-evenly'}
                     >
-                        {Array.from({ length: 7 }).map((_) => (
+                        {Array.from({ length: 7 }).map((_, idx) => (
                             <Skeleton
+                                key={idx}
                                 variant='circular'
                                 width={40}
                                 height={40}

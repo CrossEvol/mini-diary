@@ -1,6 +1,7 @@
 import fetchClient from '@/utils/fetch.client'
 import { ApiUrl } from '@/utils/string.util'
 import {
+    CreateTodoDTO,
     GetTodosDTO,
     Todo,
     UpdateTodoDTO,
@@ -21,6 +22,20 @@ const getTodos = async (getTodosDTO: GetTodosDTO) => {
         return response.data
     } else {
         return []
+    }
+}
+
+export const createTodo = async (createTodoDTO: CreateTodoDTO) => {
+    const resp = await fetchClient.post<ZResult<Todo>>(`${ApiUrl(`todos`)}`, {
+        body: JSON.stringify(createTodoDTO),
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+    })
+    if (resp.status === 200) {
+        return resp.data
+    } else {
+        return null
     }
 }
 
@@ -95,6 +110,7 @@ export const exchangeTodoOrder = async (firstTodo: Todo, secondTodo: Todo) => {
 
 export default {
     getTodos,
+    createTodo,
     updateTodo,
     deleteTodo,
     exchangeTodoOrder,
