@@ -3,7 +3,7 @@ import { pickedDayAtom } from '@/atoms/picked-day.atom'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import { useQuery } from '@tanstack/react-query'
 import { useAtom } from 'jotai'
-import TodoListLoading from './dnd-loading'
+import TodoListLoading from './todo-list-loading'
 import DndTodoDemo from './dnd-todo-demo'
 
 const DndTodoQuery = () => {
