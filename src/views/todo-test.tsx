@@ -1,9 +1,9 @@
-import DndTodoDemo from '@/components/dnd/dnd-todo-demo'
+import DndTodoQuery from '@/components/dnd/dnd-todo-query'
 
 const TodoTest = () => {
     return (
         <div>
-            <DndTodoDemo />
+            <DndTodoQuery />
         </div>
     )
 }

@@ -94,6 +94,7 @@ export const UpdateTodoSchema = z
     .object({
         text: z.string(),
         remark: z.string(),
+        order: z.number(),
         status: z.enum(TodosTable.status.enumValues),
         deadline: z.string(),
         priority: z.enum(TodosTable.priority.enumValues),

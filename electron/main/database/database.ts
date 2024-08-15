@@ -2,18 +2,18 @@ import Database from 'better-sqlite3'
 import { and, between, eq, isNotNull, like, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { join } from 'path'
+import { ErrorCause } from '../server/error'
 import { isDev } from '../util/electron.util'
 import { TodoRecord } from './database.type'
 import { ErrorConstants } from './error'
 import { DiariesTable, ProjectsTable, TodosTable, UsersTable } from './schema'
-import { ErrorCause } from '../server/error'
 
 const databasePath = 'sqlite.db'
 
 const sqlite = new Database(
     isDev() ? databasePath : join(process.resourcesPath, databasePath)
 )
-const db = drizzle(sqlite)
+const db = drizzle(sqlite, { logger: true })
 
 export const getUsersWithProjects = async () => {
     const userWithProjects = db

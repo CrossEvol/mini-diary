@@ -2,8 +2,8 @@ import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
+import { Todo } from 'electron/main/server/api.type'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { Todo } from './todo-list'
 
 interface FormValues {
     text: string

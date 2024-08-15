@@ -13,11 +13,11 @@ import MuiAccordionSummary, {
 import { styled } from '@mui/material/styles'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import { Todo } from 'electron/main/server/api.type'
 import * as React from 'react'
 import { SortableItem } from '../dnd/sortable-item'
 import PrioritySelectMenu from './priority-select-menu'
 import TodoForm from './todo-form'
-import { Todo } from './todo-list'
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -70,7 +70,7 @@ export default function TodoItem({
 }: IProps) {
     const [todo, setTodo] = React.useState(initialTodo)
 
-    const handleTodoPriorityChange = (priority: string) => {
+    const handleTodoPriorityChange = (priority: Todo['priority']) => {
         setTodo({ ...todo, priority })
     }
 
@@ -107,7 +107,10 @@ export default function TodoItem({
                                 <IconButton
                                     onClick={(e) => {
                                         e.stopPropagation()
-                                        setTodo({ ...todo, status: 'COMPLETE' })
+                                        setTodo({
+                                            ...todo,
+                                            status: 'COMPLETED',
+                                        })
                                     }}
                                 >
                                     <DoneOutlineOutlinedIcon color='success' />

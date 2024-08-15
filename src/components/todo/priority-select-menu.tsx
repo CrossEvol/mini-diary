@@ -3,10 +3,11 @@ import { IconButton } from '@mui/material'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
+import { Todo } from 'electron/main/server/api.type'
 import * as React from 'react'
 
 interface IProps {
-    onMenuItemClick: (priority: string) => void
+    onMenuItemClick: (priority: Todo['priority']) => void
 }
 
 export default function PrioritySelectMenu({ onMenuItemClick }: IProps) {

@@ -7,8 +7,8 @@ import 'react-day-picker/style.css'
 import { Droppable } from './droppable'
 
 function MyDatePicker({ onClick }: any) {
-    const [, setPickedDay] = useAtom(pickedDayAtom)
-    const [selected, setSelected] = useState<Date>(new Date())
+    const [pickedDay, setPickedDay] = useAtom(pickedDayAtom)
+    const [selected, setSelected] = useState<Date>(pickedDay)
 
     return (
         <DayPicker
