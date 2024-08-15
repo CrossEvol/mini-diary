@@ -7,6 +7,17 @@ export const okResponse = <T>(data: T) => {
         data,
     }
 }
+
+export const failResponse = (message?: string) => {
+    return {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: !message
+            ? getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR)
+            : message,
+        data: null,
+    }
+}
+
 export const getSafeStatusCode = (reasonPhrase: string) => {
     try {
         const statusCode = getStatusCode(reasonPhrase)

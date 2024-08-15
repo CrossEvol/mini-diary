@@ -61,7 +61,7 @@ const Layout = () => {
                 <Avatar
                     src={
                         !!profile?.avatar
-                            ? `${ApiUrl()}/${profile.avatar}`
+                            ? `${ApiUrl()}${profile.avatar}`
                             : `${ApiUrl()}/static/go.jpg`
                     }
                 />

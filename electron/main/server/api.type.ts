@@ -2,19 +2,19 @@ import * as z from 'zod'
 import { TodosTable } from '../database/schema'
 
 export const ProjectSchema = z.object({
-    id: z.number().nullable(),
-    name: z.string().nullable(),
-    ownerId: z.number().nullable(),
+    id: z.number(),
+    name: z.string(),
+    ownerId: z.number(),
 })
 export type Project = z.infer<typeof ProjectSchema>
 
 export const UserSchema = z.object({
-    id: z.number().nullable(),
-    email: z.string().nullable(),
-    nickname: z.string().nullable(),
-    password: z.string().nullable(),
-    pinCode: z.string().nullable(),
-    avatar: z.string().nullable(),
+    id: z.number(),
+    email: z.string(),
+    nickname: z.string(),
+    password: z.string(),
+    pinCode: z.string(),
+    avatar: z.string(),
 })
 export type User = z.infer<typeof UserSchema>
 
@@ -26,7 +26,7 @@ export const DiarySchema = z.object({
     id: z.number(),
     ownerId: z.number(),
     content: z.string(),
-    createdAt: z.date().nullable(),
+    createdAt: z.date(),
 })
 export type Diary = z.infer<typeof DiarySchema>
 

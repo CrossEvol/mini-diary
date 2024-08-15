@@ -1,15 +1,15 @@
 CREATE TABLE `diaries` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`owner_id` integer NOT NULL,
-	`content` blob,
-	`created_at` integer,
-	`updated_at` integer,
+	`content` blob DEFAULT '' NOT NULL,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	FOREIGN KEY (`owner_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `projects` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`name` text,
+	`name` text DEFAULT '' NOT NULL,
 	`owner_id` integer NOT NULL,
 	FOREIGN KEY (`owner_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
@@ -30,11 +30,11 @@ CREATE TABLE `todos` (
 --> statement-breakpoint
 CREATE TABLE `users` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`email` text,
-	`nickname` text,
-	`password` text,
-	`pin_code` text,
-	`avatar` text
+	`email` text NOT NULL,
+	`nickname` text DEFAULT '' NOT NULL,
+	`password` text DEFAULT '' NOT NULL,
+	`pin_code` text DEFAULT '' NOT NULL,
+	`avatar` text DEFAULT '/static/go.jpg' NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);

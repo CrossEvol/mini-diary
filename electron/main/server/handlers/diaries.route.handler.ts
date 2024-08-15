@@ -61,7 +61,7 @@ const useDiariesRoute = (app: HonoApp) => {
             const diaryIdMap = diaryIDs.reduce((acc, cur) => {
                 acc.set(
                     formatDateTime(
-                        cur.createdAt!,
+                        cur.createdAt,
                         DateTimeFormatEnum.DATE_FORMAT
                     ),
                     cur
@@ -70,27 +70,26 @@ const useDiariesRoute = (app: HonoApp) => {
             }, new Map<string, Pick<Diary, 'id' | 'createdAt'>>())
             const existedDates = diaryIDs
                 .map((d) => d.createdAt)
-                .filter((d) => d !== null)
                 .map((e) => formatDateTime(e!, DateTimeFormatEnum.DATE_FORMAT))
             const createdDiaries = await Promise.all(
                 diaries
-                    .filter((d) => !existedDates.includes(d.createdAt!))
+                    .filter((d) => !existedDates.includes(d.createdAt))
                     .map(
                         async (d) =>
                             await createDiary(
                                 userID,
                                 d.content,
-                                new Date(d.createdAt!)
+                                new Date(d.createdAt)
                             )
                     )
             )
             const updatedDiaries = await Promise.all(
                 diaries
-                    .filter((d) => existedDates.includes(d.createdAt!))
+                    .filter((d) => existedDates.includes(d.createdAt))
                     .map(
                         async (d) =>
                             await updateDiary(
-                                diaryIdMap.get(d.createdAt!)!.id,
+                                diaryIdMap.get(d.createdAt)!.id,
                                 d.content
                             )
                     )

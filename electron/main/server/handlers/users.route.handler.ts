@@ -9,7 +9,7 @@ import {
     ZResultSchema,
 } from '../api.type'
 import { HonoApp } from '../hono.app'
-import { okResponse } from '../server.aux'
+import { failResponse, okResponse } from '../server.aux'
 
 const useUsersRoute = (app: HonoApp) => {
     app.openapi(
@@ -54,6 +54,14 @@ const useUsersRoute = (app: HonoApp) => {
                         },
                     },
                 },
+                500: {
+                    description: 'Update User failed.',
+                    content: {
+                        'application/json': {
+                            schema: ZResultSchema(z.null()),
+                        },
+                    },
+                },
             },
         }),
         async (c) => {
@@ -61,19 +69,27 @@ const useUsersRoute = (app: HonoApp) => {
             const { email, nickname, password, pinCode, avatar } =
                 await c.req.json<Omit<User, 'id'>>()
             const user = await updateUser(Number(id), {
-                email: email!,
-                nickname: nickname!,
-                password: password!,
-                pinCode: pinCode!,
-                avatar: avatar!,
+                email,
+                nickname,
+                password,
+                pinCode,
+                avatar,
             })
+
+            if (user === null) {
+                return c.json(
+                    failResponse('Unknown error'),
+                    StatusCodes.INTERNAL_SERVER_ERROR
+                )
+            }
+
             return c.json(
                 okResponse<UserProfile>({
-                    id: user!.id,
-                    email: user!.email,
-                    nickname: user!.nickname,
-                    pinCode: user!.pinCode,
-                    avatar: user!.avatar,
+                    id: user.id,
+                    email: user.email,
+                    nickname: user.nickname,
+                    pinCode: user.pinCode,
+                    avatar: user.avatar,
                 }),
                 StatusCodes.OK
             )

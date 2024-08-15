@@ -130,7 +130,7 @@ export const useStorageRoute = (app: HonoApp) => {
             return c.json(
                 {
                     local_path: imagePath,
-                    avatar_url: `static/${imageName}`,
+                    avatar_url: `/static/${imageName}`,
                 },
                 StatusCodes.OK
             )

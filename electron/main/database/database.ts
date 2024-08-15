@@ -6,6 +6,7 @@ import { isDev } from '../util/electron.util'
 import { TodoRecord } from './database.type'
 import { ErrorConstants } from './error'
 import { DiariesTable, ProjectsTable, TodosTable, UsersTable } from './schema'
+import { ErrorCause } from '../server/error'
 
 const databasePath = 'sqlite.db'
 
@@ -88,6 +89,7 @@ export const updateUser = async (
         .from(UsersTable)
         .where(eq(UsersTable.id, userID))
         .get()
+    if (!user) throw new Error(ErrorCause.USER_NOT_FOUND)
     return user
 }
 

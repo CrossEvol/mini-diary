@@ -94,7 +94,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
                         component='img'
                         image={
                             !!user.avatar
-                                ? `${ApiUrl()}/${user.avatar}`
+                                ? `${ApiUrl()}${user.avatar}`
                                 : `${ApiUrl()}/static/go.jpg`
                         }
                         alt={`${user.nickname}'s avatar`}

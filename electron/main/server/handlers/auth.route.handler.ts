@@ -15,7 +15,7 @@ import {
 } from '../api.type'
 import { ErrorCause } from '../error'
 import { HonoApp } from '../hono.app'
-import { okResponse } from '../server.aux'
+import { failResponse, okResponse } from '../server.aux'
 
 const useAuthRoute = (app: HonoApp) => {
     app.openapi(
@@ -65,12 +65,20 @@ const useAuthRoute = (app: HonoApp) => {
             },
             responses: {
                 200: {
-                    description: 'Create new User',
+                    description: 'Create new User Success.',
                     content: {
                         'application/json': {
                             schema: ZResultSchema(
                                 UserProfileSchema.nullable().optional()
                             ),
+                        },
+                    },
+                },
+                500: {
+                    description: 'Create new User Failed.',
+                    content: {
+                        'application/json': {
+                            schema: ZResultSchema(z.null()),
                         },
                     },
                 },
@@ -80,18 +88,25 @@ const useAuthRoute = (app: HonoApp) => {
             const { email, nickname, password, pinCode } =
                 await c.req.json<Omit<User, 'id' | 'avatar'>>()
             const user = await createUser({
-                email: email!,
-                nickname: nickname!,
-                password: password!,
-                pinCode: pinCode!,
+                email,
+                nickname,
+                password,
+                pinCode,
             })
+
+            if (user === null) {
+                return c.json(
+                    failResponse('sign-up failed. can not create new user.'),
+                    StatusCodes.INTERNAL_SERVER_ERROR
+                )
+            }
             return c.json(
                 okResponse<UserProfile>({
-                    id: user!.id,
-                    email: user!.email,
-                    nickname: user!.nickname,
-                    pinCode: user!.pinCode,
-                    avatar: user!.avatar,
+                    id: user.id,
+                    email: user.email,
+                    nickname: user.nickname,
+                    pinCode: user.pinCode,
+                    avatar: user.avatar,
                 }),
                 StatusCodes.OK
             )
@@ -126,6 +141,22 @@ const useAuthRoute = (app: HonoApp) => {
                         },
                     },
                 },
+                400: {
+                    description: 'Password not match.',
+                    content: {
+                        'application/json': {
+                            schema: ZResultSchema(z.null()),
+                        },
+                    },
+                },
+                404: {
+                    description: 'User not found',
+                    content: {
+                        'application/json': {
+                            schema: ZResultSchema(z.null()),
+                        },
+                    },
+                },
             },
         }),
         async (c) => {
@@ -133,14 +164,20 @@ const useAuthRoute = (app: HonoApp) => {
                 await c.req.json<Pick<User, 'email' | 'password'>>()
             const user = await getUserByEmail(email!)
             if (!user) {
-                throw new Error(getReasonPhrase(StatusCodes.NOT_FOUND))
+                return c.json(
+                    failResponse(ErrorCause.USER_NOT_FOUND),
+                    StatusCodes.NOT_FOUND
+                )
             }
             if (user.password !== password) {
-                throw new Error(ErrorCause.PASSWORD_MISMATCH)
+                return c.json(
+                    failResponse(ErrorCause.PASSWORD_MISMATCH),
+                    StatusCodes.BAD_REQUEST
+                )
             }
             const jwt = createJWT({
-                userID: user.id!,
-                nickname: user.nickname!,
+                userID: user.id,
+                nickname: user.nickname,
             })
             return c.json(okResponse({ token: jwt }), StatusCodes.OK)
         }
