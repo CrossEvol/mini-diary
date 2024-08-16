@@ -61,6 +61,9 @@ export default function TodoCreateOrSearchInput() {
 
     return (
         <Paper
+            onSubmit={(e) => {
+                e.preventDefault()
+            }}
             component='form'
             sx={{
                 p: '2px 4px',
@@ -94,10 +97,16 @@ export default function TodoCreateOrSearchInput() {
             )}
             {inputState === 'create' ? (
                 <InputBase
+                    componentsProps={{
+                        input: {
+                            type: 'text',
+                        },
+                    }}
                     sx={{ ml: 1, flex: 1 }}
                     value={text}
                     onKeyUp={(e) => {
                         if (e.key === 'Enter') {
+                            e.preventDefault()
                             mutation.mutateAsync(
                                 {
                                     text,
@@ -122,6 +131,11 @@ export default function TodoCreateOrSearchInput() {
                 />
             ) : (
                 <InputBase
+                    componentsProps={{
+                        input: {
+                            type: 'text',
+                        },
+                    }}
                     sx={{ ml: 1, flex: 1 }}
                     value={text}
                     onKeyUp={async (e) => {

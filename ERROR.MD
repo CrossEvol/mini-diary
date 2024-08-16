@@ -35,3 +35,67 @@ Error: Unable to preload CSS for file:///D:/WEB-Code/my-electron/mini-diary/rele
 ```
 
 can be resolved by not dynamic importing the IpcButton 
+
+## localStorage.port will lost in release mode after the below code trigger though it has no problem in dev mode
+`src/components/todos/todo-create-or-search-input.tsx`
+```tsx
+<InputBase
+                    sx={{ ml: 1, flex: 1 }}
+                    value={text}
+                    onKeyUp={async (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault()
+                            setPickedDay(DATE_1999_09_09)
+                            setSearchText(text)
+                            await resetTodosPage(10)
+                        }
+                    }}
+                    onChange={(e) => {
+                        setText(e.target.value)
+                    }}
+                    placeholder={'Search todo ...'}
+                    inputProps={{ 'aria-label': 'search google maps' }}
+                />
+```
+
+`src/main.tsx`
+```tsx
+console.log('完全重新渲染了...')
+if (!isDevelopment) {
+    console.log('我又执行了...')
+    localStorage.removeItem('port')
+}
+
+```
+
+by debug info, only once the Entry will trigger full page reload. and I do not know why
+
+solve it by prevent form submit or set elementType exclude <form/>
+`prevent submit`
+```tsx
+<Paper
+    onSubmit={(e) => {
+        e.preventDefault()
+    }}
+    component='form'
+    sx={{
+        p: '2px 4px',
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+    }}
+>
+```
+
+`change <Paper/> sub component type`
+```tsx
+<Paper
+    component='div'
+    sx={{
+        p: '2px 4px',
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+    }}
+>
+```
