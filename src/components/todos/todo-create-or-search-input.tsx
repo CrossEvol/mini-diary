@@ -1,4 +1,5 @@
 import todoApi from '@/api/todo-api'
+import { pageSizeAtom } from '@/atoms/page-params.atom'
 import { pickedDayAtom } from '@/atoms/picked-day.atom'
 import { searchTextAtom } from '@/atoms/search-text.atom'
 import { DATE_1999_09_09 } from '@/shared/constants/date-constants'
@@ -22,6 +23,7 @@ type InputState = 'create' | 'search'
 
 export default function TodoCreateOrSearchInput() {
     const [, setSearchText] = useAtom(searchTextAtom)
+    const [, setPageSize] = useAtom(pageSizeAtom)
     const [text, setText] = React.useState('')
     const [pickedDay, setPickedDay] = useAtom(pickedDayAtom)
     const queryClient = useQueryClient()
@@ -54,7 +56,9 @@ export default function TodoCreateOrSearchInput() {
                     <IconButton
                         sx={{ p: '10px' }}
                         aria-label='menu'
-                        onClick={() => setInputState('search')}
+                        onClick={() => {
+                            setInputState('search')
+                        }}
                     >
                         <LibraryAddOutlinedIcon color='primary' />
                     </IconButton>

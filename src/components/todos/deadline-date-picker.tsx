@@ -1,3 +1,4 @@
+import { pageSizeAtom } from '@/atoms/page-params.atom'
 import { pickedDayAtom } from '@/atoms/picked-day.atom'
 import { searchTextAtom } from '@/atoms/search-text.atom'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
@@ -9,6 +10,7 @@ import { Droppable } from './dnd/droppable'
 
 function MyDatePicker({ onClick }: any) {
     const [, setSearchText] = useAtom(searchTextAtom)
+    const [, setPageSize] = useAtom(pageSizeAtom)
     const [pickedDay, setPickedDay] = useAtom(pickedDayAtom)
     const [selected, setSelected] = useState<Date>(pickedDay)
 
@@ -21,6 +23,7 @@ function MyDatePicker({ onClick }: any) {
                 setSelected(e!)
                 setPickedDay(e!)
                 setSearchText(undefined)
+                setPageSize(10)
             }}
             components={{
                 Day: (props: DayProps) => {

@@ -9,9 +9,10 @@ import TodoPagination from './todo-pagination'
 
 interface IProps {
     todos: Todo[]
+    totalCount: number
 }
 
-export default function TodoList({ todos }: IProps) {
+export default function TodoList({ todos, totalCount }: IProps) {
     const [q] = useAtom(searchTextAtom)
     const [expanded, setExpanded] = React.useState<number | false>(1)
 
@@ -25,7 +26,7 @@ export default function TodoList({ todos }: IProps) {
         <div className='space-y-2'>
             <TodoCreateOrSearchInput />
             <Divider />
-            {!!q ? <TodoPagination /> : null}
+            {!!q ? <TodoPagination totalCount={totalCount} /> : null}
             <div className='max-h-screen overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-slate-200 scrollbar-track-white'>
                 {todos
                     .sort((a, b) => b.order - a.order)

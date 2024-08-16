@@ -15,7 +15,7 @@ import {
 import {
     SortableContext,
     sortableKeyboardCoordinates,
-    verticalListSortingStrategy
+    verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import PanToolSharpIcon from '@mui/icons-material/PanToolSharp'
 import { Divider, IconButton } from '@mui/material'
@@ -28,9 +28,10 @@ import TodoList from '../todo-list'
 
 interface IProps {
     todos: Todo[]
+    totalCount: number
 }
 
-const DndTodoMain = ({ todos }: IProps) => {
+const DndTodoMain = ({ todos, totalCount }: IProps) => {
     const queryClient = useQueryClient()
     const [pickedDay] = useAtom(pickedDayAtom)
     const [isDragging, setIsDragging] = React.useState(false)
@@ -109,9 +110,8 @@ const DndTodoMain = ({ todos }: IProps) => {
 
     const handleDragStart = (event: DragStartEvent) => {
         const { active } = event
-        console.log(todos.map((todo) => todo.id))
 
-        setTimeout(() => setIsDragging(true), 1)
+        setIsDragging(true)
         setDraggingItem(
             todos[
                 todos.findIndex(
@@ -135,7 +135,7 @@ const DndTodoMain = ({ todos }: IProps) => {
                         strategy={verticalListSortingStrategy}
                     >
                         <div className='flex flex-col items-end'>
-                            <TodoList todos={todos} />
+                            <TodoList todos={todos} totalCount={totalCount} />
                         </div>
                     </SortableContext>
                 </div>
