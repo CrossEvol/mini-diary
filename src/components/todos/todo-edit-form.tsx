@@ -5,6 +5,7 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import { useMutation } from '@tanstack/react-query'
 import { Todo, UpdateTodoDTO } from 'electron/main/server/api.type'
+import React from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 interface FormValues {
@@ -64,7 +65,6 @@ const TodoEditForm = ({ todo, setTodo }: IProps) => {
             <Controller
                 name='text'
                 control={control}
-                defaultValue=''
                 render={({ field }) => (
                     <TextField
                         {...field}
@@ -74,11 +74,9 @@ const TodoEditForm = ({ todo, setTodo }: IProps) => {
                     />
                 )}
             />
-
             <Controller
                 name='remark'
                 control={control}
-                defaultValue=''
                 render={({ field }) => (
                     <TextField
                         {...field}
@@ -90,7 +88,6 @@ const TodoEditForm = ({ todo, setTodo }: IProps) => {
                     />
                 )}
             />
-
             <Controller
                 name='deadline'
                 control={control}
@@ -115,4 +112,4 @@ const TodoEditForm = ({ todo, setTodo }: IProps) => {
     )
 }
 
-export default TodoEditForm
+export default React.memo(TodoEditForm)

@@ -11,10 +11,7 @@ interface IProps {
     onMenuItemClick: (priority: Todo['priority']) => void
 }
 
-export default function PrioritySelectMenu({
-    priority,
-    onMenuItemClick,
-}: IProps) {
+const PrioritySelectMenu = ({ priority, onMenuItemClick }: IProps) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -97,3 +94,5 @@ export default function PrioritySelectMenu({
         </div>
     )
 }
+
+export default React.memo(PrioritySelectMenu)

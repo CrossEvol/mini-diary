@@ -193,7 +193,9 @@ export default function TodoItem({
                     </div>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <TodoEditForm todo={todo} setTodo={setTodo} />
+                    {expanded === todo.id ? (
+                        <TodoEditForm todo={todo} setTodo={setTodo} />
+                    ) : <div className='w-[25rem]'></div>}
                 </AccordionDetails>
             </Accordion>
         </div>

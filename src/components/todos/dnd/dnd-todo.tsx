@@ -141,7 +141,7 @@ const DndTodoMain = ({ todos, totalCount }: IProps) => {
                 </div>
                 <Divider orientation='vertical' flexItem />
                 <div className='w-1/2 max-h-screen border-2 border-solid border-white rounded-lg p-4 flex flex-wrap justify-start'>
-                    <MyDatePicker onClick={() => {}} />
+                    <MyDatePicker />
                 </div>
             </div>
             <DragOverlay>

@@ -15,9 +15,9 @@ https://github.com/electron-vite/electron-vite-react
 - √ when import, can choose combine content or override.
 - √ complete <Todo>
 - √ Use the dnd-kit to operate the Todo Groups.
+- √ solve the re-render-too-many problems in <TodoView/>
 - add fuse query for *Diaries*
 - add fuse query for *Todos*
-- ? solve the re-render-too-many problems in <TodoView/>
 - complete <Settings>
 - update any starter , includes electron, electron-sub-page, mui-vite .
 - add support for eslint and prettier.

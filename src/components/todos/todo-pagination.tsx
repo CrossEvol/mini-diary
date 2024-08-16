@@ -2,6 +2,7 @@ import todoApi from '@/api/todo-api'
 import { pageSizeAtom } from '@/atoms/page-params.atom'
 import { pickedDayAtom } from '@/atoms/picked-day.atom'
 import { searchTextAtom } from '@/atoms/search-text.atom'
+import useThrottle from '@/hooks/useThrottle'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import { createTodosQueryKey } from '@/utils/string.util'
 import TablePagination from '@mui/material/TablePagination'
@@ -23,40 +24,44 @@ export default function TodoPagination({ totalCount }: IProps) {
     const [pageSize, setPageSize] = useAtom(pageSizeAtom)
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(pageSize)
+    const { isThrottled, throttle } = useThrottle(50)
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number
     ) => {
-        if (newPage > page) {
-            todoContext.fetchNextPage()
-        } else if (newPage < page) {
-            queryClient.setQueryData<InfiniteData<ZPageResult<Todo>['data']>>(
-                [createTodosQueryKey(pickedDay)],
-                (data) => ({
+        throttle()
+        if (!isThrottled) {
+            if (newPage > page && newPage * pageSize < totalCount) {
+                todoContext.fetchNextPage()
+            } else if (newPage < page) {
+                queryClient.setQueryData<
+                    InfiniteData<ZPageResult<Todo>['data']>
+                >([createTodosQueryKey(pickedDay)], (data) => ({
                     pages: data?.pages.slice(0, data?.pages.length - 1) ?? [],
                     pageParams:
                         data?.pageParams.slice(
                             0,
                             data?.pageParams.length - 1
                         ) ?? [],
-                })
-            )
-        }
+                }))
+            }
 
-        setPage(newPage)
+            setPage(newPage)
+        }
     }
 
-    const handleChangeRowsPerPage = (
+    const handleChangeRowsPerPage = async (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const newRowsPerPage = parseInt(event.target.value, 10)
         setPageSize(newRowsPerPage)
         setRowsPerPage(newRowsPerPage)
         setPage(0)
+        await resetTodosPage(newRowsPerPage)
     }
 
-    const handlePageSizeChange = async () => {
+    const resetTodosPage = async (pageSize: number) => {
         const page = await todoApi.getTodos({
             q,
             current: 1,
@@ -66,7 +71,7 @@ export default function TodoPagination({ totalCount }: IProps) {
         })
         queryClient.setQueryData([createTodosQueryKey(pickedDay)], () => ({
             pages: page,
-            pageParams: [1],
+            pageParams: [0], // should be set value to initialPageParams
         }))
         queryClient.cancelQueries({
             queryKey: [createTodosQueryKey(pickedDay)],
@@ -75,11 +80,6 @@ export default function TodoPagination({ totalCount }: IProps) {
             queryKey: [createTodosQueryKey(pickedDay)],
         })
     }
-
-    React.useEffect(() => {
-        handlePageSizeChange()
-        return () => {}
-    }, [pageSize])
 
     return (
         <TablePagination

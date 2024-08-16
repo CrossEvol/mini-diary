@@ -1,8 +1,9 @@
 import { Divider } from '@mui/material'
 import Skeleton from '@mui/material/Skeleton'
 import Stack from '@mui/material/Stack'
+import React from 'react'
 
-export default function TodoListLoading() {
+const TodoListLoading = () => {
     return (
         <Stack direction={'row'} spacing={2}>
             <Stack spacing={2}>
@@ -60,3 +61,5 @@ export default function TodoListLoading() {
         </Stack>
     )
 }
+
+export default React.memo(TodoListLoading)

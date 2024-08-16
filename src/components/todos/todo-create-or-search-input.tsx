@@ -1,5 +1,4 @@
 import todoApi from '@/api/todo-api'
-import { pageSizeAtom } from '@/atoms/page-params.atom'
 import { pickedDayAtom } from '@/atoms/picked-day.atom'
 import { searchTextAtom } from '@/atoms/search-text.atom'
 import { DATE_1999_09_09 } from '@/shared/constants/date-constants'
@@ -23,7 +22,6 @@ type InputState = 'create' | 'search'
 
 export default function TodoCreateOrSearchInput() {
     const [, setSearchText] = useAtom(searchTextAtom)
-    const [, setPageSize] = useAtom(pageSizeAtom)
     const [text, setText] = React.useState('')
     const [pickedDay, setPickedDay] = useAtom(pickedDayAtom)
     const queryClient = useQueryClient()
@@ -40,6 +38,26 @@ export default function TodoCreateOrSearchInput() {
             }
         },
     })
+
+    const resetTodosPage = async (pageSize: number) => {
+        const page = await todoApi.getTodos({
+            q: text,
+            current: 1,
+            per_page: pageSize,
+            startDay: formatDateTime(pickedDay, DateTimeFormatEnum.DATE_FORMAT),
+            endDay: formatDateTime(pickedDay, DateTimeFormatEnum.DATE_FORMAT),
+        })
+        queryClient.setQueryData([createTodosQueryKey(pickedDay)], () => ({
+            pages: page,
+            pageParams: [0],
+        }))
+        queryClient.cancelQueries({
+            queryKey: [createTodosQueryKey(pickedDay)],
+        })
+        queryClient.invalidateQueries({
+            queryKey: [createTodosQueryKey(pickedDay)],
+        })
+    }
 
     return (
         <Paper
@@ -74,13 +92,12 @@ export default function TodoCreateOrSearchInput() {
                     </IconButton>
                 </Tooltip>
             )}
-            <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                value={text}
-                onKeyUp={(e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault()
-                        if (inputState === 'create') {
+            {inputState === 'create' ? (
+                <InputBase
+                    sx={{ ml: 1, flex: 1 }}
+                    value={text}
+                    onKeyUp={(e) => {
+                        if (e.key === 'Enter') {
                             mutation.mutateAsync(
                                 {
                                     text,
@@ -95,25 +112,33 @@ export default function TodoCreateOrSearchInput() {
                                     },
                                 }
                             )
-                            return
                         }
-                        if (inputState === 'search') {
+                    }}
+                    onChange={(e) => {
+                        setText(e.target.value)
+                    }}
+                    placeholder={'Write some text ...'}
+                    inputProps={{ 'aria-label': 'search google maps' }}
+                />
+            ) : (
+                <InputBase
+                    sx={{ ml: 1, flex: 1 }}
+                    value={text}
+                    onKeyUp={async (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault()
                             setPickedDay(DATE_1999_09_09)
                             setSearchText(text)
-                            return
+                            await resetTodosPage(10)
                         }
-                    }
-                }}
-                onChange={(e) => {
-                    setText(e.target.value)
-                }}
-                placeholder={
-                    inputState === 'create'
-                        ? 'Write some text ...'
-                        : 'Search todo ...'
-                }
-                inputProps={{ 'aria-label': 'search google maps' }}
-            />
+                    }}
+                    onChange={(e) => {
+                        setText(e.target.value)
+                    }}
+                    placeholder={'Search todo ...'}
+                    inputProps={{ 'aria-label': 'search google maps' }}
+                />
+            )}
             <Divider sx={{ height: 28, m: 0.5 }} orientation='vertical' />
             {inputState === 'create' ? (
                 <Tooltip title='CREATE'>
@@ -140,9 +165,10 @@ export default function TodoCreateOrSearchInput() {
                         type='button'
                         sx={{ p: '10px' }}
                         aria-label='search'
-                        onClick={() => {
+                        onClick={async () => {
                             setSearchText(text)
                             setPickedDay(DATE_1999_09_09)
+                            await resetTodosPage(10)
                         }}
                     >
                         <SearchIcon />
