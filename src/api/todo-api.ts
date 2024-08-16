@@ -11,7 +11,6 @@ import {
 
 const getTodos = async (getTodosDTO: GetTodosDTO) => {
     const response = await fetchClient.get<ZPageResult<Todo>>(
-        // `${ApiUrl('todos')}?${queryString.stringify(getTodosDTO)}`,
         `${ApiUrl('todos', getTodosDTO)}`,
         {
             headers: {

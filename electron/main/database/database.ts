@@ -189,11 +189,13 @@ type GetTodosParams = {
     q?: string
     startDay?: Date
     endDay?: Date
+    offset?: number
+    limit?: number
 }
 
 export const getAllTodos = (
     userID: number,
-    { startDay, endDay, q }: GetTodosParams
+    { startDay, endDay, q, offset, limit }: GetTodosParams
 ) => {
     const result = db
         .select()
@@ -207,8 +209,8 @@ export const getAllTodos = (
                     : undefined
             )
         )
-        .limit(30)
-        .offset(0)
+        .limit(!!limit ? limit : 1000)
+        .offset(!!offset ? offset : 0)
         .all()
     return result
 }

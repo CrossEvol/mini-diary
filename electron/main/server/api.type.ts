@@ -66,6 +66,8 @@ export const ZPageResultSchema = <T>(dataSchema: z.ZodType<T>) =>
         message: z.string(),
         data: z.object({
             list: z.array(dataSchema),
+            current: z.number().optional(),
+            per_page: z.number().optional(),
             total_count: z.number(),
         }),
     })
@@ -91,6 +93,8 @@ export const GetTodosSchema = z.object({
     q: z.string().optional(),
     startDay: z.string().optional(),
     endDay: z.string().optional(),
+    current: z.number().optional(),
+    per_page: z.number().optional(),
 })
 
 export type GetTodosDTO = z.infer<typeof GetTodosSchema>

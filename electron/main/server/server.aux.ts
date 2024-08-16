@@ -9,14 +9,11 @@ export const okResponse = <T>(data: T) => {
     } satisfies ZResult<T>
 }
 
-export const pageResponse = <T>(list: T[], total_count: number) => {
+export const pageResponse = <T>(data: ZPageResult<T>['data']) => {
     return {
         status: StatusCodes.OK,
         message: getReasonPhrase(StatusCodes.OK),
-        data: {
-            list,
-            total_count,
-        },
+        data,
     } satisfies ZPageResult<T>
 }
 

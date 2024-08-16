@@ -16,7 +16,7 @@ import {
     UpdateTodoDTO,
     UpdateTodoSchema,
     ZPageResultSchema,
-    ZResultSchema
+    ZResultSchema,
 } from '../api.type'
 import { HonoApp } from '../hono.app'
 import { okResponse, pageResponse } from '../server.aux'
@@ -45,6 +45,30 @@ const useTodosRoute = (app: HonoApp) => {
                             },
                             type: 'string',
                             example: undefined,
+                        }),
+                    current: z
+                        .string()
+                        .optional()
+                        .openapi({
+                            param: {
+                                name: 'current',
+                                in: 'query',
+                                required: false,
+                            },
+                            type: 'integer',
+                            example: '1',
+                        }),
+                    per_page: z
+                        .string()
+                        .optional()
+                        .openapi({
+                            param: {
+                                name: 'per_page',
+                                in: 'query',
+                                required: false,
+                            },
+                            type: 'integer',
+                            example: '10',
                         }),
                     startDay: z
                         .string()
@@ -88,10 +112,15 @@ const useTodosRoute = (app: HonoApp) => {
         }),
         (c) => {
             const userID = c.get('userID')
-            const { q, startDay, endDay } = c.req.valid('query')
+            const { q, startDay, endDay, current, per_page } =
+                c.req.valid('query')
             // TODO:use prettier to let
             const paramsForWhere = {
                 q,
+                offset: !!current
+                    ? (Number(current) - 1) * Number(per_page)
+                    : undefined,
+                limit: !!per_page ? Number(per_page) : undefined,
                 startDay: !!startDay
                     ? startDay === STR_1999_09_09
                         ? undefined
@@ -106,7 +135,15 @@ const useTodosRoute = (app: HonoApp) => {
             const todos = getAllTodos(userID, paramsForWhere)
             const count = countTodos(userID, paramsForWhere)
             c.header('Total-Count', count.toString())
-            return c.json(pageResponse<Todo>(todos, count), StatusCodes.OK)
+            return c.json(
+                pageResponse<Todo>({
+                    list: todos,
+                    total_count: count,
+                    current: !current ? undefined : Number(current),
+                    per_page: !per_page ? undefined : Number(per_page),
+                }),
+                StatusCodes.OK
+            )
         }
     )
 
