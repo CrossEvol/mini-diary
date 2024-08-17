@@ -1,5 +1,4 @@
 import ErrorPage from '@/error-page'
-import EditorSearchView from '@/views/editor-search-view'
 import React, { Suspense } from 'react'
 import { createHashRouter, RouteObject } from 'react-router-dom'
 import Layout from '../layout'
@@ -10,6 +9,7 @@ const Home = React.lazy(() => import('@/views/home'))
 const SignIn = React.lazy(() => import('@/views/sign-in'))
 const SignUp = React.lazy(() => import('@/views/sign-up'))
 const TodoView = React.lazy(() => import('@/views/todo-view'))
+const EditorSearchView = React.lazy(() => import('@/views/editor-search-view'))
 const UserProfileView = React.lazy(() => import('@/views/profile-view'))
 
 const routes: RouteObject[] = [

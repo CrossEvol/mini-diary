@@ -36,15 +36,22 @@ export default defineConfig(({ command }) => {
                     manualChunks: (id, {}) => {
                         if (id.includes('node_modules')) {
                             if (id.includes('parse5')) return `vendor-parse5`
-                            if (id.includes('@mantine')) return `vendor-mantine`
                             if (id.includes('micromark'))
                                 return `vendor-micromark`
                             if (id.includes('@popperjs')) return `vendor-popper`
                             if (id.includes('emoji')) return `vendor-emoji`
-                            if (id.includes('@tiptap')) return `vendor-tiptap`
-                            if (id.includes('prosemirror'))
-                                return `vendor-prosemirror`
-                            if (id.includes('yjs')) return `vendor-yjs`
+                            if (
+                                id.includes('@blocknote') ||
+                                id.includes('@mantine')
+                            )
+                                return `vendor-@blocknote`
+                            if (
+                                id.includes('@tiptap') ||
+                                id.includes('prosemirror') ||
+                                id.includes('yjs')
+                            ) {
+                                return `vendor-@tiptap`
+                            }
                             if (id.includes('hast-util'))
                                 return `vendor-hast-util`
                             if (id.includes('mdast-util'))
@@ -55,10 +62,8 @@ export default defineConfig(({ command }) => {
                                 return `vendor-markdown-it`
                             if (id.includes('@floating-ui'))
                                 return `vendor-floating-ui`
-                            if (id.includes('@mui')) return 'vendor-mui'
-                            if (id.includes('@blocknote'))
-                                return 'vender-block-note'
-                            if (id.includes('@emotion')) return 'vendor-emotion'
+                            if (id.includes('@mui') || id.includes('@emotion'))
+                                return 'vendor-@mui'
                             if (id.includes('js-beautify'))
                                 return 'vendor-js-beautify'
                             if (id.includes('localforage'))
@@ -79,6 +84,12 @@ export default defineConfig(({ command }) => {
                             }
                             if (id.includes('react-calendar'))
                                 return 'vendor-react-calendar'
+                            if (id.includes('react-markdown')) {
+                                return `vendor-react-markdown`
+                            }
+                            if (id.includes('react-hook-form')) {
+                                return `vendor-react-hook-form`
+                            }
                             return 'vendor'
                         }
                     },

@@ -17,7 +17,7 @@ https://github.com/electron-vite/electron-vite-react
 - √ Use the dnd-kit to operate the Todo Groups.
 - √ solve the re-render-too-many problems in <TodoView/>
 - √ Highlight search text for *Todos*
-- add fuse query for *Diaries*
+- √ add fuse query for *Diaries*
 - complete <Settings>
 - update any starter , includes electron, electron-sub-page, mui-vite .
 - add support for eslint and prettier.
