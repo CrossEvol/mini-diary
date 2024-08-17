@@ -2,9 +2,9 @@ import { EmitterEvent, eventEmitterAtom } from '@/atoms/event.emitter.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
 import useProfile from '@/hooks/useProfile'
 import {
-    compareDate,
+    compareDateStrings,
     DateTimeFormatEnum,
-    formatDateTime
+    formatDateTime,
 } from '@/utils/datetime.utils'
 import Fuse from 'fuse.js'
 import { useAtom } from 'jotai'
@@ -62,11 +62,14 @@ export default function SearchResult({ q }: IProps) {
 
         const results = fuse.search(q)
         // console.log(results)
-        ee.once(EmitterEvent.RETURN_MARKDOWN_FROM_BLOCKS, (entries: MarkdownEntry[]) => {
-            setMarkdownEntries(
-                entries.sort((a, b) => compareDate(a.date, b.date))
-            )
-        })
+        ee.once(
+            EmitterEvent.RETURN_MARKDOWN_FROM_BLOCKS,
+            (entries: MarkdownEntry[]) => {
+                setMarkdownEntries(
+                    entries.sort((a, b) => -compareDateStrings(a.date, b.date))
+                )
+            }
+        )
         ee.emit(
             EmitterEvent.SEND_BLOCKS_TO_EDITOR,
             results.map((result) => result.item)

@@ -37,6 +37,25 @@ export const parseDateTime = (
     return dayjs(parsedString, format ?? DateTimeFormatEnum.DATE_TIME_FORMAT)
 }
 
-export const compareDate = (a: string, b: string) => {
-    return new Date(a).getMilliseconds() - new Date(b).getMilliseconds()
+/**
+ * Compares two date strings in the format 'YYYY-MM-DD'.
+ *
+ * @param dateString1 - The first date string.
+ * @param dateString2 - The second date string.
+ * @returns -1 if the first date is earlier, 1 if the first date is later, 0 if they are the same.
+ */
+export const compareDateStrings = (
+    dateString1: string,
+    dateString2: string
+): number => {
+    const date1 = new Date(dateString1)
+    const date2 = new Date(dateString2)
+
+    if (date1 < date2) {
+        return -1
+    } else if (date1 > date2) {
+        return 1
+    } else {
+        return 0
+    }
 }

@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
-  DateTimeFormatEnum,
-  formatDateTime,
-  parseDateTime,
+    compareDateStrings,
+    DateTimeFormatEnum,
+    formatDateTime,
+    parseDateTime,
 } from './datetime.utils'
 
 describe('DateTimeUtils', () => {
@@ -72,5 +73,29 @@ describe('DateTimeUtils', () => {
             DateTimeFormatEnum.DAY_FORMAT
         ).toDate()
         expect(parsed).toEqual(testDate)
+    })
+})
+
+describe('compareDateStrings', () => {
+    it('should return 1 when the first date is later', () => {
+        expect(compareDateStrings('2024-08-17', '2024-08-16')).toBe(1)
+    })
+
+    it('should return -1 when the first date is earlier', () => {
+        expect(compareDateStrings('2024-08-16', '2024-08-17')).toBe(-1)
+    })
+
+    it('should return 0 when both dates are the same', () => {
+        expect(compareDateStrings('2024-08-17', '2024-08-17')).toBe(0)
+    })
+
+    it('should handle different months correctly', () => {
+        expect(compareDateStrings('2024-07-17', '2024-08-17')).toBe(-1)
+        expect(compareDateStrings('2024-09-17', '2024-08-17')).toBe(1)
+    })
+
+    it('should handle different years correctly', () => {
+        expect(compareDateStrings('2023-08-17', '2024-08-17')).toBe(-1)
+        expect(compareDateStrings('2025-08-17', '2024-08-17')).toBe(1)
     })
 })
