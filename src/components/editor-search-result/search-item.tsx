@@ -7,6 +7,8 @@ import MuiAccordionSummary, {
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export type MarkdownEntry = {
     date: string
@@ -75,7 +77,15 @@ export default function SearchItem({
                     <Typography>{markdownEntry.date}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Typography>{markdownEntry.mdText}</Typography>
+                    <Typography>
+                        {expanded === markdownEntry.date ? (
+                            <Markdown remarkPlugins={[remarkGfm]}>
+                                {markdownEntry.mdText}
+                            </Markdown>
+                        ) : (
+                            <div className='w-[25rem]'></div>
+                        )}
+                    </Typography>
                 </AccordionDetails>
             </Accordion>
         </div>
