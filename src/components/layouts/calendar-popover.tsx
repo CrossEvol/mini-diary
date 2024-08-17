@@ -99,7 +99,11 @@ const CalendarBarMenus = () => {
     )
 }
 
-const CalendarBar = () => {
+interface CalendarBarProps {
+    handleClose: () => void
+}
+
+const CalendarBar = ({ handleClose }: CalendarBarProps) => {
     const navigate = useNavigate()
     const [text, setText] = useState('')
     const [eventEmitter] = useAtom(eventEmitterAtom)
@@ -126,6 +130,7 @@ const CalendarBar = () => {
                     navigate(
                         `/editor/search${text.trim().length > 0 ? `?q=${text.trim()}` : ''}`
                     )
+                    setTimeout(() => handleClose(), 50)
                 }}
                 type='button'
                 sx={{ p: '10px' }}
@@ -207,7 +212,7 @@ export default function CalendarPopover() {
                     horizontal: 'right',
                 }}
             >
-                <CalendarBar />
+                <CalendarBar handleClose={handleClose} />
                 <Calendar
                     onClickDay={(value) => {
                         navigate(
