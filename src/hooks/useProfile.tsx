@@ -28,7 +28,7 @@ const useProfile = () => {
         }
     }, [profile, setProfile])
 
-    return { setupUserProfile }
+    return { profile, setupUserProfile }
 }
 
 export default useProfile

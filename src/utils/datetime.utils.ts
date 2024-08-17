@@ -36,3 +36,7 @@ export const parseDateTime = (
 
     return dayjs(parsedString, format ?? DateTimeFormatEnum.DATE_TIME_FORMAT)
 }
+
+export const compareDate = (a: string, b: string) => {
+    return new Date(a).getMilliseconds() - new Date(b).getMilliseconds()
+}

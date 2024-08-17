@@ -173,5 +173,13 @@ export default defineConfig(({ command }) => {
                 }
             })(),
         clearScreen: false,
+        optimizeDeps: {
+            include: [
+                '@mui/icons-material',
+                '@mui/material',
+                '@emotion/react',
+                '@emotion/styled',
+            ],
+        },
     }
 })

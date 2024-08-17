@@ -10,7 +10,7 @@ import {
     ExportParam,
     FinalImportsData,
     ImportAllParam,
-    PickDateAndFormat
+    PickDateAndFormat,
 } from '@/shared/params'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import fetchClient from '@/utils/fetch.client'
@@ -32,6 +32,12 @@ import { useAtom } from 'jotai'
 import localforage from 'localforage'
 import { join } from 'path-browserify'
 import React from 'react'
+import { MarkdownEntry } from '../editor-search-result/search-result'
+
+export type SearchResultEntry = {
+    diaryKey: string
+    diaryValue: PartialBlock[] | undefined
+}
 
 const EditorLayout = () => {
     const [port] = useAtom(portAtom)
@@ -308,12 +314,28 @@ const EditorLayout = () => {
                 })
             }
         )
+        eventEmitter.on(
+            EmitterEvent.SEND_BLOCKS_TO_EDITOR,
+            async (entries: SearchResultEntry[]) => {
+                const markDownEntries = (await Promise.all(
+                    entries.map(async (entry) => ({
+                        date: extractDataByDiaryKey(entry.diaryKey)!.date,
+                        mdText: await editor.blocksToMarkdownLossy(
+                            entry.diaryValue
+                        ),
+                    }))
+                )) satisfies MarkdownEntry[]
+                eventEmitter.emit(EmitterEvent.RETURN_MARKDOWN_FROM_BLOCKS, markDownEntries)
+            }
+        )
+
         return () => {
             eventEmitter.removeListener(EmitterEvent.SYNC)
             eventEmitter.removeListener(EmitterEvent.EXPORT_DIARY)
             eventEmitter.removeListener(EmitterEvent.EXPORT_ALL_DIARY)
             eventEmitter.removeListener(EmitterEvent.IMPORT_DIARY)
             eventEmitter.removeListener(EmitterEvent.IMPORT_ALL_DIARY)
+            eventEmitter.removeListener(EmitterEvent.SEND_BLOCKS_TO_EDITOR)
         }
     }, [eventEmitter, profile])
     return <div className='hidden'></div>

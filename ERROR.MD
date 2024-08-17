@@ -99,3 +99,26 @@ solve it by prevent form submit or set elementType exclude <form/>
     }}
 >
 ```
+
+## TypeError: styled_default is not a function
+this error seems unpredictable
+
+[issue](https://github.com/mui/material-ui/issues/36515)
+`desc: `The Popper runs well and does not complain about styled not being a function when bundled with Webpack - this leads me to believe it's a problem on Vite's side, in their bundling logic, not in your project.
+`one solution:`
+```tsx
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+
+export default defineConfig({
+  plugins: [react()],
+  optimizeDeps: {
+    include: [
+      '@mui/icons-material',
+      '@mui/material',
+      '@emotion/react',
+      '@emotion/styled',
+    ],
+  },
+});
+```

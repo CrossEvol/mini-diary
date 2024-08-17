@@ -101,6 +101,7 @@ const CalendarBarMenus = () => {
 
 const CalendarBar = () => {
     const navigate = useNavigate()
+    const [text, setText] = useState('')
     const [eventEmitter] = useAtom(eventEmitterAtom)
 
     return (
@@ -115,11 +116,17 @@ const CalendarBar = () => {
             <CalendarBarMenus />
             <InputBase
                 sx={{ ml: 1, flex: 1 }}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
                 placeholder='Search Diary ...'
                 inputProps={{ 'aria-label': 'search google maps' }}
             />
             <IconButton
-                onClick={() => navigate('/editor/search')}
+                onClick={() => {
+                    navigate(
+                        `/editor/search${text.trim().length > 0 ? `?q=${text.trim()}` : ''}`
+                    )
+                }}
                 type='button'
                 sx={{ p: '10px' }}
                 aria-label='search'
