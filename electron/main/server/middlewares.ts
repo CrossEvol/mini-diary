@@ -10,7 +10,7 @@ const whiteList = [
     '/favicon.ico',
 ]
 
-const permissiveRegExp = ['/static/*'].map((s) => new RegExp(s))
+const permissiveRegExp = ['/static/*','/dl/*'].map((s) => new RegExp(s))
 
 export const bearerAuth = async (c: Context, next: Next) => {
     if (permissiveRegExp.filter((r) => r.test(c.req.path)).length > 0) {

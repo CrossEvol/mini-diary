@@ -1,8 +1,8 @@
 import { serveStatic } from '@hono/node-server/serve-static'
 import { createRoute, z } from '@hono/zod-openapi'
-import fs from 'fs'
+import fs, { readFileSync } from 'fs'
 import { StatusCodes } from 'http-status-codes'
-import path from 'path'
+import path, { join } from 'path'
 import { isDev } from '../../util/electron.util'
 import { HonoApp } from '../hono.app'
 
@@ -136,6 +136,17 @@ export const useStorageRoute = (app: HonoApp) => {
             )
         }
     )
+
+    app.get('/dl/*', (c) => {
+        const filename = c.req.path.replace('/dl', '')
+        const filePath = join('static', filename) // Adjust the path to your image file
+        const imageBuffer = readFileSync(filePath)
+
+        c.header('Content-Disposition', `attachment; filename="${filename}"`)
+        c.header('Content-Type', 'image/jpeg')
+
+        return c.body(imageBuffer)
+    })
 }
 
 export default useStorageRoute

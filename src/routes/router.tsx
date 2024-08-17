@@ -1,4 +1,5 @@
 import ErrorPage from '@/error-page'
+import EditorSearchView from '@/views/editor-search-view'
 import React, { Suspense } from 'react'
 import { createHashRouter, RouteObject } from 'react-router-dom'
 import Layout from '../layout'
@@ -22,6 +23,7 @@ const routes: RouteObject[] = [
             { path: 'sign-up', element: <SignUp /> },
             { path: 'todo', element: <TodoView /> },
             { path: 'profile', element: <UserProfileView /> },
+            { path: 'editor/search', element: <EditorSearchView /> },
             { path: 'editor/:date', element: <EditorView /> },
         ].map((route) => ({
             ...route,

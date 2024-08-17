@@ -1,7 +1,7 @@
 import { profileAtom } from '@/atoms/profile.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
 import { createDiaryKey } from '@/utils/string.util'
-import { uploadFile } from '@/utils/uploadFile'
+import { resolveFileUrl, uploadFile } from '@/utils/uploadFile'
 import { BlockNoteEditor, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import { BlockNoteView } from '@blocknote/mantine'
@@ -11,13 +11,13 @@ import {
     DragHandleMenu,
     RemoveBlockItem,
     SideMenu,
-    SideMenuController
-} from "@blocknote/react"
+    SideMenuController,
+} from '@blocknote/react'
 import { useAtom } from 'jotai'
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
- 
-import { ResetBlockTypeItem } from "./reset-block-item"
+
+import { ResetBlockTypeItem } from './reset-block-item'
 
 export default function Editor() {
     const location = useLocation()
@@ -46,7 +46,7 @@ export default function Editor() {
         if (initialContent === 'loading') {
             return undefined
         }
-        return BlockNoteEditor.create({ initialContent, uploadFile })
+        return BlockNoteEditor.create({ initialContent, uploadFile ,resolveFileUrl})
     }, [initialContent, diaryKey])
 
     if (editor === undefined) {

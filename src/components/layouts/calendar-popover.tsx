@@ -16,7 +16,7 @@ import * as React from 'react'
 import { useState } from 'react'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
-import { useLocation, useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { extraDateFromEditorRoute, isEditorRoute } from '@/utils/regExp.utils'
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
@@ -100,11 +100,12 @@ const CalendarBarMenus = () => {
 }
 
 const CalendarBar = () => {
+    const navigate = useNavigate()
     const [eventEmitter] = useAtom(eventEmitterAtom)
 
     return (
         <Paper
-            component='form'
+            component='div'
             sx={{
                 p: '2px 4px',
                 display: 'flex',
@@ -117,7 +118,12 @@ const CalendarBar = () => {
                 placeholder='Search Diary ...'
                 inputProps={{ 'aria-label': 'search google maps' }}
             />
-            <IconButton type='button' sx={{ p: '10px' }} aria-label='search'>
+            <IconButton
+                onClick={() => navigate('/editor/search')}
+                type='button'
+                sx={{ p: '10px' }}
+                aria-label='search'
+            >
                 <SearchIcon />
             </IconButton>
             <Divider sx={{ height: 28, m: 0.5 }} orientation='vertical' />
