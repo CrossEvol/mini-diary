@@ -63,6 +63,7 @@ export default function TodoCreateOrSearchInput() {
         <Paper
             onSubmit={(e) => {
                 e.preventDefault()
+                e.stopPropagation()
             }}
             component='form'
             sx={{
@@ -107,6 +108,7 @@ export default function TodoCreateOrSearchInput() {
                     onKeyUp={(e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault()
+                            e.stopPropagation()
                             mutation.mutateAsync(
                                 {
                                     text,
@@ -141,6 +143,7 @@ export default function TodoCreateOrSearchInput() {
                     onKeyUp={async (e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault()
+                            e.stopPropagation()
                             setPickedDay(DATE_1999_09_09)
                             setSearchText(text)
                             await resetTodosPage(10)

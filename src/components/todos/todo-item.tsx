@@ -7,7 +7,7 @@ import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined'
 import NotStartedOutlinedIcon from '@mui/icons-material/NotStartedOutlined'
 import PanToolOutlinedIcon from '@mui/icons-material/PanToolOutlined'
 import RotateLeftRoundedIcon from '@mui/icons-material/RotateLeftRounded'
-import { IconButton } from '@mui/material'
+import { IconButton, Stack } from '@mui/material'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import MuiAccordionSummary, {
@@ -60,8 +60,10 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     borderTop: '1px solid rgba(0, 0, 0, .125)',
 }))
 
+export type TodoWithHighlights = Todo & { highlights: string[] }
+
 interface IProps {
-    initialTodo: Todo
+    initialTodo: TodoWithHighlights
     expanded: number | false
     handleExpandedChange: (
         panel: number
@@ -116,9 +118,32 @@ export default function TodoItem({
                     id='panel1d-header'
                 >
                     <div className='w-full flex items-center justify-between'>
-                        <Typography className='overflow-ellipsis'>
-                            {todo.text}
-                        </Typography>
+                        {todo.highlights.length === 0 ? (
+                            <Typography className='overflow-ellipsis'>
+                                {todo.text}
+                            </Typography>
+                        ) : (
+                            <Stack
+                                direction={'row'}
+                                spacing={0}
+                                justifyContent={'center'}
+                            >
+                                {todo.highlights.map((text, idx) => (
+                                    <Typography
+                                        component={'div'}
+                                        key={idx}
+                                        className='overflow-ellipsis'
+                                    >
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: text,
+                                            }}
+                                        />
+                                    </Typography>
+                                ))}
+                            </Stack>
+                        )}
+
                         <div>
                             <SortableItem
                                 element={'span'}
@@ -195,7 +220,9 @@ export default function TodoItem({
                 <AccordionDetails>
                     {expanded === todo.id ? (
                         <TodoEditForm todo={todo} setTodo={setTodo} />
-                    ) : <div className='w-[25rem]'></div>}
+                    ) : (
+                        <div className='w-[25rem]'></div>
+                    )}
                 </AccordionDetails>
             </Accordion>
         </div>

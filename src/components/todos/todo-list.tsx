@@ -30,6 +30,18 @@ export default function TodoList({ todos, totalCount }: IProps) {
             <div className='max-h-screen overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-slate-200 scrollbar-track-white'>
                 {todos
                     .sort((a, b) => b.order - a.order)
+                    .map((todo) => ({
+                        ...todo,
+                        highlights:
+                            !!q && q?.length > 0
+                                ? todo.text
+                                      .replaceAll(
+                                          q,
+                                          `%%%<div class="text-white bg-yellow-400 mx-0.5 px-0.5">${q}</div>%%%`
+                                      )
+                                      .split('%%%')
+                                : [],
+                    }))
                     .map((todo) => (
                         <TodoItem
                             key={todo.id}

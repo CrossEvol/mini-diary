@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query'
 import { Todo, UpdateTodoDTO } from 'electron/main/server/api.type'
 import React from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { TodoWithHighlights } from './todo-item'
 
 interface FormValues {
     text: string
@@ -15,8 +16,8 @@ interface FormValues {
 }
 
 interface IProps {
-    todo: Todo
-    setTodo: React.Dispatch<React.SetStateAction<Todo>>
+    todo: TodoWithHighlights
+    setTodo: React.Dispatch<React.SetStateAction<TodoWithHighlights>>
 }
 
 const TodoEditForm = ({ todo, setTodo }: IProps) => {
