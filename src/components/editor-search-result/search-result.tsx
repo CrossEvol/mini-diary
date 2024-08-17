@@ -11,6 +11,7 @@ import { useAtom } from 'jotai'
 import localforage from 'localforage'
 import * as React from 'react'
 import { SearchResultEntry } from '../layouts/editor-layout'
+import NoResult from './no-result'
 import SearchItem from './search-item'
 
 export type MarkdownEntry = {
@@ -92,13 +93,13 @@ export default function SearchResult({ q }: IProps) {
                 markdownEntries.map((entry) => (
                     <SearchItem
                         key={entry.date}
-                        markdownEntry={entry}
+                        entry={entry}
                         expanded={expanded}
                         handleExpandedChange={handleExpandedChange}
                     />
                 ))
             ) : (
-                <div> No Result.</div>
+                <NoResult searchTerm={q} />
             )}
         </div>
     )

@@ -1,4 +1,5 @@
-import Editor from '@/components/editor'
+import Editor from '@/components/editor/editor'
+import BackFab from '@/components/editor/back-fab'
 import React from 'react'
 import { useLocation, useParams } from 'react-router'
 
@@ -13,6 +14,7 @@ const EditorView = () => {
 
     return (
         <div>
+            <BackFab />
             <Editor />
         </div>
     )

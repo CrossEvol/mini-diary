@@ -1,4 +1,6 @@
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
+import SwitchAccessShortcutSharpIcon from '@mui/icons-material/SwitchAccessShortcutSharp'
+import { IconButton, Stack, Tooltip } from '@mui/material'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import MuiAccordionSummary, {
@@ -8,6 +10,7 @@ import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import Markdown from 'react-markdown'
+import { useNavigate } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
 
 export type MarkdownEntry = {
@@ -52,7 +55,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }))
 
 interface IProps {
-    markdownEntry: MarkdownEntry
+    entry: MarkdownEntry
     expanded: string | false
     handleExpandedChange: (
         panel: string
@@ -60,27 +63,41 @@ interface IProps {
 }
 
 export default function SearchItem({
-    markdownEntry,
+    entry,
     expanded,
     handleExpandedChange,
 }: IProps) {
+    const navigate = useNavigate()
+
     return (
         <div>
             <Accordion
-                expanded={expanded === markdownEntry.date}
-                onChange={handleExpandedChange(markdownEntry.date)}
+                expanded={expanded === entry.date}
+                onChange={handleExpandedChange(entry.date)}
             >
                 <AccordionSummary
                     aria-controls='panel1d-content'
                     id='panel1d-header'
                 >
-                    <Typography>{markdownEntry.date}</Typography>
+                    <Stack direction={'row'} spacing={4} alignItems={'center'}>
+                        <Typography>{entry.date}</Typography>
+                        <Tooltip title='Edit'>
+                            <IconButton
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    navigate(`/editor/${entry.date}`)
+                                }}
+                            >
+                                <SwitchAccessShortcutSharpIcon color='primary' />
+                            </IconButton>
+                        </Tooltip>
+                    </Stack>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Typography>
-                        {expanded === markdownEntry.date ? (
+                        {expanded === entry.date ? (
                             <Markdown remarkPlugins={[remarkGfm]}>
-                                {markdownEntry.mdText}
+                                {entry.mdText}
                             </Markdown>
                         ) : (
                             <div className='w-[25rem]'></div>
