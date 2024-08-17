@@ -1,5 +1,5 @@
 import { profileAtom } from '@/atoms/profile.atom'
-import UserProfile from '@/components/user-profile'
+import UserProfile from '@/components/profile/user-profile'
 import { User } from 'electron/main/server/api.type'
 import { useAtom } from 'jotai'
 

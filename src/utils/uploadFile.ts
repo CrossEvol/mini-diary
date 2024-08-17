@@ -1,4 +1,4 @@
-import { UploadFileResponse } from '@/components/upload-zone'
+import { UploadFileResponse } from '@/components/profile/upload-zone'
 import fetchClient from './fetch.client'
 import { ApiUrl } from './string.util'
 
