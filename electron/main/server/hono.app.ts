@@ -10,7 +10,7 @@ import useExampleRoute from './handlers/example.route.handler'
 import useStorageRoute from './handlers/storage.route.handler'
 import useTodosRoute from './handlers/todos.route.handler'
 import useUsersRoute from './handlers/users.route.handler'
-import { bearerAuth } from './middlewares'
+import { bearerAuth, customHonoLogger } from './middlewares'
 import { getSafeStatusCode } from './server.aux'
 
 export const startHonoServer = async () => {
@@ -30,7 +30,7 @@ const app = new OpenAPIHono<{ Variables: { userID: number } }, any, any>()
 
 export type HonoApp = typeof app
 
-app.use(logger())
+app.use(logger(customHonoLogger))
 app.use('*', async (c, next) => {
     const corsMiddlewareHandler = cors({
         origin: '*',

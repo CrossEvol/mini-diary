@@ -1,4 +1,5 @@
 import { Context, Next } from 'hono'
+import logger from '../logging/winston.util'
 import { getFromJWT } from '../util/jwt.util'
 
 const whiteList = [
@@ -10,7 +11,7 @@ const whiteList = [
     '/favicon.ico',
 ]
 
-const permissiveRegExp = ['/static/*','/dl/*'].map((s) => new RegExp(s))
+const permissiveRegExp = ['/static/*', '/dl/*'].map((s) => new RegExp(s))
 
 export const bearerAuth = async (c: Context, next: Next) => {
     if (permissiveRegExp.filter((r) => r.test(c.req.path)).length > 0) {
@@ -36,4 +37,8 @@ export const bearerAuth = async (c: Context, next: Next) => {
     }
     await next()
     return
+}
+
+export const customHonoLogger = (message: string, ...rest: string[]) => {
+    logger.info(rest.length > 0 ? [message, ...rest] : message)
 }

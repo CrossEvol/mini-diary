@@ -5,6 +5,7 @@ import { join } from 'path'
 import { ErrorCause } from '../server/error'
 import { isDev } from '../util/electron.util'
 import { TodoRecord } from './database.type'
+import drizzleLogger from './logger'
 import { DiariesTable, ProjectsTable, TodosTable, UsersTable } from './schema'
 
 const databasePath = 'sqlite.db'
@@ -12,7 +13,7 @@ const databasePath = 'sqlite.db'
 const sqlite = new Database(
     isDev() ? databasePath : join(process.resourcesPath, databasePath)
 )
-const db = drizzle(sqlite, { logger: true })
+const db = drizzle(sqlite, { logger: drizzleLogger })
 
 export const getUsersWithProjects = async () => {
     const userWithProjects = db

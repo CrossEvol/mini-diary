@@ -126,6 +126,16 @@ export default defineConfig(({ command }) => {
                                         ? pkg.dependencies
                                         : {}
                                 ),
+                                output: {
+                                    manualChunks: (id, {}) => {
+                                        if (id.includes('node_modules')) {
+                                            if (id.includes('winston')) {
+                                                return `winston`
+                                            }
+                                            return `vendor`
+                                        }
+                                    },
+                                },
                             },
                         },
                     },

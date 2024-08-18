@@ -123,6 +123,7 @@
     "vite-plugin-electron": "^0.11.2",
     "vite-plugin-electron-renderer": "^0.14.1",
     "vitest": "^2.0.4",
+    "winston": "^3.14.2",
     "zod": "^3.23.8",
     "zustand": "^4.5.4"
   },
