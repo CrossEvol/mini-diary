@@ -122,3 +122,24 @@ export default defineConfig({
   },
 });
 ```
+
+## build error cause by generate vite.config.d.ts
+```shell
+error TS6305: Output file 'D:/WEB-Code/my-electron/mini-diary-bak/vite.config.d.ts' has not been built from source file 'D:/WEB-Code/my-electron/mini-diary-bak/vite.config.ts'.
+  The file is in the program because:
+    Matched by include pattern '**/*.ts' in 'D:/WEB-Code/my-electron/mini-diary-bak/tsconfig.json'
+
+  tsconfig.json:33:5
+    33     "**/*.ts",
+           ~~~~~~~~~
+    File is matched by include pattern specified here.
+
+
+Found 1 error.
+
+ ELIFECYCLE  Command failed with exit code 2.
+```
+
+`tsconfig.node.json`
+from `"include": ["vite.config.ts", "package.json","jest.config.js"]`
+to `"include": ["package.json","jest.config.js"]`
