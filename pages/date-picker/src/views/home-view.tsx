@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/popover'
 import { toast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils'
-import { EFormat } from '@/shared/enums'
+import { EFormat } from 'ce-shard'
 import { useAtom } from 'jotai'
 import { useNavigate } from 'react-router-dom'
 

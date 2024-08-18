@@ -4,7 +4,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger
 } from '@/components/ui/context-menu'
-import { EFormat } from '@/shared/enums'
+import { EFormat } from 'ce-shard'
 import { PropsWithChildren } from 'react'
 import { useNavigate } from 'react-router-dom'
 

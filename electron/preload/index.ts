@@ -1,5 +1,5 @@
-import { EChannel } from './shared/enums'
 import {
+    EChannel,
     EventResult,
     ExportParam,
     ExportResult,
@@ -8,7 +8,7 @@ import {
     NotifyParam,
     SendMessagePortData,
     VerifyImportData,
-} from './shared/params'
+} from 'ce-shard'
 
 const { contextBridge, ipcRenderer } = require('electron')
 

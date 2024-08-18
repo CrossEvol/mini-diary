@@ -1,5 +1,5 @@
 import { toBeImportedAtom } from '@/atoms/to-be-imported'
-import { EChannel } from '@/shared/enums'
+import { EChannel } from 'ce-shard'
 import { NavigateData } from '@/views/home-view'
 import { useAtom } from 'jotai'
 import React from 'react'

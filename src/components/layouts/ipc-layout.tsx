@@ -1,7 +1,6 @@
 import { portAtom } from '@/atoms/message-port.atom'
 import { toBeImportedAtom } from '@/atoms/to-be-imported.atom'
-import { EChannel } from '@/shared/enums'
-import { SendMessagePortData } from '@/shared/params'
+import { EChannel, SendMessagePortData } from 'ce-shard'
 import { useAtom } from 'jotai'
 import React from 'react'
 

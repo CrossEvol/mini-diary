@@ -1,4 +1,4 @@
-import { EFormat } from '@/shared/enums'
+import { EFormat } from 'ce-shard'
 import { Parser } from 'htmlparser2'
 import JSON5 from 'json5'
 import MarkdownIt from 'markdown-it'

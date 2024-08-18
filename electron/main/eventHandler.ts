@@ -1,4 +1,12 @@
 import {
+    EChannel, EditorContentData, EFormat, EventResult,
+    ExportParam,
+    FileItem,
+    ImportAllParam,
+    newNotifyParam,
+    SendMessagePortData
+} from 'ce-shard'
+import {
     BrowserWindow,
     BrowserWindowConstructorOptions,
     dialog,
@@ -8,16 +16,6 @@ import {
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import mainLogger from './logging/main.logger'
-import { EChannel, EFormat } from './shared/enums'
-import {
-    EditorContentData,
-    EventResult,
-    ExportParam,
-    FileItem,
-    ImportAllParam,
-    newNotifyParam,
-    SendMessagePortData
-} from './shared/params'
 import { extraDateFromPath } from './util/file.util'
 import { combineEditorContent } from './util/string.util'
 

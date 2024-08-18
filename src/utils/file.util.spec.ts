@@ -1,4 +1,4 @@
-import { EFormat } from '@/shared/enums'
+import { EFormat } from 'ce-shard'
 import { describe, expect, it } from 'vitest'
 import { verifyContentFormat } from './file.util'
 

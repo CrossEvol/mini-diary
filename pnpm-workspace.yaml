@@ -1,3 +1,4 @@
 packages:
+  - 'packages/*'
   - 'pages/date-picker'
   - 'pages/imports-diff-box'

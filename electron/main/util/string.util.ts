@@ -1,4 +1,4 @@
-import { EFormat } from '../shared/enums'
+import { EFormat } from 'ce-shard';
 
 export const combineEditorContent = (
     format: EFormat,

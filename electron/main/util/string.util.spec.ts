@@ -1,6 +1,6 @@
+import { EFormat } from 'ce-shard'
 import { describe, expect, test } from 'vitest'
 import { combineEditorContent } from './string.util'
-import { EFormat } from '../shared/enums'
 
 describe('combineEditorContent', () => {
     test('should concatenate HTML content', () => {

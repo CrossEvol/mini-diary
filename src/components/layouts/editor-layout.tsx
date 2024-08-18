@@ -4,14 +4,6 @@ import { profileAtom } from '@/atoms/profile.atom'
 import { toBeImportedAtom } from '@/atoms/to-be-imported.atom'
 import { useEditorStorage } from '@/hooks/useEditorStorage'
 import { useImportContentStorage } from '@/hooks/useImportContentStorage'
-import { EFormat } from '@/shared/enums'
-import {
-    EditorContentData,
-    ExportParam,
-    FinalImportsData,
-    ImportAllParam,
-    PickDateAndFormat,
-} from '@/shared/params'
 import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
 import fetchClient from '@/utils/fetch.client'
 import { beautifyHtml } from '@/utils/html.util'
@@ -27,6 +19,12 @@ import { Block, PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
 import { useCreateBlockNote } from '@blocknote/react'
+import {
+    EditorContentData, EFormat, ExportParam,
+    FinalImportsData,
+    ImportAllParam,
+    PickDateAndFormat
+} from 'ce-shard'
 import { StatusCodes } from 'http-status-codes'
 import { useAtom } from 'jotai'
 import localforage from 'localforage'

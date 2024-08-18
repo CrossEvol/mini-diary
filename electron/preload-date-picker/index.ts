@@ -1,10 +1,9 @@
 // We need to wait until the main world is ready to receive the message before
 // sending the port. We create this promise in the preload so it's guaranteed
 
+import { SendMessagePortData } from 'ce-shard'
+import { EChannel, EditorContentData } from 'ce-shard'
 import { ipcRenderer } from 'electron'
-import { EChannel, EFormat } from './shared/enums'
-import { EditorContentData } from './shared/params'
-import { SendMessagePortData } from '@/shared/params'
 
 // to register the onload listener before the load event is fired.
 const windowLoaded = new Promise((resolve) => {

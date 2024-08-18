@@ -1,7 +1,7 @@
+import { EChannel } from 'ce-shard'
 import { ipcMain } from 'electron'
 import path from 'node:path'
 import { Worker } from 'node:worker_threads'
-import { EChannel } from '../shared/enums'
 
 type Message = {
     port: number

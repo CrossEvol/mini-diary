@@ -5,8 +5,8 @@ import { formatAtom } from './atoms/format.atom'
 import { portAtom } from './atoms/port.atom'
 import { toBeImportedAtom } from './atoms/to-be-imported'
 import ContextMenuWrapper from './components/context-menu-warpper'
-import { EChannel } from './shared/enums'
-import { SendMessagePortData } from './shared/params'
+import { EChannel } from 'ce-shard'
+import { SendMessagePortData } from 'ce-shard'
 
 const Layout = () => {
   const [, setPort] = useAtom(portAtom)

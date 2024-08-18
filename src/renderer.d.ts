@@ -6,7 +6,7 @@ import {
     ImportParam,
     ImportResult,
     NotifyParam,
-} from '@/shared/params'
+} from 'ce-shard'
 
 export interface IElectronAPI {
     onUpdatePort: (callback: (port: number) => void) => void

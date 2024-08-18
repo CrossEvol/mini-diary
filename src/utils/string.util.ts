@@ -1,4 +1,4 @@
-import { EFormat } from '@/shared/enums'
+import { EFormat } from 'ce-shard'
 import queryString, { StringifyOptions } from 'query-string'
 import { DateTimeFormatEnum, formatDateTime } from './datetime.utils'
 

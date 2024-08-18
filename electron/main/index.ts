@@ -1,4 +1,10 @@
 import {
+    EChannel, EFormat, EventResult,
+    ExportResult,
+    ImportResult,
+    newNotifyParam
+} from 'ce-shard'
+import {
     BrowserWindow,
     Menu,
     MenuItem,
@@ -22,13 +28,6 @@ import {
 } from './eventHandler'
 import mainLogger from './logging/main.logger'
 import { showMessageBox } from './message-box'
-import { EChannel, EFormat } from './shared/enums'
-import {
-    EventResult,
-    ExportResult,
-    ImportResult,
-    newNotifyParam,
-} from './shared/params'
 import { update } from './update'
 import { startHonoServer } from './util/net.util'
 
