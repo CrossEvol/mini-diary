@@ -1,6 +1,5 @@
-import { serve } from '@hono/node-server'
 import * as net from 'net'
-import app from '../server/hono.app'
+import { execAsync } from './cmd.aux'
 
 const getRandomPort = (start: number, end: number): number => {
     return Math.floor(Math.random() * (end - start + 1)) + start
@@ -34,15 +33,68 @@ export const findFreePort = async (
     return port
 }
 
-export const startHonoServer = async () => {
-    const port = await findFreePort(3000, 8000)
+interface Connection {
+    protocol: string
+    localAddress: string
+    localPort: number
+    remoteAddress: string
+    remotePort: number
+    state: string
+    pid: number
+}
 
-    console.log(`Server is running on port ${port}`)
+export const getConnectionsUsingPort = async (
+    port: number
+): Promise<Connection[]> => {
+    try {
+        const { stdout } = await execAsync(`netstat -ano | findstr ${port}`)
 
-    serve({
-        fetch: app.fetch,
-        port,
-    })
+        const lines = stdout.trim().split('\n')
+        const connections: Connection[] = lines.map((line) => {
+            const parts = line.trim().split(/\s+/)
 
-    return port
+            const [protocol, localAddressPort, remoteAddressPort, state, pid] =
+                parts
+
+            const [localAddress, localPort] = localAddressPort.split(':')
+            const [remoteAddress, remotePort] = remoteAddressPort.split(':')
+
+            return {
+                protocol,
+                localAddress,
+                localPort: Number(localPort),
+                remoteAddress,
+                remotePort: Number(remotePort),
+                state,
+                pid: Number(pid),
+            }
+        })
+
+        return connections
+    } catch (error) {
+        console.error('Error executing netstat command:', error)
+        return []
+    }
+}
+
+export const killPort = async (port: number): Promise<boolean> => {
+    const connections = await getConnectionsUsingPort(port)
+
+    if (connections.length === 0) {
+        console.log(`No connections found using port ${port}.`)
+        return false
+    }
+
+    const pids = [...new Set(connections.map((conn) => conn.pid))] // Unique PIDs
+
+    try {
+        for (const pid of pids) {
+            await execAsync(`taskkill /PID ${pid} /F`)
+            console.log(`Killed process with PID: ${pid}`)
+        }
+        return true
+    } catch (error) {
+        console.error('Failed to kill process:', error)
+        return false
+    }
 }

@@ -1,7 +1,9 @@
+import { serve } from '@hono/node-server'
 import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
+import { findFreePort } from '../util/net.util'
 import useAuthRoute from './handlers/auth.route.handler'
 import useDiariesRoute from './handlers/diaries.route.handler'
 import useExampleRoute from './handlers/example.route.handler'
@@ -10,6 +12,19 @@ import useTodosRoute from './handlers/todos.route.handler'
 import useUsersRoute from './handlers/users.route.handler'
 import { bearerAuth } from './middlewares'
 import { getSafeStatusCode } from './server.aux'
+
+export const startHonoServer = async () => {
+    const port = await findFreePort(3000, 8000)
+
+    console.log(`Server is running on port ${port}`)
+
+    serve({
+        fetch: app.fetch,
+        port,
+    })
+
+    return port
+}
 
 const app = new OpenAPIHono<{ Variables: { userID: number } }, any, any>()
 

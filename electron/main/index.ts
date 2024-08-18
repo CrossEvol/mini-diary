@@ -1,8 +1,10 @@
 import {
-    EChannel, EFormat, EventResult,
+    EChannel,
+    EFormat,
+    EventResult,
     ExportResult,
     ImportResult,
-    newNotifyParam
+    newNotifyParam,
 } from 'ce-shard'
 import {
     BrowserWindow,
@@ -28,8 +30,16 @@ import {
 } from './eventHandler'
 import mainLogger from './logging/main.logger'
 import { showMessageBox } from './message-box'
+import { startHonoServer } from './server/hono.app'
 import { update } from './update'
-import { startHonoServer } from './util/net.util'
+import { killPort } from './util/net.util'
+;(async () => {
+    if (await killPort(4444)) {
+        mainLogger.info('kill the 4444 port successfully.')
+    } else {
+        mainLogger.error('kill the 4444 port Failed.')
+    }
+})()
 
 // The built directory structure
 //

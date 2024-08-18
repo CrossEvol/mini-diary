@@ -16,7 +16,7 @@
     "dev:server": "tsx watch electron/main/server/main.ts",
     "build": "tsc && vite build && electron-builder",
     "rebuild": ".\\node_modules\\.bin\\electron-rebuild.cmd -f -m ./node_modules/better-sqlite3",
-    "reset": "rm -rf ./node_modules/better-sqlite3 && npm install better-sqlite3",
+    "reset": "rm -rf ./node_modules/better-sqlite3 && rm -rf ./node_modules/.pnpm/better-sqlite3@11.1.2 && pnpm install -w better-sqlite3",
     "preview": "vite preview",
     "pree2e": "vite build --mode=test",
     "e2e": "playwright test",
