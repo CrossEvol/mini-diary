@@ -31,7 +31,7 @@ import EventEmitterLayout from './components/layouts/event-emitter-layout'
 import IPCLayout from './components/layouts/ipc-layout'
 import UserProfileLayout from './components/layouts/user-profile-layout'
 import { ColorModeContext } from './providers/color-mode-provider'
-import { DateTimeFormatEnum, formatDateTime } from './utils/datetime.utils'
+import { DateTimeFormatEnum, formatDateTime } from 'ce-utils'
 import { ApiUrl } from './utils/string.util'
 
 const Layout = () => {

@@ -1,7 +1,7 @@
 import { pageSizeAtom } from '@/atoms/page-params.atom'
 import { pickedDayAtom } from '@/atoms/picked-day.atom'
 import { searchTextAtom } from '@/atoms/search-text.atom'
-import { DateTimeFormatEnum, formatDateTime } from '@/utils/datetime.utils'
+import { DateTimeFormatEnum, formatDateTime } from 'ce-utils'
 import { useAtom } from 'jotai'
 import React, { useState } from 'react'
 import { Day, DayPicker, DayProps } from 'react-day-picker'

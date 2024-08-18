@@ -1,6 +1,6 @@
 import { EFormat } from 'ce-shard'
 import queryString, { StringifyOptions } from 'query-string'
-import { DateTimeFormatEnum, formatDateTime } from './datetime.utils'
+import { DateTimeFormatEnum, formatDateTime } from 'ce-utils'
 
 export const createTodosQueryKey = (date: Date) => {
     return `todos-${formatDateTime(date, DateTimeFormatEnum.DATE_FORMAT)}`

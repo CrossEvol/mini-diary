@@ -5,7 +5,7 @@ import {
     compareDateStrings,
     DateTimeFormatEnum,
     formatDateTime,
-} from '@/utils/datetime.utils'
+} from 'ce-utils'
 import Fuse from 'fuse.js'
 import { useAtom } from 'jotai'
 import localforage from 'localforage'

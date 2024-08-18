@@ -1,0 +1,24 @@
+{
+  "name": "ce-utils",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.12"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "vite": "^5.4.1",
+    "vite-plugin-dts": "^3.9.1",
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2"
+  },
+  "main": "./dist/ce-utils.js",
+  "types": "./dist/main.d.ts"
+}

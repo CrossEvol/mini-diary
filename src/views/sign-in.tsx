@@ -1,6 +1,5 @@
 import { profileAtom } from '@/atoms/profile.atom'
 import useNotify from '@/hooks/useNotify'
-import fetchClient from '@/utils/fetch.client'
 import { ApiUrl } from '@/utils/string.util'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
@@ -19,6 +18,7 @@ import { ZResult } from 'electron/main/server/api.type'
 import { useAtom } from 'jotai'
 import * as React from 'react'
 import { useNavigate } from 'react-router'
+import { fetchPost } from 'ce-utils'
 
 function Copyright(props: any) {
     return (
@@ -67,7 +67,7 @@ export default function SignIn() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
-        const res = await fetchClient.post<ZResult<{ token: string }>>(
+        const res = await fetchPost<ZResult<{ token: string }>>(
             `${ApiUrl()}/auth/sign-in`,
             {
                 body: JSON.stringify({

@@ -1,5 +1,5 @@
 import { UploadFileResponse } from '@/components/profile/upload-zone'
-import fetchClient from './fetch.client'
+import { fetchPostForm } from 'ce-utils'
 import { ApiUrl } from './string.util'
 
 // Uploads a file to tmpfiles.org and returns the URL to the uploaded file.
@@ -23,7 +23,7 @@ export const uploadFile = async (file: File) => {
     formData.append('image', file as File)
 
     try {
-        const response = await fetchClient.postForm<UploadFileResponse>(
+        const response = await fetchPostForm<UploadFileResponse>(
             `${ApiUrl()}/upload`,
             {
                 body: formData,

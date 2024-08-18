@@ -1,5 +1,4 @@
 import useNotify from '@/hooks/useNotify'
-import fetchClient from '@/utils/fetch.client'
 import { ApiUrl } from '@/utils/string.util'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
@@ -15,6 +14,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { User, ZResult } from 'electron/main/server/api.type'
+import { fetchPost } from 'ce-utils'
 import * as React from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -64,7 +64,7 @@ export default function SignUp() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
-        const res = await fetchClient.post<ZResult<Omit<User, 'password'>>>(
+        const res = await fetchPost<ZResult<Omit<User, 'password'>>>(
             `${ApiUrl()}/auth/sign-up`,
             {
                 body: JSON.stringify({
