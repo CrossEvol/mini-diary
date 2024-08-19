@@ -1,10 +1,13 @@
 import {
-    EChannel, EditorContentData, EFormat, EventResult,
+    EChannel,
+    EditorContentData,
+    EFormat,
+    EventResult,
     ExportParam,
     FileItem,
     ImportAllParam,
     newNotifyParam,
-    SendMessagePortData
+    SendMessagePortData,
 } from 'ce-shard'
 import {
     BrowserWindow,
@@ -315,7 +318,7 @@ const createSubWindowWithMessageChannel = <T>(
     return subWindow
 }
 
-const createSubWindow = (
+export const createSubWindow = (
     entryPath: string,
     options?: BrowserWindowConstructorOptions
 ) => {

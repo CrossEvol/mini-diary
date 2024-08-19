@@ -3,6 +3,7 @@ import {
     EFormat,
     EventResult,
     ExportResult,
+    FileType,
     ImportResult,
     newNotifyParam,
 } from 'ce-shard'
@@ -20,10 +21,11 @@ import {
 } from 'electron'
 import { writeFile } from 'node:fs/promises'
 import { release } from 'node:os'
-import { join } from 'node:path'
+import { join, relative } from 'node:path'
 import { initializeConfig } from './config/boot-config'
 import { initPrisma } from './deprecated.prisma.util'
 import {
+    createSubWindow,
     exportAllDiariesHandler,
     exportDiaryHandler,
     importAllDiariesHandler,
@@ -33,6 +35,7 @@ import mainLogger from './logging/main.logger'
 import { showMessageBox } from './message-box'
 import { startHonoServer } from './server/hono.app'
 import { update } from './update'
+import { isDev } from './util/electron.util'
 import { killPort } from './util/net.util'
 
 const config = initializeConfig()
@@ -105,7 +108,8 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                 {
                     label: 'settings',
                     click: () => {
-                        const settingsWindow = new BrowserWindow({
+                        const entryPath = 'pages/settings/dist/index.html'
+                        const settingsWindow = createSubWindow(entryPath, {
                             width: 600,
                             height: 800,
                             parent: undefined,
@@ -117,22 +121,59 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                             autoHideMenuBar: false,
                             resizable: false,
                         })
+                        // const settingsWindow2 = new BrowserWindow({
+                        //     width: 600,
+                        //     height: 800,
+                        //     parent: undefined,
+                        //     modal: true,
+                        //     webPreferences: {
+                        //         nodeIntegration: true,
+                        //         contextIsolation: false,
+                        //     },
+                        //     autoHideMenuBar: false,
+                        //     resizable: false,
+                        // })
 
-                        const datePickerUrl =
-                            process.env.NODE_ENV === 'development'
-                                ? 'pages/settings/dist/index.html'
-                                : join(
-                                      process.env.DIST,
-                                      'pages/settings/dist/index.html'
-                                  )
-                        console.log(datePickerUrl)
-                        settingsWindow.loadFile(datePickerUrl)
+                        // const datePickerUrl =
+                        //     process.env.NODE_ENV === 'development'
+                        //         ? 'pages/settings/dist/index.html'
+                        //         : join(
+                        //               process.env.DIST,
+                        //               'pages/settings/dist/index.html'
+                        //           )
+                        // console.log(datePickerUrl)
+                        // settingsWindow2.loadFile(datePickerUrl)
                         ipcMain.on(EChannel.GET_CONFIG, () => {
                             settingsWindow.webContents.send(
                                 EChannel.GET_CONFIG_RESULT,
                                 config
                             )
                         })
+                        ipcMain.on(
+                            EChannel.GET_FILE_PATH,
+                            async (_event, filetype: FileType) => {
+                                const { canceled, filePaths } =
+                                    await dialog.showOpenDialog({
+                                        properties: [
+                                            filetype === 'file'
+                                                ? 'openFile'
+                                                : 'openDirectory',
+                                        ],
+                                    })
+                                if (canceled) {
+                                    return
+                                }
+                                settingsWindow.webContents.send(
+                                    EChannel.GET_FILE_PATH_RESULT,
+                                    relative(
+                                        isDev()
+                                            ? process.cwd()
+                                            : process.resourcesPath,
+                                        filePaths[0]
+                                    )
+                                )
+                            }
+                        )
                         // settingsWindow.once('ready-to-show', () => {
                         //     settingsWindow.webContents.send(
                         //         EChannel.GET_CONFIG_RESULT,

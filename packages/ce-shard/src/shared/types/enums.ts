@@ -26,5 +26,5 @@ export enum EChannel {
     GET_CONFIG = 'get_config',
     GET_CONFIG_RESULT = 'get_config_result',
     GET_FILE_PATH = 'get_file_path',
-    SEND_FILE_PATH = 'send_file_path',
+    GET_FILE_PATH_RESULT = 'get_file_path_result',
 }
