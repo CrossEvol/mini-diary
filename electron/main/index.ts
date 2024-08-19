@@ -102,6 +102,47 @@ const buildMenus = (mainWindow: BrowserWindow) => {
         {
             label: app.name,
             submenu: [
+                {
+                    label: 'settings',
+                    click: () => {
+                        const settingsWindow = new BrowserWindow({
+                            width: 600,
+                            height: 800,
+                            parent: undefined,
+                            modal: true,
+                            webPreferences: {
+                                nodeIntegration: true,
+                                contextIsolation: false,
+                            },
+                            autoHideMenuBar: false,
+                            resizable: false,
+                        })
+
+                        const datePickerUrl =
+                            process.env.NODE_ENV === 'development'
+                                ? 'pages/settings/dist/index.html'
+                                : join(
+                                      process.env.DIST,
+                                      'pages/settings/dist/index.html'
+                                  )
+                        console.log(datePickerUrl)
+                        settingsWindow.loadFile(datePickerUrl)
+                        settingsWindow.once('ready-to-show', () => {
+                            settingsWindow.webContents.send(
+                                'date-init',
+                                '2011-01-01'
+                            )
+                        })
+
+                        ipcMain.once('date-selected', (event, date) => {
+                            dialog.showMessageBox(mainWindow!, {
+                                type: 'info',
+                                message: `You selected: ${date}`,
+                            })
+                            settingsWindow.close()
+                        })
+                    },
+                },
                 { label: 'b', click: () => showMessageBox(win!) },
                 {
                     click: () => {
