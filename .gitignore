@@ -55,3 +55,6 @@ todos.json
 # static
 static/
 !!static/go.jpg
+
+# config
+config.json
