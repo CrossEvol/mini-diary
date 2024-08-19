@@ -32,7 +32,8 @@
     "prisma",
     "**/*.ts",
     "**/*.tsx",
-    "./vitest.setup.ts"
+    "./vitest.setup.ts",
+    "__tests__/memfs-demo.spec.ts"
   ],
   "exclude": [
     "pages"
