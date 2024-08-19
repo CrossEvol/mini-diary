@@ -21,6 +21,7 @@ import {
 import { writeFile } from 'node:fs/promises'
 import { release } from 'node:os'
 import { join } from 'node:path'
+import { initializeConfig } from './config/boot-config'
 import { initPrisma } from './deprecated.prisma.util'
 import {
     exportAllDiariesHandler,
@@ -33,6 +34,9 @@ import { showMessageBox } from './message-box'
 import { startHonoServer } from './server/hono.app'
 import { update } from './update'
 import { killPort } from './util/net.util'
+
+const config = initializeConfig()
+mainLogger.info('Configuration loaded:', config)
 ;(async () => {
     if (await killPort(4444)) {
         mainLogger.info('kill the 4444 port successfully.')
