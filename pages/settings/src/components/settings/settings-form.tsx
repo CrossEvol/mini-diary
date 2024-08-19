@@ -29,8 +29,9 @@ import {
   MenubarShortcut,
   MenubarTrigger
 } from '@/components/ui/menubar'
+import { useToast } from '@/components/ui/use-toast'
 import { isDevelopment } from '@/constants'
-import { Config, EChannel, FileType } from 'ce-shard'
+import { Config, EChannel, FileType, UpdateConfigResult } from 'ce-shard'
 import { Controller, useForm } from 'react-hook-form'
 import { IoFileTrayFullOutline } from 'react-icons/io5'
 import { RxReset } from 'react-icons/rx'
@@ -77,6 +78,7 @@ interface IProps {
 }
 
 function SettingsForm({ config }: IProps) {
+  const { toast } = useToast()
   const { handleSubmit, register, control, reset, setValue } =
     useForm<FormValues>({
       defaultValues: config
@@ -98,8 +100,29 @@ function SettingsForm({ config }: IProps) {
     }
   }
 
+  const handleConfigSubmit = async (config: Config) => {
+    if (!isDevelopment) {
+      // Use electron APIs here
+      const { ipcRenderer } = require('electron')
+
+      ipcRenderer.once(
+        EChannel.UPDATE_CONFIG_RESULT,
+        (_event: any, value: UpdateConfigResult) => {
+          toast({
+            variant: 'default',
+            title: 'Config Update Result',
+            description: JSON.stringify(value)
+          })
+        }
+      )
+
+      ipcRenderer.send(EChannel.UPDATE_CONFIG, config)
+    }
+  }
+
   const onSubmit = (data: typeof config) => {
     console.log('Submitted Data:', data)
+    handleConfigSubmit(data!)
   }
 
   return (

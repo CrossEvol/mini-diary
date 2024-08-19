@@ -97,3 +97,7 @@ export type FileType = z.infer<typeof FileTypeSchema>
 export const GetConfigSchema = z.object({ reset: z.boolean() })
 
 export type GetConfig = z.infer<typeof GetConfigSchema>
+
+export const UpdateConfigResultSchema = z.object({ status: z.boolean() })
+
+export type UpdateConfigResult = z.infer<typeof UpdateConfigResultSchema>

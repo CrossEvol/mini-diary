@@ -1,4 +1,5 @@
 import {
+    Config,
     EChannel,
     EFormat,
     EventResult,
@@ -6,23 +7,25 @@ import {
     FileType,
     ImportResult,
     newNotifyParam,
+    UpdateConfigResult,
 } from 'ce-shard'
 import {
+    app,
     BrowserWindow,
+    dialog,
+    ipcMain,
     Menu,
     MenuItem,
     MenuItemConstructorOptions,
     MessageChannelMain,
     Notification,
-    app,
-    dialog,
-    ipcMain,
     shell,
 } from 'electron'
 import { writeFile } from 'node:fs/promises'
 import { release } from 'node:os'
 import { join, relative } from 'node:path'
-import { initializeConfig } from './config/boot-config'
+import { initializeConfig, writeConfigJson } from './config/boot-config'
+import { CONFIG_PATH } from './config/config-path'
 import { initPrisma } from './deprecated.prisma.util'
 import {
     createSubWindow,
@@ -171,6 +174,21 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                                             : process.resourcesPath,
                                         filePaths[0]
                                     )
+                                )
+                            }
+                        )
+                        ipcMain.on(
+                            EChannel.UPDATE_CONFIG,
+                            (_event, value: Config) => {
+                                const hasSucceed = writeConfigJson(
+                                    CONFIG_PATH,
+                                    value
+                                )
+                                settingsWindow.webContents.send(
+                                    EChannel.UPDATE_CONFIG_RESULT,
+                                    {
+                                        status: hasSucceed,
+                                    } satisfies UpdateConfigResult
                                 )
                             }
                         )
