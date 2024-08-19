@@ -29,12 +29,13 @@ import {
   MenubarShortcut,
   MenubarTrigger
 } from '@/components/ui/menubar'
+import { Config } from 'ce-shard'
 import { Controller, useForm } from 'react-hook-form'
 import { IoFileTrayFullOutline } from 'react-icons/io5'
 import { RxReset } from 'react-icons/rx'
 import SettingsHeader from './settings-header'
 
-const config = {
+const defaultConfig = {
   ui: {
     theme: 'system',
     'main-window': {
@@ -69,7 +70,7 @@ const config = {
     fixed: false,
     port: 4444
   }
-}
+} satisfies Config
 
 interface FormValues {
   ui: {
@@ -108,17 +109,20 @@ interface FormValues {
   }
 }
 
-function Settings() {
-  const { handleSubmit, register, control, reset, setValue } =
-    useForm<FormValues>({
-      defaultValues: {
-        ...config,
-        ui: {
-          ...config.ui,
-          theme: config.ui.theme as FormValues['ui']['theme']
-        }
+interface IProps {
+  config?: Config
+}
+
+function Settings({ config = defaultConfig }: IProps) {
+  const { handleSubmit, register, control, reset } = useForm<FormValues>({
+    defaultValues: {
+      ...config,
+      ui: {
+        ...config.ui,
+        theme: config.ui.theme as FormValues['ui']['theme']
       }
-    })
+    }
+  })
 
   const onSubmit = (data: typeof config) => {
     console.log('Submitted Data:', data)

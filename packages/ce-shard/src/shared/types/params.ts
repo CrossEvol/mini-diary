@@ -93,3 +93,7 @@ export type FinalImportsData = z.infer<typeof FinalImportsDataSchema>
 export const FileTypeSchema = z.enum(['file', 'directory'])
 
 export type FileType = z.infer<typeof FileTypeSchema>
+
+export const GetConfigSchema = z.object({ reset: z.boolean() })
+
+export type GetConfig = z.infer<typeof GetConfigSchema>

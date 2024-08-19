@@ -4,7 +4,6 @@ export enum EFormat {
     'MARKDOWN' = 'md',
 }
 
-
 export enum EChannel {
     PORT_FROM_WORKER = 'port_from_worker',
     SEND_MESSAGE_PORT = 'send_message_port',
@@ -23,5 +22,9 @@ export enum EChannel {
     EXPORT_ALL_DIARY_VALUE = 'export_all_diary_value',
     NOTIFY_SUCCESS = 'notify_success',
     NOTIFY_ERROR = 'notify_error',
-    PURE_REDIRECT = 'pure_redirect'
+    PURE_REDIRECT = 'pure_redirect',
+    GET_CONFIG = 'get_config',
+    GET_CONFIG_RESULT = 'get_config_result',
+    GET_FILE_PATH = 'get_file_path',
+    SEND_FILE_PATH = 'send_file_path',
 }

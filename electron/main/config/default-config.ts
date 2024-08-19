@@ -1,4 +1,4 @@
-import { Config } from './config-schema'
+import { Config } from 'ce-shard'
 
 // Default configuration
 export const defaultConfig: Config = {

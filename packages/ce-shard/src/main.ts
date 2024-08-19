@@ -12,8 +12,7 @@ export const sayHi = (data: string) => {
     console.log(`Hello, ${data}`)
 }
 
-export * from './shared/constants/date-constants'
+export * from './shared/constants'
 
-export * from './shared/enums'
+export * from './shared/types'
 
-export * from './shared/params'

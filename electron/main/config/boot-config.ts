@@ -1,6 +1,6 @@
+import { Config, ConfigSchema } from 'ce-shard'
 import fs from 'node:fs'
 import { CONFIG_PATH } from './config-path'
-import { Config, ConfigSchema } from './config-schema'
 import { defaultConfig } from './default-config'
 
 // Function to initialize config

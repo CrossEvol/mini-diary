@@ -127,12 +127,18 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                                   )
                         console.log(datePickerUrl)
                         settingsWindow.loadFile(datePickerUrl)
-                        settingsWindow.once('ready-to-show', () => {
+                        ipcMain.on(EChannel.GET_CONFIG, () => {
                             settingsWindow.webContents.send(
-                                'date-init',
-                                '2011-01-01'
+                                EChannel.GET_CONFIG_RESULT,
+                                config
                             )
                         })
+                        // settingsWindow.once('ready-to-show', () => {
+                        //     settingsWindow.webContents.send(
+                        //         EChannel.GET_CONFIG_RESULT,
+                        //         '2011-01-01'
+                        //     )
+                        // })
 
                         ipcMain.once('date-selected', (event, date) => {
                             dialog.showMessageBox(mainWindow!, {
