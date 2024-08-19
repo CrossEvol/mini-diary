@@ -21,14 +21,14 @@ export const defaultConfig: Config = {
         log: { dir: 'logs' },
         secret: {
             'pri-key': 'private.key',
-            'pub-key': 'public.pem',
+            'pub-pem': 'public.pem',
         },
         database: 'sqlite.db',
         images: '/static',
     },
     system: {
         'auto-update': false,
-        notification: true,
+        'enable-notify': true,
     },
     server: {
         fixed: false,

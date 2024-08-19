@@ -1,6 +1,6 @@
+import Settings from '@/components/settings/settings'
 import { isDevelopment } from '@/constants'
 import React from 'react'
-import Settings from '../components/settings/settings'
 
 export default function HomeView() {
   const useDynamicImportElectronInEjs = async () => {

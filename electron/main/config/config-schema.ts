@@ -7,13 +7,13 @@ const LogSchema = z.object({
 
 const SecretSchema = z.object({
     'pri-key': z.string(),
-    'pub-key': z.string(),
+    'pub-pem': z.string(),
 })
 // type Secret = z.infer<typeof SecretSchema>
 
 const SystemSchema = z.object({
     'auto-update': z.boolean(),
-    notification: z.boolean(),
+    'enable-notify': z.boolean(),
 })
 // type System = z.infer<typeof SystemSchema>
 
