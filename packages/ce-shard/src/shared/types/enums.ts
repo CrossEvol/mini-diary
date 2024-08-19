@@ -27,6 +27,7 @@ export enum EChannel {
     GET_CONFIG_RESULT = 'get_config_result',
     GET_FILE_PATH = 'get_file_path',
     GET_FILE_PATH_RESULT = 'get_file_path_result',
-    UPDATE_CONFIG = 'UPDATE_CONFIG',
-    UPDATE_CONFIG_RESULT = 'UPDATE_CONFIG_RESULT',
+    UPDATE_CONFIG = 'update_config',
+    UPDATE_CONFIG_RESULT = 'update_config_result',
+    CLOSE_SETTINGS_WINDOW = 'close_settings_window',
 }

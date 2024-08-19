@@ -14,12 +14,13 @@ import {
     BrowserWindow,
     dialog,
     ipcMain,
+    IpcMainEvent,
     Menu,
     MenuItem,
     MenuItemConstructorOptions,
     MessageChannelMain,
     Notification,
-    shell,
+    shell
 } from 'electron'
 import { writeFile } from 'node:fs/promises'
 import { release } from 'node:os'
@@ -124,73 +125,63 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                             autoHideMenuBar: false,
                             resizable: false,
                         })
-                        // const settingsWindow2 = new BrowserWindow({
-                        //     width: 600,
-                        //     height: 800,
-                        //     parent: undefined,
-                        //     modal: true,
-                        //     webPreferences: {
-                        //         nodeIntegration: true,
-                        //         contextIsolation: false,
-                        //     },
-                        //     autoHideMenuBar: false,
-                        //     resizable: false,
-                        // })
 
-                        // const datePickerUrl =
-                        //     process.env.NODE_ENV === 'development'
-                        //         ? 'pages/settings/dist/index.html'
-                        //         : join(
-                        //               process.env.DIST,
-                        //               'pages/settings/dist/index.html'
-                        //           )
-                        // console.log(datePickerUrl)
-                        // settingsWindow2.loadFile(datePickerUrl)
-                        ipcMain.on(EChannel.GET_CONFIG, () => {
+                        const handleGetConfigEvent = () => {
                             settingsWindow.webContents.send(
                                 EChannel.GET_CONFIG_RESULT,
                                 config
                             )
-                        })
+                        }
+                        ipcMain.on(EChannel.GET_CONFIG, handleGetConfigEvent)
+
+                        const handleGetFilePathEvent = async (
+                            _event: IpcMainEvent,
+                            filetype: FileType
+                        ) => {
+                            const { canceled, filePaths } =
+                                await dialog.showOpenDialog({
+                                    properties: [
+                                        filetype === 'file'
+                                            ? 'openFile'
+                                            : 'openDirectory',
+                                    ],
+                                })
+                            if (canceled) {
+                                return
+                            }
+                            settingsWindow.webContents.send(
+                                EChannel.GET_FILE_PATH_RESULT,
+                                relative(
+                                    isDev()
+                                        ? process.cwd()
+                                        : process.resourcesPath,
+                                    filePaths[0]
+                                )
+                            )
+                        }
                         ipcMain.on(
                             EChannel.GET_FILE_PATH,
-                            async (_event, filetype: FileType) => {
-                                const { canceled, filePaths } =
-                                    await dialog.showOpenDialog({
-                                        properties: [
-                                            filetype === 'file'
-                                                ? 'openFile'
-                                                : 'openDirectory',
-                                        ],
-                                    })
-                                if (canceled) {
-                                    return
-                                }
-                                settingsWindow.webContents.send(
-                                    EChannel.GET_FILE_PATH_RESULT,
-                                    relative(
-                                        isDev()
-                                            ? process.cwd()
-                                            : process.resourcesPath,
-                                        filePaths[0]
-                                    )
-                                )
-                            }
+                            handleGetFilePathEvent
                         )
+
+                        const handleUpdateConfigEvent = (
+                            _event: IpcMainEvent,
+                            value: Config
+                        ) => {
+                            const hasSucceed = writeConfigJson(
+                                CONFIG_PATH,
+                                value
+                            )
+                            settingsWindow.webContents.send(
+                                EChannel.UPDATE_CONFIG_RESULT,
+                                {
+                                    status: hasSucceed,
+                                } satisfies UpdateConfigResult
+                            )
+                        }
                         ipcMain.on(
                             EChannel.UPDATE_CONFIG,
-                            (_event, value: Config) => {
-                                const hasSucceed = writeConfigJson(
-                                    CONFIG_PATH,
-                                    value
-                                )
-                                settingsWindow.webContents.send(
-                                    EChannel.UPDATE_CONFIG_RESULT,
-                                    {
-                                        status: hasSucceed,
-                                    } satisfies UpdateConfigResult
-                                )
-                            }
+                            handleUpdateConfigEvent
                         )
                         // settingsWindow.once('ready-to-show', () => {
                         //     settingsWindow.webContents.send(
@@ -198,6 +189,29 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                         //         '2011-01-01'
                         //     )
                         // })
+
+                        const handleCloseWindow = (_event: IpcMainEvent) => {
+                            ipcMain.off(
+                                EChannel.GET_CONFIG,
+                                handleGetConfigEvent
+                            )
+                            ipcMain.off(
+                                EChannel.GET_FILE_PATH,
+                                handleGetFilePathEvent
+                            )
+                            ipcMain.off(
+                                EChannel.UPDATE_CONFIG,
+                                handleUpdateConfigEvent
+                            )
+                            if (!settingsWindow.isClosable()) {
+                                settingsWindow.setClosable(true)
+                            }
+                            settingsWindow.close()
+                        }
+                        ipcMain.on(
+                            EChannel.CLOSE_SETTINGS_WINDOW,
+                            handleCloseWindow
+                        )
 
                         ipcMain.once('date-selected', (event, date) => {
                             dialog.showMessageBox(mainWindow!, {

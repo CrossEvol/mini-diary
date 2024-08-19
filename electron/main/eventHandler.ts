@@ -14,6 +14,7 @@ import {
     BrowserWindowConstructorOptions,
     dialog,
     ipcMain,
+    IpcMainEvent,
     MessageChannelMain,
 } from 'electron'
 import { readFile, writeFile } from 'node:fs/promises'
@@ -31,6 +32,8 @@ export const handlePortFromWorkerThread = (
 ) => {
     port = (event as any).port
 } */
+
+export type IpcMainEventListener = (event: IpcMainEvent, ...args: any[]) => void
 
 export const exportDiaryHandler = async (
     mainWindow: BrowserWindow | null,

@@ -29,6 +29,7 @@ import {
   MenubarShortcut,
   MenubarTrigger
 } from '@/components/ui/menubar'
+import { ToastAction } from '@/components/ui/toast'
 import { useToast } from '@/components/ui/use-toast'
 import { isDevelopment } from '@/constants'
 import { Config, EChannel, FileType, UpdateConfigResult } from 'ce-shard'
@@ -108,10 +109,22 @@ function SettingsForm({ config }: IProps) {
       ipcRenderer.once(
         EChannel.UPDATE_CONFIG_RESULT,
         (_event: any, value: UpdateConfigResult) => {
+          setTimeout(
+            () => ipcRenderer.send(EChannel.CLOSE_SETTINGS_WINDOW),
+            3000
+          )
           toast({
             variant: 'default',
-            title: 'Config Update Result',
-            description: JSON.stringify(value)
+            title: 'Config Update, Close in 3 seconds...',
+            description: JSON.stringify(value),
+            action: (
+              <ToastAction
+                altText="Close Now!"
+                onClick={() => ipcRenderer.send(EChannel.CLOSE_SETTINGS_WINDOW)}
+              >
+                Close Now!
+              </ToastAction>
+            )
           })
         }
       )
