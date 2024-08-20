@@ -13,7 +13,7 @@ export default defineConfig({
     react(),
     tsconfigPaths(),
     renderer(),
-    visualizer({ open: true, filename: 'ce-stats.html' })
+    visualizer({ open: false, filename: 'ce-stats.html' })
   ],
   resolve: {
     alias: {

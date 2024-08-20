@@ -125,7 +125,7 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                                 nodeIntegration: true,
                                 contextIsolation: false,
                             },
-                            autoHideMenuBar: false,
+                            autoHideMenuBar: true,
                             resizable: false,
                         })
 

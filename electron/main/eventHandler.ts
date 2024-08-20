@@ -22,6 +22,7 @@ import { join } from 'node:path'
 import mainLogger from './logging/main.logger'
 import { extraDateFromPath } from './util/file.util'
 import { combineEditorContent } from './util/string.util'
+import { isDev } from './util/electron.util'
 
 // TODO wait for worker bundle
 /* export let port = 0
@@ -296,8 +297,8 @@ const createSubWindowWithMessageChannel = <T>(
             contextIsolation: true,
             preload: join(__dirname, '../preload-date-picker/index.js'),
         },
-        autoHideMenuBar: false,
-        resizable: false,
+        autoHideMenuBar: !isDev(),
+        resizable: isDev(),
         ...options,
     })
 
@@ -335,8 +336,8 @@ export const createSubWindow = (
             nodeIntegration: true,
             contextIsolation: false,
         },
-        autoHideMenuBar: false,
-        resizable: true,
+        autoHideMenuBar: !isDev(),
+        resizable: isDev(),
         ...options,
     })
 

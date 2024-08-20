@@ -9,15 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "dayjs": "^1.11.12"
+    "dayjs": "^1.11.12",
+    "vitest": "^2.0.5"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "vite": "^5.4.1",
-    "vite-plugin-dts": "^3.9.1",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.5.2"
+    "@testing-library/user-event": "^14.5.2",
+    "typescript": "^5",
+    "vite": "^5.4.1",
+    "vite-plugin-dts": "^3.9.1"
   },
   "main": "./dist/ce-utils.js",
   "types": "./dist/main.d.ts"

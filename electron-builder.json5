@@ -15,6 +15,7 @@
         'public/default-avatar.jpg',
         'static/*',
         'logs/*',
+        'config.json',
     ],
     mac: {
         artifactName: '${productName}_${version}.${ext}',
