@@ -26,3 +26,45 @@ https://github.com/electron-vite/electron-vite-react
 
 ## 打包
 `rollup-plugin-visualizer` analyze the size of dependency and optimize the bundle chunk.
+
+## run service_worker
+`vite.config.ts`
+```ts
+build: {
+    sourcemap,
+    minify: isBuild,
+    outDir: 'dist-electron/main',
+    rollupOptions: {
+        external: Object.keys(
+            'dependencies' in pkg
+                ? pkg.dependencies
+                : {}
+        ),
+        input: {
+            index: 'electron/main/index.ts',
+            'schedule-worker':
+                'electron/main/workers/schedule-worker.ts',
+        }
+    },
+},
+```
+`run-worker`
+```ts
+import path from 'node:path'
+import { Worker } from 'node:worker_threads'
+
+export const startScheduleWorker = () => {
+    const worker = new Worker(
+        path.resolve(__dirname, 'schedule-worker.js')
+    )
+
+    worker.on('message', (message) => {})
+    worker.on('error', (err) => {
+        console.error('Worker thread error:', err)
+    })
+    worker.on('exit', (code) => {
+        if (code !== 0) console.error(`Worker stopped with exit code ${code}`)
+    })
+}
+
+```

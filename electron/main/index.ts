@@ -3,15 +3,9 @@ import {
     EventResult,
     ExportResult,
     ImportResult,
-    newNotifyParam
+    newNotifyParam,
 } from 'ce-shard'
-import {
-    app,
-    BrowserWindow,
-    ipcMain,
-    nativeTheme,
-    shell
-} from 'electron'
+import { app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron'
 import { writeFile } from 'node:fs/promises'
 import { release } from 'node:os'
 import { join } from 'node:path'

@@ -126,8 +126,22 @@ export default defineConfig(({ command }) => {
                                         ? pkg.dependencies
                                         : {}
                                 ),
+                                input: {
+                                    index: 'electron/main/index.ts',
+                                    'schedule-worker':
+                                        'electron/main/workers/schedule-worker.ts',
+                                },
                                 output: {
+                                    entryFileNames: `[name].js`, // No hash
+                                    chunkFileNames: `[name].js`, // No hash for chunks either
                                     manualChunks: (id, {}) => {
+                                        // if (
+                                        //     id.includes(
+                                        //         'workers/schedule-worker'
+                                        //     )
+                                        // ) {
+                                        //     return `schedule-worker`
+                                        // }
                                         if (id.includes('node_modules')) {
                                             if (id.includes('winston')) {
                                                 return `winston`
