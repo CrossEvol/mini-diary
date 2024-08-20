@@ -1,4 +1,4 @@
 interface IDialogProps {
-    open: boolean
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }

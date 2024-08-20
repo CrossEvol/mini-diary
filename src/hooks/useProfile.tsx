@@ -6,29 +6,29 @@ import { useAtom } from 'jotai'
 import { useCallback } from 'react'
 
 const useProfile = () => {
-    const [profile, setProfile] = useAtom(profileAtom)
+  const [profile, setProfile] = useAtom(profileAtom)
 
-    const setupUserProfile = useCallback(async () => {
-        if (!localStorage.getItem('token')) {
-            return
+  const setupUserProfile = useCallback(async () => {
+    if (!localStorage.getItem('token')) {
+      return
+    }
+    if (profile) {
+      return
+    }
+    const res = await fetchClient.get<ZResult<UserProfile>>(
+      `${ApiUrl()}/profile`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-        if (!!profile) {
-            return
-        }
-        const res = await fetchClient.get<ZResult<UserProfile>>(
-            `${ApiUrl()}/profile`,
-            {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            }
-        )
-        if (res.status === 200) {
-            setProfile(res.data)
-        }
-    }, [profile, setProfile])
+      }
+    )
+    if (res.status === 200) {
+      setProfile(res.data)
+    }
+  }, [profile, setProfile])
 
-    return { profile, setupUserProfile }
+  return { profile, setupUserProfile }
 }
 
 export default useProfile

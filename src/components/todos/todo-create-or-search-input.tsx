@@ -21,177 +21,177 @@ import * as React from 'react'
 type InputState = 'create' | 'search'
 
 export default function TodoCreateOrSearchInput() {
-    const [, setSearchText] = useAtom(searchTextAtom)
-    const [text, setText] = React.useState('')
-    const [pickedDay, setPickedDay] = useAtom(pickedDayAtom)
-    const queryClient = useQueryClient()
-    const [inputState, setInputState] = React.useState<InputState>('create')
+  const [, setSearchText] = useAtom(searchTextAtom)
+  const [text, setText] = React.useState('')
+  const [pickedDay, setPickedDay] = useAtom(pickedDayAtom)
+  const queryClient = useQueryClient()
+  const [inputState, setInputState] = React.useState<InputState>('create')
 
-    // Mutations
-    const mutation = useMutation<Todo | null, Error, CreateTodoDTO>({
-        mutationFn: async (params) => await todoApi.createTodo(params),
-        onSuccess: (data) => {
-            if (data !== null) {
-                queryClient.invalidateQueries({
-                    queryKey: [createTodosQueryKey(pickedDay)],
-                })
-            }
-        },
-    })
-
-    const resetTodosPage = async (pageSize: number) => {
-        const page = await todoApi.getTodos({
-            q: text,
-            current: 1,
-            per_page: pageSize,
-            startDay: formatDateTime(pickedDay, DateTimeFormatEnum.DATE_FORMAT),
-            endDay: formatDateTime(pickedDay, DateTimeFormatEnum.DATE_FORMAT),
-        })
-        queryClient.setQueryData([createTodosQueryKey(pickedDay)], () => ({
-            pages: page,
-            pageParams: [0],
-        }))
-        queryClient.cancelQueries({
-            queryKey: [createTodosQueryKey(pickedDay)],
-        })
+  // Mutations
+  const mutation = useMutation<Todo | null, Error, CreateTodoDTO>({
+    mutationFn: async (params) => await todoApi.createTodo(params),
+    onSuccess: (data) => {
+      if (data !== null) {
         queryClient.invalidateQueries({
-            queryKey: [createTodosQueryKey(pickedDay)],
+          queryKey: [createTodosQueryKey(pickedDay)]
         })
+      }
     }
+  })
 
-    return (
-        <Paper
-            onSubmit={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
+  const resetTodosPage = async (pageSize: number) => {
+    const page = await todoApi.getTodos({
+      q: text,
+      current: 1,
+      per_page: pageSize,
+      startDay: formatDateTime(pickedDay, DateTimeFormatEnum.DATE_FORMAT),
+      endDay: formatDateTime(pickedDay, DateTimeFormatEnum.DATE_FORMAT)
+    })
+    queryClient.setQueryData([createTodosQueryKey(pickedDay)], () => ({
+      pages: page,
+      pageParams: [0]
+    }))
+    queryClient.cancelQueries({
+      queryKey: [createTodosQueryKey(pickedDay)]
+    })
+    queryClient.invalidateQueries({
+      queryKey: [createTodosQueryKey(pickedDay)]
+    })
+  }
+
+  return (
+    <Paper
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+      }}
+      component="form"
+      sx={{
+        p: '2px 4px',
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%'
+      }}
+    >
+      {inputState === 'create' ? (
+        <Tooltip title="create">
+          <IconButton
+            sx={{ p: '10px' }}
+            aria-label="menu"
+            onClick={() => {
+              setInputState('search')
             }}
-            component='form'
-            sx={{
-                p: '2px 4px',
-                display: 'flex',
-                alignItems: 'center',
-                width: '100%',
+          >
+            <LibraryAddOutlinedIcon color="primary" />
+          </IconButton>
+        </Tooltip>
+      ) : (
+        <Tooltip title="search">
+          <IconButton
+            sx={{ p: '10px' }}
+            aria-label="menu"
+            onClick={() => setInputState('create')}
+          >
+            <PageviewOutlinedIcon color="info" />
+          </IconButton>
+        </Tooltip>
+      )}
+      {inputState === 'create' ? (
+        <InputBase
+          componentsProps={{
+            input: {
+              type: 'text'
+            }
+          }}
+          sx={{ ml: 1, flex: 1 }}
+          value={text}
+          onKeyUp={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              e.stopPropagation()
+              mutation.mutateAsync(
+                {
+                  text,
+                  deadline: formatDateTime(
+                    pickedDay,
+                    DateTimeFormatEnum.DATE_FORMAT
+                  )
+                },
+                {
+                  onSettled(data, error, variables, context) {
+                    setText('')
+                  }
+                }
+              )
+            }
+          }}
+          onChange={(e) => {
+            setText(e.target.value)
+          }}
+          placeholder={'Write some text ...'}
+          inputProps={{ 'aria-label': 'search google maps' }}
+        />
+      ) : (
+        <InputBase
+          componentsProps={{
+            input: {
+              type: 'text'
+            }
+          }}
+          sx={{ ml: 1, flex: 1 }}
+          value={text}
+          onKeyUp={async (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              e.stopPropagation()
+              setPickedDay(DATE_1999_09_09)
+              setSearchText(text)
+              await resetTodosPage(10)
+            }
+          }}
+          onChange={(e) => {
+            setText(e.target.value)
+          }}
+          placeholder={'Search todo ...'}
+          inputProps={{ 'aria-label': 'search google maps' }}
+        />
+      )}
+      <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+      {inputState === 'create' ? (
+        <Tooltip title="CREATE">
+          <IconButton
+            color="primary"
+            sx={{ p: '10px' }}
+            aria-label="directions"
+            onClick={() => {
+              mutation.mutateAsync({
+                text,
+                deadline: formatDateTime(
+                  pickedDay,
+                  DateTimeFormatEnum.DATE_FORMAT
+                )
+              })
             }}
-        >
-            {inputState === 'create' ? (
-                <Tooltip title='create'>
-                    <IconButton
-                        sx={{ p: '10px' }}
-                        aria-label='menu'
-                        onClick={() => {
-                            setInputState('search')
-                        }}
-                    >
-                        <LibraryAddOutlinedIcon color='primary' />
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title='search'>
-                    <IconButton
-                        sx={{ p: '10px' }}
-                        aria-label='menu'
-                        onClick={() => setInputState('create')}
-                    >
-                        <PageviewOutlinedIcon color='info' />
-                    </IconButton>
-                </Tooltip>
-            )}
-            {inputState === 'create' ? (
-                <InputBase
-                    componentsProps={{
-                        input: {
-                            type: 'text',
-                        },
-                    }}
-                    sx={{ ml: 1, flex: 1 }}
-                    value={text}
-                    onKeyUp={(e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            mutation.mutateAsync(
-                                {
-                                    text,
-                                    deadline: formatDateTime(
-                                        pickedDay,
-                                        DateTimeFormatEnum.DATE_FORMAT
-                                    ),
-                                },
-                                {
-                                    onSettled(data, error, variables, context) {
-                                        setText('')
-                                    },
-                                }
-                            )
-                        }
-                    }}
-                    onChange={(e) => {
-                        setText(e.target.value)
-                    }}
-                    placeholder={'Write some text ...'}
-                    inputProps={{ 'aria-label': 'search google maps' }}
-                />
-            ) : (
-                <InputBase
-                    componentsProps={{
-                        input: {
-                            type: 'text',
-                        },
-                    }}
-                    sx={{ ml: 1, flex: 1 }}
-                    value={text}
-                    onKeyUp={async (e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            setPickedDay(DATE_1999_09_09)
-                            setSearchText(text)
-                            await resetTodosPage(10)
-                        }
-                    }}
-                    onChange={(e) => {
-                        setText(e.target.value)
-                    }}
-                    placeholder={'Search todo ...'}
-                    inputProps={{ 'aria-label': 'search google maps' }}
-                />
-            )}
-            <Divider sx={{ height: 28, m: 0.5 }} orientation='vertical' />
-            {inputState === 'create' ? (
-                <Tooltip title='CREATE'>
-                    <IconButton
-                        color='primary'
-                        sx={{ p: '10px' }}
-                        aria-label='directions'
-                        onClick={() => {
-                            mutation.mutateAsync({
-                                text,
-                                deadline: formatDateTime(
-                                    pickedDay,
-                                    DateTimeFormatEnum.DATE_FORMAT
-                                ),
-                            })
-                        }}
-                    >
-                        <DirectionsIcon />
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title='SEARCH'>
-                    <IconButton
-                        type='button'
-                        sx={{ p: '10px' }}
-                        aria-label='search'
-                        onClick={async () => {
-                            setSearchText(text)
-                            setPickedDay(DATE_1999_09_09)
-                            await resetTodosPage(10)
-                        }}
-                    >
-                        <SearchIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
-        </Paper>
-    )
+          >
+            <DirectionsIcon />
+          </IconButton>
+        </Tooltip>
+      ) : (
+        <Tooltip title="SEARCH">
+          <IconButton
+            type="button"
+            sx={{ p: '10px' }}
+            aria-label="search"
+            onClick={async () => {
+              setSearchText(text)
+              setPickedDay(DATE_1999_09_09)
+              await resetTodosPage(10)
+            }}
+          >
+            <SearchIcon />
+          </IconButton>
+        </Tooltip>
+      )}
+    </Paper>
+  )
 }

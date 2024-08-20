@@ -11,7 +11,7 @@ import { createRootTheme } from './theme'
 const isDevelopment = process.env.NODE_ENV === 'development'
 
 if (!isDevelopment) {
-    localStorage.removeItem('port')
+  localStorage.removeItem('port')
 }
 
 const rootElement = document.getElementById('root')!
@@ -20,18 +20,18 @@ const root = ReactDOM.createRoot(rootElement)
 const rootTheme = createRootTheme(rootElement)
 
 root.render(
-    <React.StrictMode>
-        <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={rootTheme}>
-                <ColorModeProvider>
-                    <ReactQueryProvider>
-                        <JotaiProvider>
-                            <CssBaseline />
-                            <App />
-                        </JotaiProvider>
-                    </ReactQueryProvider>
-                </ColorModeProvider>
-            </ThemeProvider>
-        </StyledEngineProvider>
-    </React.StrictMode>
+  <React.StrictMode>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={rootTheme}>
+        <ColorModeProvider>
+          <ReactQueryProvider>
+            <JotaiProvider>
+              <CssBaseline />
+              <App />
+            </JotaiProvider>
+          </ReactQueryProvider>
+        </ColorModeProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
+  </React.StrictMode>
 )

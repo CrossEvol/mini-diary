@@ -1,8 +1,8 @@
 import * as beautify from 'js-beautify'
 
 export const beautifyHtml = (
-    html: string,
-    options?: beautify.HTMLBeautifyOptions
+  html: string,
+  options?: beautify.HTMLBeautifyOptions
 ) => {
-    return beautify.html(html, options)
+  return beautify.html(html, options)
 }

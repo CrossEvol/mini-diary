@@ -35,161 +35,151 @@ import { DateTimeFormatEnum, formatDateTime } from 'ce-utils'
 import { ApiUrl } from './utils/string.util'
 
 const Layout = () => {
-    const [profile] = useAtom(profileAtom)
-    const [open, setOpen] = React.useState(false)
-    const navigate = useNavigate()
-    const theme = useTheme()
-    const colorMode = React.useContext(ColorModeContext)
+  const [profile] = useAtom(profileAtom)
+  const [open, setOpen] = React.useState(false)
+  const navigate = useNavigate()
+  const theme = useTheme()
+  const colorMode = React.useContext(ColorModeContext)
 
-    const toggleDrawer = (newOpen: boolean) => () => {
-        setOpen(newOpen)
-    }
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpen(newOpen)
+  }
 
-    const DrawerList = (
-        <Box
-            sx={{ width: 250 }}
-            role='presentation'
-            onClick={toggleDrawer(false)}
-        >
-            <Stack
-                direction={'row'}
-                spacing={2}
-                alignItems={'center'}
-                padding={1}
-                marginLeft={1}
-            >
-                <Avatar
-                    src={
-                        !!profile?.avatar
-                            ? `${ApiUrl()}${profile.avatar}`
-                            : `${ApiUrl()}/static/go.jpg`
-                    }
-                />
-                <Typography variant='h5'>
-                    {profile?.nickname ?? 'Unknown'}
-                </Typography>
-            </Stack>
-            <Divider />
-            <List>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/')}>
-                        <ListItemIcon>
-                            <HomeOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Home'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/sign-in')}>
-                        <ListItemIcon>
-                            <LoginOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'SignIn'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/sign-up')}>
-                        <ListItemIcon>
-                            <PersonAddOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'SignUp'} />
-                    </ListItemButton>
-                </ListItem>
-            </List>
-            <Divider />
-            <List>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/profile')}>
-                        <ListItemIcon>
-                            <AccountBoxOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Profile'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/todo')}>
-                        <ListItemIcon>
-                            <FormatListNumberedOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Todo'} />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton
-                        onClick={() =>
-                            navigate(
-                                `/editor/${formatDateTime(new Date(), DateTimeFormatEnum.DATE_FORMAT)}`
-                            )
-                        }
-                    >
-                        <ListItemIcon>
-                            <AbcOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Editor'} />
-                    </ListItemButton>
-                </ListItem>
-            </List>
-        </Box>
-    )
+  const DrawerList = (
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+      <Stack
+        direction={'row'}
+        spacing={2}
+        alignItems={'center'}
+        padding={1}
+        marginLeft={1}
+      >
+        <Avatar
+          src={
+            profile?.avatar
+              ? `${ApiUrl()}${profile.avatar}`
+              : `${ApiUrl()}/static/go.jpg`
+          }
+        />
+        <Typography variant="h5">{profile?.nickname ?? 'Unknown'}</Typography>
+      </Stack>
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate('/')}>
+            <ListItemIcon>
+              <HomeOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Home'} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate('/sign-in')}>
+            <ListItemIcon>
+              <LoginOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary={'SignIn'} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate('/sign-up')}>
+            <ListItemIcon>
+              <PersonAddOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary={'SignUp'} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate('/profile')}>
+            <ListItemIcon>
+              <AccountBoxOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Profile'} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate('/todo')}>
+            <ListItemIcon>
+              <FormatListNumberedOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Todo'} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() =>
+              navigate(
+                `/editor/${formatDateTime(new Date(), DateTimeFormatEnum.DATE_FORMAT)}`
+              )
+            }
+          >
+            <ListItemIcon>
+              <AbcOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Editor'} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  )
 
-    return (
-        <div
-            id='app'
-            className='overflow-scroll scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-blue-200 scrollbar-corner-blue-200 scrollbar-track-white'
-        >
-            <CssBaseline />
-            <Box sx={{ flexGrow: 1 }}>
-                <AppBar position='static'>
-                    <Toolbar>
-                        <Tooltip title='navigation'>
-                            <IconButton
-                                size='large'
-                                edge='start'
-                                color='inherit'
-                                aria-label='menu'
-                                sx={{ mr: 2 }}
-                                onClick={toggleDrawer(true)}
-                            >
-                                <MenuIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Typography
-                            variant='h6'
-                            component='div'
-                            sx={{ flexGrow: 1 }}
-                        >
-                            MUI
-                        </Typography>
-                        <CalendarPopover />
-                        <Tooltip title='mode'>
-                            <IconButton
-                                sx={{ ml: 1 }}
-                                onClick={colorMode.toggleColorMode}
-                                color='inherit'
-                            >
-                                {theme.palette.mode === 'dark' ? (
-                                    <Brightness7Icon />
-                                ) : (
-                                    <Brightness4Icon />
-                                )}
-                            </IconButton>
-                        </Tooltip>
-                    </Toolbar>
-                </AppBar>
-                <div className='overflow-scroll scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-slate-200 scrollbar-corner-slate-200 scrollbar-track-white'>
-                    <Outlet />
-                </div>
-            </Box>
-            <EventEmitterLayout />
-            <EditorLayout />
-            <IPCLayout />
-            <UserProfileLayout />
-            <Drawer open={open} onClose={toggleDrawer(false)}>
-                {DrawerList}
-            </Drawer>
-            <ToastContainer />
+  return (
+    <div
+      id="app"
+      className="scrollbar-thumb-rounded overflow-scroll scrollbar-thin scrollbar-track-white scrollbar-thumb-blue-200 scrollbar-corner-blue-200"
+    >
+      <CssBaseline />
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            <Tooltip title="navigation">
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="menu"
+                sx={{ mr: 2 }}
+                onClick={toggleDrawer(true)}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              MUI
+            </Typography>
+            <CalendarPopover />
+            <Tooltip title="mode">
+              <IconButton
+                sx={{ ml: 1 }}
+                onClick={colorMode.toggleColorMode}
+                color="inherit"
+              >
+                {theme.palette.mode === 'dark' ? (
+                  <Brightness7Icon />
+                ) : (
+                  <Brightness4Icon />
+                )}
+              </IconButton>
+            </Tooltip>
+          </Toolbar>
+        </AppBar>
+        <div className="scrollbar-thumb-rounded overflow-scroll scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-200 scrollbar-corner-slate-200">
+          <Outlet />
         </div>
-    )
+      </Box>
+      <EventEmitterLayout />
+      <EditorLayout />
+      <IPCLayout />
+      <UserProfileLayout />
+      <Drawer open={open} onClose={toggleDrawer(false)}>
+        {DrawerList}
+      </Drawer>
+      <ToastContainer />
+    </div>
+  )
 }
 
 export default Layout
