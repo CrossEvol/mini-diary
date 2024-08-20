@@ -22,7 +22,8 @@ const initialHtml = `
 `
 
 const options: HTMLReactParserOptions = {
-  replace({ attribs, children }: DOMNode & any) {
+  //@ts-expect-error, definitions error not of mine, but of lib itself
+  replace({ attribs, children }: DOMNode) {
     if (!attribs) {
       return
     }

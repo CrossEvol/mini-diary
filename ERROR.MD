@@ -143,3 +143,24 @@ Found 1 error.
 `tsconfig.node.json`
 from `"include": ["vite.config.ts", "package.json","jest.config.js"]`
 to `"include": ["package.json","jest.config.js"]`
+
+## ESLint couldn't determine the plugin uniquely
+Sometimes, if you integrate, you might see an error similar to this
+
+```shell
+Oops! Something went wrong! :(
+
+ESLint: 8.25.0
+
+ESLint couldn't determine the plugin "react" uniquely.
+
+- /Users/paul.ang/tw-code/cards-page/node_modules/.pnpm/eslint-plugin-react@7.31.10_eslint@8.25.0/node_modules/eslint-plugin-react/index.js (loaded in ".eslintrc.js » plugin:react/jsx-runtime")
+- /Users/paul.ang/tw-code/cards-page/node_modules/.pnpm/@wise+eslint-config@8.0.1_@babel+plugin-sy_afooenpggdpbpvboeoaxgxg2zu/node_modules/@wise/eslint-config/node_modules/eslint-plugin-react/index.js (loaded in ".eslintrc.js » @wise/eslint-config » plugin:react/jsx-runtime")
+
+Please remove the "plugins" setting from either config or remove either plugin installation.
+
+If you still can't figure out the problem, please stop by https://eslint.org/chat/help to chat with the team.
+```
+Most of the time, removing the offending plugin (in this case, plugin:react/jsx-runtime) in your eslintrc file should solve the issue.
+
+What this means is that the said plugin is already imported in the configs. Importing them again will cause the issue.

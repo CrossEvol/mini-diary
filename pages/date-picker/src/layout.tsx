@@ -28,7 +28,7 @@ const Layout = () => {
       }
     }
     return () => {}
-  }, [setPort, setFormat])
+  }, [setPort, setFormat, setToBeImported])
 
   return (
     <div>

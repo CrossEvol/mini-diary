@@ -96,14 +96,14 @@ export default function HomeView() {
     return () => {}
   }, [])
 
-  const useDynamicImportElectronInEjs = async () => {
+  const handleDynamicImportElectronInEjs = async () => {
     if (!isDevelopment) {
       // Use electron APIs here
       const { ipcRenderer } = require('electron')
 
       ipcRenderer.on(
         EChannel.PURE_REDIRECT,
-        (_event: any, value: FinalImportsData) => {
+        (_event: unknown, value: FinalImportsData) => {
           console.log(value)
           setIsLoading(false)
           setDiffDiaries(value.toBeOverridden)
@@ -126,7 +126,7 @@ export default function HomeView() {
   }
 
   React.useEffect(() => {
-    useDynamicImportElectronInEjs()
+    handleDynamicImportElectronInEjs()
     return () => {}
   }, [])
 

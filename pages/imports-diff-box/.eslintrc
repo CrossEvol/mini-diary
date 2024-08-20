@@ -19,6 +19,14 @@
     "plugin:tailwindcss/recommended"
   ],
   "parser": "@typescript-eslint/parser",
+  "ignorePatterns": [
+    "node_modules/",
+    "src/components/ui",
+    "dist/",
+    "build/",
+    "public/",
+    ".vscode"
+  ],
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
@@ -26,7 +34,12 @@
     "ecmaVersion": 11,
     "sourceType": "module"
   },
-  "plugins": ["react", "react-hooks", "@typescript-eslint", "tailwindcss"],
+  "plugins": [
+    "react",
+    "react-hooks",
+    "@typescript-eslint",
+    "tailwindcss"
+  ],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
@@ -34,6 +47,7 @@
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-var-requires": "warn",
     "tailwindcss/classnames-order": "warn",
     "tailwindcss/no-custom-classname": "warn",
     "tailwindcss/no-contradicting-classname": "error"

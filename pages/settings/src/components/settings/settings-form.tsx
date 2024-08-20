@@ -41,7 +41,7 @@ import {
   UpdateConfigResult
 } from 'ce-shard'
 import React, { useContext } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, FieldPath, FieldPathValue, useForm } from 'react-hook-form'
 import { IoFileTrayFullOutline } from 'react-icons/io5'
 import { RxReset } from 'react-icons/rx'
 import { MenuContext } from '../context-menu-warpper'
@@ -95,14 +95,20 @@ function SettingsForm({ config }: IProps) {
       defaultValues: config
     })
 
-  const filepathInputHandler = async (field: any, filetype: FileType) => {
+  const filepathInputHandler = async (
+    field: FieldPath<FormValues>,
+    filetype: FileType
+  ) => {
     if (!isDevelopment) {
       // Use electron APIs here
       const { ipcRenderer } = require('electron')
 
       ipcRenderer.once(
         EChannel.GET_FILE_PATH_RESULT,
-        (_event: any, value: any) => {
+        (
+          _event: unknown,
+          value: FieldPathValue<FormValues, FieldPath<FormValues>>
+        ) => {
           setValue(field, value)
         }
       )
@@ -118,7 +124,7 @@ function SettingsForm({ config }: IProps) {
 
       ipcRenderer.once(
         EChannel.UPDATE_CONFIG_RESULT,
-        (_event: any, value: UpdateConfigResult) => {
+        (_event: unknown, value: UpdateConfigResult) => {
           setTimeout(
             () => ipcRenderer.send(EChannel.CLOSE_SETTINGS_WINDOW),
             3000

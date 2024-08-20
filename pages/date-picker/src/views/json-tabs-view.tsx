@@ -17,8 +17,8 @@ const initialJson = {
 
 const JsonTabsView = () => {
   const [primaryJson, setPrimaryJson] =
-    useState<Record<string, any>>(initialJson)
-  const [secondaryJson, setSecondaryJson] = useState<Record<string, any>>()
+    useState<Record<string, unknown>>(initialJson)
+  const [secondaryJson, setSecondaryJson] = useState<Record<string, unknown>>()
   const { shouldBeOverridden, ImportTypeSelect } = useImportTypeSelect()
   const location: Location<NavigateData> = useLocation()
   const shouldDiff = !!secondaryJson && JSON.stringify(secondaryJson) !== '{}'

@@ -2,14 +2,14 @@ import { CopyIcon } from '@radix-ui/react-icons'
 
 import { Button } from '@/components/ui/button'
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 
@@ -47,7 +47,7 @@ export function ConfirmDialog({
           </div>
           <Button type="submit" size="sm" className="px-3">
             <span className="sr-only">Copy</span>
-            <CopyIcon className="h-4 w-4" />
+            <CopyIcon className="size-4" />
           </Button>
         </div>
         <DialogFooter className="sm:justify-start">

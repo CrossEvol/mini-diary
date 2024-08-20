@@ -10,12 +10,12 @@ export default function HomeView() {
     isDevelopment ? defaultConfig : undefined
   )
 
-  const getConfigResultListener = (_event: any, value: Config) => {
+  const getConfigResultListener = (_event: unknown, value: Config) => {
     console.log(value)
     setConfig(value)
   }
 
-  const useDynamicImportElectronInEjs = () => {
+  const handleDynamicImportElectronInEjs = () => {
     if (!isDevelopment) {
       // Use electron APIs here
       const { ipcRenderer } = require('electron')
@@ -29,7 +29,7 @@ export default function HomeView() {
   }
 
   React.useEffect(() => {
-    useDynamicImportElectronInEjs()
+    handleDynamicImportElectronInEjs()
     return () => {
       if (!isDevelopment) {
         // Use electron APIs here
