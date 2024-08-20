@@ -14,9 +14,10 @@ export default function ColorModeProvider({
         () => ({
             toggleColorMode: () => {
                 setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'))
+                window.electronAPI.toggle()
             },
         }),
-        [],
+        []
     )
 
     const theme = React.useMemo(
@@ -35,7 +36,7 @@ export default function ColorModeProvider({
                     },
                 },
             }),
-        [mode],
+        [mode]
     )
 
     return (

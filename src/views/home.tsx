@@ -1,11 +1,11 @@
 import fetchClient from '@/utils/fetch.client'
-import { Button } from '@mui/material'
+import { ApiUrl } from '@/utils/string.util'
+import { Button, Stack } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
 import ProTip from '../ProTip'
-import { ApiUrl } from '@/utils/string.util'
 
 function Copyright() {
     return (
@@ -32,6 +32,24 @@ export default function Home() {
     return (
         <Container maxWidth='sm'>
             <Box sx={{ my: 4 }}>
+                <Stack direction={'column'} spacing={2}>
+                    <Button
+                        id='toggle-dark-mode'
+                        variant='outlined'
+                        className='w-1/2'
+                        onClick={() => window.electronAPI.toggle()}
+                    >
+                        Toggle Dark Mode
+                    </Button>
+                    <Button
+                        id='reset-to-system'
+                        variant='outlined'
+                        className='w-1/2'
+                        onClick={() => window.electronAPI.system()}
+                    >
+                        Reset to System Theme
+                    </Button>
+                </Stack>
                 <Typography variant='h4' component='h1' sx={{ mb: 2 }}>
                     Material UI Vite.js example in TypeScript
                 </Typography>

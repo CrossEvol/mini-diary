@@ -9,6 +9,8 @@ import {
 } from 'ce-shard'
 
 export interface IElectronAPI {
+    toggle: () => void
+    system: () => void
     onUpdatePort: (callback: (port: number) => void) => void
     onVerifyImport: (
         callback: (arg0: VerifyImportData) => Promise<boolean>

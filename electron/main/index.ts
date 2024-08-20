@@ -20,6 +20,7 @@ import {
     MenuItem,
     MenuItemConstructorOptions,
     MessageChannelMain,
+    nativeTheme,
     Notification,
     shell,
 } from 'electron'
@@ -125,8 +126,7 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                                 nodeIntegration: true,
                                 contextIsolation: false,
                             },
-                            autoHideMenuBar: true,
-                            resizable: false,
+                            closable: false,
                         })
 
                         const handleGetConfigEvent: IpcMainEventListener = (
@@ -678,4 +678,17 @@ ipcMain.handle('open-win', (_, arg) => {
     } else {
         childWindow.loadFile(indexHtml, { hash: arg })
     }
+})
+
+ipcMain.handle('dark-mode:toggle', () => {
+    if (nativeTheme.shouldUseDarkColors) {
+        nativeTheme.themeSource = 'light'
+    } else {
+        nativeTheme.themeSource = 'dark'
+    }
+    return nativeTheme.shouldUseDarkColors
+})
+
+ipcMain.handle('dark-mode:system', () => {
+    nativeTheme.themeSource = 'system'
 })

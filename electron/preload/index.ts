@@ -19,6 +19,8 @@ declare global {
 }
 
 contextBridge.exposeInMainWorld('electronAPI', {
+    toggle: () => ipcRenderer.invoke('dark-mode:toggle'),
+    system: () => ipcRenderer.invoke('dark-mode:system'),
     onUpdatePort: (callback: (arg0: number) => void) =>
         ipcRenderer.on(EChannel.SEND_SERVER_PORT, (_event, value: number) =>
             callback(value)
