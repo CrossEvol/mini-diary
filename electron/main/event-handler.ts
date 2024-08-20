@@ -20,9 +20,9 @@ import {
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import mainLogger from './logging/main.logger'
+import { isDev } from './util/electron.util'
 import { extraDateFromPath } from './util/file.util'
 import { combineEditorContent } from './util/string.util'
-import { isDev } from './util/electron.util'
 
 // TODO wait for worker bundle
 /* export let port = 0
@@ -197,6 +197,7 @@ export const importDiaryHandler = async (
         content: fileItems[0].content,
     })
 }
+
 export const importAllDiariesHandler = async (
     mainWindow: BrowserWindow | null,
     format: EFormat
@@ -351,7 +352,7 @@ export const createSubWindow = (
     return subWindow
 }
 
-const createFileFilters = (format: EFormat): Electron.FileFilter => {
+export const createFileFilters = (format: EFormat): Electron.FileFilter => {
     switch (format) {
         case EFormat.JSON:
             return { name: 'json-filter', extensions: ['json'] }

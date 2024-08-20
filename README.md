@@ -19,6 +19,7 @@ https://github.com/electron-vite/electron-vite-react
 - √ Highlight search text for *Todos*
 - √ add fuse query for *Diaries*
 - √ complete <Settings>
+- complete the <HomeView/>
 - update any starter , includes electron, electron-sub-page, mui-vite .
 - add support for eslint and prettier.
 

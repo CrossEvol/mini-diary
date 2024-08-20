@@ -25,8 +25,7 @@ export default defineConfig(({ command }) => {
             rollupOptions: {
                 input: {
                     main: 'index.html',
-                    datePicker: 'date-picker.html',
-                    test: 'pages/date-picker/dist/index.html',
+                    datePicker: 'pages/date-picker/dist/index.html',
                     messageBox: 'pages/imports-diff-box/dist/index.html',
                     settings: 'pages/settings/dist/index.html',
                 },
