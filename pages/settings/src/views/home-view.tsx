@@ -1,3 +1,4 @@
+import { defaultConfig } from '@/components/settings/default-config'
 import Settings from '@/components/settings/settings'
 import { isDevelopment } from '@/constants'
 import { Config, EChannel, GetConfig } from 'ce-shard'
@@ -5,7 +6,9 @@ import React from 'react'
 import RingLoader from 'react-spinners/RingLoader'
 
 export default function HomeView() {
-  const [config, setConfig] = React.useState<Config>()
+  const [config, setConfig] = React.useState<Config | undefined>(
+    isDevelopment ? defaultConfig : undefined
+  )
 
   const getConfigResultListener = (_event: any, value: Config) => {
     console.log(value)

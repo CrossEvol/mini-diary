@@ -1,9 +1,12 @@
 import { Outlet } from 'react-router-dom'
+import ContextMenuMain from './components/context-menu-warpper'
 
 const Layout = () => {
   return (
     <div>
-      <Outlet />
+      <ContextMenuMain>
+        <Outlet />
+      </ContextMenuMain>
     </div>
   )
 }

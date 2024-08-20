@@ -5,6 +5,7 @@ import {
     EventResult,
     ExportResult,
     FileType,
+    GetConfig,
     ImportResult,
     newNotifyParam,
     UpdateConfigResult,
@@ -20,13 +21,14 @@ import {
     MenuItemConstructorOptions,
     MessageChannelMain,
     Notification,
-    shell
+    shell,
 } from 'electron'
 import { writeFile } from 'node:fs/promises'
 import { release } from 'node:os'
 import { join, relative } from 'node:path'
 import { initializeConfig, writeConfigJson } from './config/boot-config'
 import { CONFIG_PATH } from './config/config-path'
+import { defaultConfig } from './config/default-config'
 import { initPrisma } from './deprecated.prisma.util'
 import {
     createSubWindow,
@@ -34,6 +36,7 @@ import {
     exportDiaryHandler,
     importAllDiariesHandler,
     importDiaryHandler,
+    IpcMainEventListener,
 } from './eventHandler'
 import mainLogger from './logging/main.logger'
 import { showMessageBox } from './message-box'
@@ -126,11 +129,22 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                             resizable: false,
                         })
 
-                        const handleGetConfigEvent = () => {
-                            settingsWindow.webContents.send(
-                                EChannel.GET_CONFIG_RESULT,
-                                config
-                            )
+                        const handleGetConfigEvent: IpcMainEventListener = (
+                            _event,
+                            value: GetConfig
+                        ) => {
+                            if (value.reset) {
+                                writeConfigJson(CONFIG_PATH, defaultConfig)
+                                settingsWindow.webContents.send(
+                                    EChannel.GET_CONFIG_RESULT,
+                                    defaultConfig
+                                )
+                            } else {
+                                settingsWindow.webContents.send(
+                                    EChannel.GET_CONFIG_RESULT,
+                                    config
+                                )
+                            }
                         }
                         ipcMain.on(EChannel.GET_CONFIG, handleGetConfigEvent)
 
@@ -191,6 +205,10 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                         // })
 
                         const handleCloseWindow = (_event: IpcMainEvent) => {
+                            if (!settingsWindow.isClosable()) {
+                                settingsWindow.setClosable(true)
+                            }
+                            settingsWindow.close()
                             ipcMain.off(
                                 EChannel.GET_CONFIG,
                                 handleGetConfigEvent
@@ -203,12 +221,8 @@ const buildMenus = (mainWindow: BrowserWindow) => {
                                 EChannel.UPDATE_CONFIG,
                                 handleUpdateConfigEvent
                             )
-                            if (!settingsWindow.isClosable()) {
-                                settingsWindow.setClosable(true)
-                            }
-                            settingsWindow.close()
                         }
-                        ipcMain.on(
+                        ipcMain.once(
                             EChannel.CLOSE_SETTINGS_WINDOW,
                             handleCloseWindow
                         )

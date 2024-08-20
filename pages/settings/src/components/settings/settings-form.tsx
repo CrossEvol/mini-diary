@@ -16,6 +16,7 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { GrDocumentStore, GrKey } from 'react-icons/gr'
 import { HiOutlineKey } from 'react-icons/hi'
+import { IoMdMore } from 'react-icons/io'
 import { IoImagesSharp } from 'react-icons/io5'
 import { VscOutput } from 'react-icons/vsc'
 import { Button } from '../ui/button'
@@ -32,10 +33,18 @@ import {
 import { ToastAction } from '@/components/ui/toast'
 import { useToast } from '@/components/ui/use-toast'
 import { isDevelopment } from '@/constants'
-import { Config, EChannel, FileType, UpdateConfigResult } from 'ce-shard'
+import {
+  Config,
+  EChannel,
+  FileType,
+  GetConfig,
+  UpdateConfigResult
+} from 'ce-shard'
+import React, { useContext } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { IoFileTrayFullOutline } from 'react-icons/io5'
 import { RxReset } from 'react-icons/rx'
+import { MenuContext } from '../context-menu-warpper'
 
 interface FormValues {
   ui: {
@@ -79,6 +88,7 @@ interface IProps {
 }
 
 function SettingsForm({ config }: IProps) {
+  const context = useContext(MenuContext)
   const { toast } = useToast()
   const { handleSubmit, register, control, reset, setValue } =
     useForm<FormValues>({
@@ -133,10 +143,49 @@ function SettingsForm({ config }: IProps) {
     }
   }
 
+  const handleClose = () => {
+    if (!isDevelopment) {
+      // Use electron APIs here
+      const { ipcRenderer } = require('electron')
+
+      toast({ description: 'Closing...' })
+      setTimeout(() => ipcRenderer.send(EChannel.CLOSE_SETTINGS_WINDOW), 1000)
+    }
+  }
+
   const onSubmit = (data: typeof config) => {
     console.log('Submitted Data:', data)
     handleConfigSubmit(data!)
   }
+
+  const handleRestore = () => {
+    if (!isDevelopment) {
+      // Use electron APIs here
+      const { ipcRenderer } = require('electron')
+
+      ipcRenderer.once(EChannel.GET_CONFIG_RESULT, () => {
+        toast({
+          title: 'Closing...',
+          description: 'Restore config successfully...'
+        })
+        setTimeout(() => ipcRenderer.send(EChannel.CLOSE_SETTINGS_WINDOW), 1000)
+      })
+
+      ipcRenderer.send(EChannel.GET_CONFIG, {
+        reset: true
+      } satisfies GetConfig)
+    }
+  }
+
+  const handleReset = () => reset()
+
+  React.useEffect(() => {
+    context.setOnClose(() => handleClose)
+    context.setOnRestore(() => handleRestore)
+    context.setOnReset(() => reset)
+    context.setOnSubmit(() => handleSubmit(onSubmit))
+    return () => {}
+  }, [])
 
   return (
     <div className="w-full">
@@ -521,21 +570,24 @@ function SettingsForm({ config }: IProps) {
           <Menubar>
             <MenubarMenu>
               <MenubarTrigger className="hover:bg-red-500">
-                Reset
+                <IoMdMore />
               </MenubarTrigger>
               <MenubarContent>
                 <MenubarItem
-                  className="focus:bg-red-500"
-                  onClick={() => reset()}
+                  className="focus:bg-red-500 focus:font-semibold focus:text-white"
+                  onClick={handleReset}
                 >
-                  Reset Current{' '}
+                  Reset
                   <MenubarShortcut>
                     <RxReset />
                   </MenubarShortcut>
                 </MenubarItem>
                 <MenubarSeparator />
-                <MenubarItem className="focus:bg-red-500">
-                  Reset Full{' '}
+                <MenubarItem
+                  className="focus:bg-red-500 focus:font-semibold focus:text-white"
+                  onClick={handleRestore}
+                >
+                  Restore
                   <MenubarShortcut>
                     <IoFileTrayFullOutline />
                   </MenubarShortcut>
