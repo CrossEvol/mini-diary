@@ -31,6 +31,7 @@ export interface IElectronAPI {
 
   sendPureRedirect: <T>(value: T) => void
   onPureRedirect: <T>(callback: (arg0: T) => void) => void
+  onOpenExternalURl: (url: string) => void
 }
 
 declare global {

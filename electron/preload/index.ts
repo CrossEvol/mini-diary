@@ -88,7 +88,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onPureRedirect: <T>(callback: (arg0: T) => void) =>
     ipcRenderer.once(EChannel.PURE_REDIRECT, (_event, value: T) =>
       callback(value)
-    )
+    ),
+  onOpenExternalURl: (url: string) =>
+    ipcRenderer.send(EChannel.OPEN_EXTERNAL_URL, url)
 })
 
 // to register the onload listener before the load event is fired.

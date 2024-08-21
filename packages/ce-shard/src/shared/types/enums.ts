@@ -30,5 +30,6 @@ export enum EChannel {
   UPDATE_CONFIG = 'update_config',
   UPDATE_CONFIG_RESULT = 'update_config_result',
   CLOSE_SETTINGS_WINDOW = 'close_settings_window',
-  NAVIGATE_TO_HOME = 'navigate_to_home'
+  NAVIGATE_TO_HOME = 'navigate_to_home',
+  OPEN_EXTERNAL_URL = 'open_external_url'
 }

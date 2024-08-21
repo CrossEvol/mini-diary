@@ -5,7 +5,7 @@ import Layout from '../layout'
 import Loading from './loading'
 
 const EditorView = React.lazy(() => import('@/views/editor-view'))
-const Home = React.lazy(() => import('@/views/home'))
+const Home = React.lazy(() => import('@/views/home-view'))
 const SignIn = React.lazy(() => import('@/views/sign-in'))
 const SignUp = React.lazy(() => import('@/views/sign-up'))
 const TodoView = React.lazy(() => import('@/views/todo-view'))

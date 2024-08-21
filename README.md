@@ -20,8 +20,8 @@ https://github.com/electron-vite/electron-vite-react
 - √ add fuse query for *Diaries*
 - √ complete <Settings>
 - √ add support for eslint and prettier.
-- complete the <HomeView/>
-- update any starter , includes electron, electron-sub-page, mui-vite .
+- √ complete the <HomeView/>
+- √ update any starter , includes electron, electron-sub-page, mui-vite .
 
 
 ## 打包

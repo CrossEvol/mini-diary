@@ -3,7 +3,7 @@ import {
     EventResult,
     ExportResult,
     ImportResult,
-    newNotifyParam,
+    newNotifyParam
 } from 'ce-shard'
 import { app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron'
 import { writeFile } from 'node:fs/promises'
@@ -20,11 +20,11 @@ import { killPort } from './util/net.util'
 const config = initializeConfig()
 mainLogger.info('Configuration loaded:', config)
 ;(async () => {
-    if (await killPort(4444)) {
-        mainLogger.info('kill the 4444 port successfully.')
-    } else {
-        mainLogger.error('kill the 4444 port Failed.')
-    }
+  if (await killPort(4444)) {
+    mainLogger.info('kill the 4444 port successfully.')
+  } else {
+    mainLogger.error('kill the 4444 port Failed.')
+  }
 })()
 
 // The built directory structure
@@ -40,8 +40,8 @@ mainLogger.info('Configuration loaded:', config)
 process.env.DIST_ELECTRON = join(__dirname, '../')
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist')
 process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
-    ? join(process.env.DIST_ELECTRON, '../public')
-    : process.env.DIST
+  ? join(process.env.DIST_ELECTRON, '../public')
+  : process.env.DIST
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -50,8 +50,8 @@ if (release().startsWith('6.1')) app.disableHardwareAcceleration()
 if (process.platform === 'win32') app.setAppUserModelId(app.getName())
 
 if (!app.requestSingleInstanceLock()) {
-    app.quit()
-    process.exit(0)
+  app.quit()
+  process.exit(0)
 }
 
 // Remove electron security warnings
@@ -68,146 +68,155 @@ const indexHtml = join(process.env.DIST, 'index.html')
 initPrisma()
 
 async function createWindow() {
-    const port = await startHonoServer()
+  const port = await startHonoServer()
 
-    win = new BrowserWindow({
-        width: 1000,
-        height: 800,
-        title: 'Main window',
-        icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
-        webPreferences: {
-            preload,
-            // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
-            // Consider using contextBridge.exposeInMainWorld
-            // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
-            nodeIntegration: true,
-            contextIsolation: true,
-        },
-    })
-
-    if (url) {
-        // electron-vite-vue#298
-        win.loadURL(url)
-        // Open devTool if the app is not packaged
-        win.webContents.openDevTools()
-    } else {
-        win.loadFile(indexHtml)
+  win = new BrowserWindow({
+    width: 1000,
+    height: 800,
+    title: 'Main window',
+    icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    webPreferences: {
+      preload,
+      // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
+      // Consider using contextBridge.exposeInMainWorld
+      // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
+      nodeIntegration: true,
+      contextIsolation: true
     }
+  })
 
-    // Test actively push message to the Electron-Renderer
-    win.webContents.on('did-finish-load', () => {
-        win?.webContents.send(
-            'main-process-message',
-            new Date().toLocaleString()
-        )
-    })
+  if (url) {
+    // electron-vite-vue#298
+    win.loadURL(url)
+    // Open devTool if the app is not packaged
+    win.webContents.openDevTools()
+  } else {
+    win.loadFile(indexHtml)
+  }
 
-    win.once('ready-to-show', () => {
-        win?.webContents.send(EChannel.SEND_SERVER_PORT, port)
-    })
+  // Test actively push message to the Electron-Renderer
+  win.webContents.on('did-finish-load', () => {
+    win?.webContents.send('main-process-message', new Date().toLocaleString())
+  })
 
-    // Make all links open with the browser, not with the application
-    win.webContents.setWindowOpenHandler(({ url }) => {
-        if (url.startsWith('https:')) shell.openExternal(url)
-        return { action: 'deny' }
-    })
+  win.once('ready-to-show', () => {
+    win?.webContents.send(EChannel.SEND_SERVER_PORT, port)
+  })
 
-    // Apply electron-updater
-    update(win)
+  // Make all links open with the browser, not with the application
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('https:')) shell.openExternal(url)
+    return { action: 'deny' }
+  })
+
+  // Apply electron-updater
+  update(win)
 }
 
 app.whenReady().then(() => {
-    ipcMain.on(
-        EChannel.EXPORT_ALL_DIARY_VALUE,
-        (_event, value: EventResult<ExportResult>) => {
-            mainLogger.info(value)
-            Promise.all(
-                value.data.fileItems.map(
-                    async (fileItem) =>
-                        await writeFile(fileItem.path, fileItem.content, {
-                            encoding: 'utf-8',
-                        })
-                )
-            )
-                .then((res) =>
-                    win?.webContents.send(
-                        EChannel.NOTIFY_SUCCESS,
-                        newNotifyParam({ message: 'SUCCESS', hasSucceed: true })
-                    )
-                )
-                .catch((err) =>
-                    win?.webContents.send(
-                        EChannel.NOTIFY_ERROR,
-                        newNotifyParam({ message: err, hasSucceed: false })
-                    )
-                )
-        }
-    )
+  ipcMain.on(
+    EChannel.EXPORT_ALL_DIARY_VALUE,
+    (_event, value: EventResult<ExportResult>) => {
+      mainLogger.info(value)
+      Promise.all(
+        value.data.fileItems.map(
+          async (fileItem) =>
+            await writeFile(fileItem.path, fileItem.content, {
+              encoding: 'utf-8'
+            })
+        )
+      )
+        .then((res) =>
+          win?.webContents.send(
+            EChannel.NOTIFY_SUCCESS,
+            newNotifyParam({ message: 'SUCCESS', hasSucceed: true })
+          )
+        )
+        .catch((err) =>
+          win?.webContents.send(
+            EChannel.NOTIFY_ERROR,
+            newNotifyParam({ message: err, hasSucceed: false })
+          )
+        )
+    }
+  )
 
-    ipcMain.on(
-        EChannel.IMPORT_ALL_DIARY_VALUE,
-        (_event, value: EventResult<ImportResult>) => {
-            mainLogger.info(value)
-            win?.webContents.send(
-                EChannel.NOTIFY_ERROR,
-                newNotifyParam({ message: 'ERROR', hasSucceed: false })
-            )
-        }
-    )
-    // ipcMain.on(EChannel.PORT_FROM_WORKER, handlePortFromWorkerThread) // maybe be useful once I solve how to  bundle the worker
-    createWindow().then(() => {
-        setMenus(win!, { config })
-    })
+  ipcMain.on(
+    EChannel.IMPORT_ALL_DIARY_VALUE,
+    (_event, value: EventResult<ImportResult>) => {
+      mainLogger.info(value)
+      win?.webContents.send(
+        EChannel.NOTIFY_ERROR,
+        newNotifyParam({ message: 'ERROR', hasSucceed: false })
+      )
+    }
+  )
+  // ipcMain.on(EChannel.PORT_FROM_WORKER, handlePortFromWorkerThread) // maybe be useful once I solve how to  bundle the worker
+  createWindow().then(() => {
+    setMenus(win!, { config })
+  })
 })
 
 app.on('window-all-closed', () => {
-    win = null
-    if (process.platform !== 'darwin') app.quit()
+  win = null
+  if (process.platform !== 'darwin') app.quit()
 })
 
 app.on('second-instance', () => {
-    if (win) {
-        // Focus on the main window if the user tried to open another
-        if (win.isMinimized()) win.restore()
-        win.focus()
-    }
+  if (win) {
+    // Focus on the main window if the user tried to open another
+    if (win.isMinimized()) win.restore()
+    win.focus()
+  }
 })
 
 app.on('activate', () => {
-    const allWindows = BrowserWindow.getAllWindows()
-    if (allWindows.length) {
-        allWindows[0].focus()
-    } else {
-        createWindow()
-    }
+  const allWindows = BrowserWindow.getAllWindows()
+  if (allWindows.length) {
+    allWindows[0].focus()
+  } else {
+    createWindow()
+  }
+})
+
+ipcMain.on(EChannel.OPEN_EXTERNAL_URL, (_, url) => {
+  const childWindow = new BrowserWindow({
+    webPreferences: {
+      preload,
+      nodeIntegration: true,
+      contextIsolation: false
+    },
+    autoHideMenuBar: true
+  })
+  childWindow.loadURL(url)
 })
 
 // New window example arg: new windows url
 ipcMain.handle('open-win', (_, arg) => {
-    const childWindow = new BrowserWindow({
-        webPreferences: {
-            preload,
-            nodeIntegration: true,
-            contextIsolation: false,
-        },
-    })
-
-    if (process.env.VITE_DEV_SERVER_URL) {
-        childWindow.loadURL(`${url}#${arg}`)
-    } else {
-        childWindow.loadFile(indexHtml, { hash: arg })
+  const childWindow = new BrowserWindow({
+    webPreferences: {
+      preload,
+      nodeIntegration: true,
+      contextIsolation: false
     }
+  })
+
+  if (process.env.VITE_DEV_SERVER_URL) {
+    childWindow.loadURL(`${url}#${arg}`)
+  } else {
+    childWindow.loadFile(indexHtml, { hash: arg })
+  }
 })
 
 ipcMain.handle('dark-mode:toggle', () => {
-    if (nativeTheme.shouldUseDarkColors) {
-        nativeTheme.themeSource = 'light'
-    } else {
-        nativeTheme.themeSource = 'dark'
-    }
-    return nativeTheme.shouldUseDarkColors
+  if (nativeTheme.shouldUseDarkColors) {
+    nativeTheme.themeSource = 'light'
+  } else {
+    nativeTheme.themeSource = 'dark'
+  }
+  return nativeTheme.shouldUseDarkColors
 })
 
 ipcMain.handle('dark-mode:system', () => {
-    nativeTheme.themeSource = 'system'
+  nativeTheme.themeSource = 'system'
 })
