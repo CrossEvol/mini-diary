@@ -1,116 +1,118 @@
 import {
-    EChannel,
-    EventResult,
-    ExportParam,
-    ExportResult,
-    ImportParam,
-    ImportResult,
-    NotifyParam,
-    SendMessagePortData,
-    VerifyImportData,
+  EChannel,
+  EventResult,
+  ExportParam,
+  ExportResult,
+  ImportParam,
+  ImportResult,
+  NotifyParam,
+  SendMessagePortData,
+  VerifyImportData
 } from 'ce-shard'
 
 const { contextBridge, ipcRenderer } = require('electron')
 
 declare global {
-    interface Window {
-        electronMessagePort: Electron.MessagePortMain
-    }
+  interface Window {
+    electronMessagePort: Electron.MessagePortMain
+  }
 }
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    toggle: () => ipcRenderer.invoke('dark-mode:toggle'),
-    system: () => ipcRenderer.invoke('dark-mode:system'),
-    onUpdatePort: (callback: (arg0: number) => void) =>
-        ipcRenderer.on(EChannel.SEND_SERVER_PORT, (_event, value: number) =>
-            callback(value)
-        ),
-    onClickMessage: (value: string) =>
-        ipcRenderer.send(EChannel.CLICK_MESSAGE, value),
-    onVerifyImport: (callback: (arg0: VerifyImportData) => boolean) => {
-        ipcRenderer.on(
-            EChannel.VERIFY_IMPORT,
-            (_event, value: VerifyImportData) => {
-                if (callback(value)) {
-                    ipcRenderer.send(EChannel.VERIFY_IMPORT_RESULT, {
-                        status: 200,
-                        data: true,
-                        message: 'OK',
-                    })
-                } else {
-                    ipcRenderer.send(EChannel.VERIFY_IMPORT_RESULT, {
-                        status: 500,
-                        data: false,
-                        message: 'ERROR',
-                    })
-                }
-            }
-        )
-    },
-    onExportDiary: (callback: (arg0: ExportParam) => void) =>
-        ipcRenderer.on(EChannel.EXPORT_DIARY, (_event, value: ExportParam) =>
-            callback(value)
-        ),
-    diaryExportValue: (value: EventResult<ExportResult>) =>
-        ipcRenderer.send(EChannel.EXPORT_DIARY_VALUE, value),
-    onExportAllDiaries: (callback: (arg0: ExportParam) => void) =>
-        ipcRenderer.on(
-            EChannel.EXPORT_ALL_DIARY,
-            (_event, value: ExportParam) => callback(value)
-        ),
-    allDiaryExportsValue: (value: EventResult<ExportResult>) =>
-        ipcRenderer.send(EChannel.EXPORT_ALL_DIARY_VALUE, value),
+  toggle: () => ipcRenderer.invoke('dark-mode:toggle'),
+  system: () => ipcRenderer.invoke('dark-mode:system'),
+  onUpdatePort: (callback: (arg0: number) => void) =>
+    ipcRenderer.on(EChannel.SEND_SERVER_PORT, (_event, value: number) =>
+      callback(value)
+    ),
+  onClickMessage: (value: string) =>
+    ipcRenderer.send(EChannel.CLICK_MESSAGE, value),
+  onVerifyImport: (callback: (arg0: VerifyImportData) => boolean) => {
+    ipcRenderer.on(
+      EChannel.VERIFY_IMPORT,
+      (_event, value: VerifyImportData) => {
+        if (callback(value)) {
+          ipcRenderer.send(EChannel.VERIFY_IMPORT_RESULT, {
+            status: 200,
+            data: true,
+            message: 'OK'
+          })
+        } else {
+          ipcRenderer.send(EChannel.VERIFY_IMPORT_RESULT, {
+            status: 500,
+            data: false,
+            message: 'ERROR'
+          })
+        }
+      }
+    )
+  },
+  onExportDiary: (callback: (arg0: ExportParam) => void) =>
+    ipcRenderer.on(EChannel.EXPORT_DIARY, (_event, value: ExportParam) =>
+      callback(value)
+    ),
+  diaryExportValue: (value: EventResult<ExportResult>) =>
+    ipcRenderer.send(EChannel.EXPORT_DIARY_VALUE, value),
+  onExportAllDiaries: (callback: (arg0: ExportParam) => void) =>
+    ipcRenderer.on(EChannel.EXPORT_ALL_DIARY, (_event, value: ExportParam) =>
+      callback(value)
+    ),
+  allDiaryExportsValue: (value: EventResult<ExportResult>) =>
+    ipcRenderer.send(EChannel.EXPORT_ALL_DIARY_VALUE, value),
 
-    onImportDiary: <T>(callback: (arg0: T) => void) =>
-        ipcRenderer.on(EChannel.IMPORT_DIARY, (_event, value: T) =>
-            callback(value)
-        ),
-    diaryImportValue: (value: EventResult<ImportResult>) =>
-        ipcRenderer.send(EChannel.IMPORT_DIARY_VALUE, value),
-    onImportAllDiaries: (callback: (arg0: ImportParam) => void) =>
-        ipcRenderer.on(
-            EChannel.IMPORT_ALL_DIARY,
-            (_event, value: ImportParam) => callback(value)
-        ),
-    allDiaryImportsValue: (value: EventResult<ImportResult>) =>
-        ipcRenderer.send(EChannel.IMPORT_ALL_DIARY_VALUE, value),
+  onImportDiary: <T>(callback: (arg0: T) => void) =>
+    ipcRenderer.on(EChannel.IMPORT_DIARY, (_event, value: T) =>
+      callback(value)
+    ),
+  diaryImportValue: (value: EventResult<ImportResult>) =>
+    ipcRenderer.send(EChannel.IMPORT_DIARY_VALUE, value),
+  onImportAllDiaries: (callback: (arg0: ImportParam) => void) =>
+    ipcRenderer.on(EChannel.IMPORT_ALL_DIARY, (_event, value: ImportParam) =>
+      callback(value)
+    ),
+  allDiaryImportsValue: (value: EventResult<ImportResult>) =>
+    ipcRenderer.send(EChannel.IMPORT_ALL_DIARY_VALUE, value),
 
-    onNotifySuccess: (callback: (arg0: NotifyParam) => void) =>
-        ipcRenderer.on(EChannel.NOTIFY_SUCCESS, (_event, value: NotifyParam) =>
-            callback(value)
-        ),
-    onNotifyError: (callback: (arg0: NotifyParam) => void) =>
-        ipcRenderer.on(EChannel.NOTIFY_ERROR, (_event, value: NotifyParam) =>
-            callback(value)
-        ),
+  onNotifySuccess: (callback: (arg0: NotifyParam) => void) =>
+    ipcRenderer.on(EChannel.NOTIFY_SUCCESS, (_event, value: NotifyParam) =>
+      callback(value)
+    ),
+  onNotifyError: (callback: (arg0: NotifyParam) => void) =>
+    ipcRenderer.on(EChannel.NOTIFY_ERROR, (_event, value: NotifyParam) =>
+      callback(value)
+    ),
 
-    sendPureRedirect: <T>(value: T) => {
-        ipcRenderer.send(EChannel.PURE_REDIRECT, value)
-    },
-    onPureRedirect: <T>(callback: (arg0: T) => void) =>
-        ipcRenderer.once(EChannel.PURE_REDIRECT, (_event, value: T) =>
-            callback(value)
-        ),
+  sendPureRedirect: <T>(value: T) => {
+    ipcRenderer.send(EChannel.PURE_REDIRECT, value)
+  },
+  onPureRedirect: <T>(callback: (arg0: T) => void) =>
+    ipcRenderer.once(EChannel.PURE_REDIRECT, (_event, value: T) =>
+      callback(value)
+    )
 })
 
 // to register the onload listener before the load event is fired.
 const windowLoaded = new Promise((resolve) => {
-    window.onload = resolve
+  window.onload = resolve
 })
 
 ipcRenderer.on(
-    EChannel.SEND_MESSAGE_PORT,
-    async (event, value: Omit<SendMessagePortData, 'channel'>) => {
-        await windowLoaded
-        // We use regular window.postMessage to transfer the port from the isolated
-        // world to the main world.
-        window.postMessage(
-            { ...value, channel: EChannel.SEND_MESSAGE_PORT },
-            '*',
-            event.ports
-        )
-    }
+  EChannel.SEND_MESSAGE_PORT,
+  async (event, value: Omit<SendMessagePortData, 'channel'>) => {
+    await windowLoaded
+    // We use regular window.postMessage to transfer the port from the isolated
+    // world to the main world.
+    window.postMessage(
+      { ...value, channel: EChannel.SEND_MESSAGE_PORT },
+      '*',
+      event.ports
+    )
+  }
 )
+
+ipcRenderer.on(EChannel.NAVIGATE_TO_HOME, async (event) => {
+  window.location.href = '/#/'
+})
 
 // function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
 //   return new Promise(resolve => {
