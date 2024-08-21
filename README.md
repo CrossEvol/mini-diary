@@ -1,7 +1,123 @@
-## 来源
-https://github.com/electron-vite/electron-vite-react
+## What is 
+this repo use the pnpm monorepo.
+it consist of the code for the main window in the root <br/>
+the code for sub window in `pages` <br/>
+some shared code in `packages` <br/>
 
-[integrate-hono-with-openapiswagger-3dem](https://dev.to/bimaadi/integrate-hono-with-openapiswagger-3dem)
+the project structure is decided by [electron-vite-react](https://github.com/electron-vite/electron-vite-react) <br/>
+use the [block-note](https://github.com/TypeCellOS/BlockNote) as the rich-text-editor. <br/>
+use the [drizzle-orm](https://orm.drizzle.team/) to interact with the sqlite <br/>
+can run the [hono-server](https://hono.dev/docs/) in the service_workers(the author is too lazy to migrate) <br/>
+
+## Getting Started
+
+### Install
+
+#### Install dependencies.
+
+```bash
+pnpm install
+```
+maybe the sub project under `packages` and `pages` need run this command 
+
+#### Build sub projects
+
+Build the `packages` and `pages`
+```bash
+pnpm run build:packages
+```
+
+```bash
+pnpm run build:pages
+```
+
+#### Initialize the drizzle
+initialize the orm
+```bash
+pnpm run generate
+```
+```bash
+pnpm run migrate 
+```
+
+`better-sqlite3` uses a nodejs version which is different from yours electron environment, you can 
+```bash
+pnpm run rebuild 
+```
+to rebuild the `better-sqlite3` for the compatible version with electron <br/>
+if you want to restore the `better-sqlite3` to the origin version , you can run  
+```bash
+pnpm run reset
+```
+
+### generate key-pairs
+```bash
+pnpm run key:gen
+```
+
+#### Run
+```bash
+pnpm run dev
+```
+
+### Lint
+
+```bash
+pnpm run lint
+```
+
+### Typecheck
+
+```bash
+pnpm run typecheck
+```
+
+### Build
+
+```bash
+pnpm run build
+```
+use `rollup-plugin-visualizer` analyze the size of dependency and optimize the bundle chunk.
+
+then you can find the release application and installation executable in the `release`
+
+## Source
+[electron-vite-react](https://github.com/electron-vite/electron-vite-react)
+[electron-react-vite-starter](https://github.com/CrossEvol/electron-react-vite-starter)
+[samuelmeuli/mini-diary](https://github.com/CrossEvol/mini-diary)
+
+## Stack List
+
+This project uses many tools like:
+
+client:
+- [Vite](https://vitejs.dev)
+- [ReactJS](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org)
+- [Vitest](https://vitest.dev)
+- [Testing Library](https://testing-library.com)
+- [Tailwindcss](https://tailwindcss.com)
+- [Eslint](https://eslint.org)
+- [Prettier](https://prettier.io)
+- [mui](https://mui.com/material-ui/getting-started/)
+- [shadcn-ui](https://ui.shadcn.com/)
+- [react-query](https://tanstack.com/query/latest/docs/framework/react/overview)
+- [tiptap](https://github.com/ueberdosis/tiptap)
+- [BlockNote](https://github.com/TypeCellOS/BlockNote)
+- [react-hook-form](https://react-hook-form.com/)
+- [dndkit](https://docs.dndkit.com/)
+
+backend:
+- [hono](https://hono.dev/docs/)
+- [drizzle-orm](https://orm.drizzle.team/)
+- [electron](https://www.electronjs.org/)
+- [winston](https://github.com/winstonjs/winston#readme)
+
+## References
+[integrate-hono-with-openapi](https://dev.to/bimaadi/integrate-hono-with-openapiswagger-3dem)
+[create-a-monorepo-using-pnpm-workspace](https://dev.to/vinomanick/create-a-monorepo-using-pnpm-workspace-1ebn)
+[managing-full-stack-monorepo-pnpm](https://blog.logrocket.com/managing-full-stack-monorepo-pnpm/#create-root-project)
+[pnpm-workspace-examples](https://github.com/ashleydavis/pnpm-workspace-examples)
 
 ## Todo
 - √ remove <Counter> and <Len>
@@ -23,11 +139,8 @@ https://github.com/electron-vite/electron-vite-react
 - √ complete the <HomeView/>
 - √ update any starter , includes electron, electron-sub-page, mui-vite .
 
-
-## 打包
-`rollup-plugin-visualizer` analyze the size of dependency and optimize the bundle chunk.
-
-## run service_worker
+## Q & A
+### run in service_worker
 `vite.config.ts`
 ```ts
 build: {
