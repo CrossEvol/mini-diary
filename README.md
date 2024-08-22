@@ -1,5 +1,5 @@
 ## What is 
-this repo use the pnpm monorepo.
+this repo use the pnpm monorepo. <br/>
 it consist of the code for the main window in the root <br/>
 the code for sub window in `pages` <br/>
 some shared code in `packages` <br/>
@@ -77,14 +77,14 @@ pnpm run typecheck
 ```bash
 pnpm run build
 ```
-use `rollup-plugin-visualizer` analyze the size of dependency and optimize the bundle chunk.
+use `rollup-plugin-visualizer` analyze the size of dependency and optimize the bundle chunk. <br/>
 
 then you can find the release application and installation executable in the `release`
 
 ## Source
-[electron-vite-react](https://github.com/electron-vite/electron-vite-react)
-[electron-react-vite-starter](https://github.com/CrossEvol/electron-react-vite-starter)
-[samuelmeuli/mini-diary](https://github.com/CrossEvol/mini-diary)
+[electron-vite-react](https://github.com/electron-vite/electron-vite-react) <br/>
+[electron-react-vite-starter](https://github.com/CrossEvol/electron-react-vite-starter) <br/>
+[samuelmeuli/mini-diary](https://github.com/CrossEvol/mini-diary) <br/>
 
 ## Stack List
 
@@ -114,10 +114,10 @@ backend:
 - [winston](https://github.com/winstonjs/winston#readme)
 
 ## References
-[integrate-hono-with-openapi](https://dev.to/bimaadi/integrate-hono-with-openapiswagger-3dem)
-[create-a-monorepo-using-pnpm-workspace](https://dev.to/vinomanick/create-a-monorepo-using-pnpm-workspace-1ebn)
-[managing-full-stack-monorepo-pnpm](https://blog.logrocket.com/managing-full-stack-monorepo-pnpm/#create-root-project)
-[pnpm-workspace-examples](https://github.com/ashleydavis/pnpm-workspace-examples)
+[integrate-hono-with-openapi](https://dev.to/bimaadi/integrate-hono-with-openapiswagger-3dem) <br/>
+[create-a-monorepo-using-pnpm-workspace](https://dev.to/vinomanick/create-a-monorepo-using-pnpm-workspace-1ebn) <br/>
+[managing-full-stack-monorepo-pnpm](https://blog.logrocket.com/managing-full-stack-monorepo-pnpm/#create-root-project) <br/>
+[pnpm-workspace-examples](https://github.com/ashleydavis/pnpm-workspace-examples) <br/>
 
 ## Todo
 - √ remove <Counter> and <Len>
@@ -155,8 +155,8 @@ build: {
         ),
         input: {
             index: 'electron/main/index.ts',
-            'schedule-worker':
-                'electron/main/workers/schedule-worker.ts',
+            'worker':
+                'electron/main/worker.ts',
         }
     },
 },
@@ -168,7 +168,7 @@ import { Worker } from 'node:worker_threads'
 
 export const startScheduleWorker = () => {
     const worker = new Worker(
-        path.resolve(__dirname, 'schedule-worker.js')
+        path.resolve(__dirname, 'worker.js')
     )
 
     worker.on('message', (message) => {})
